@@ -3852,21 +3852,23 @@ app.get(
    CHATBOT
 ========================================================= */
 
-app.post(
-  '/api/chatbot',
-  loginRequired,
-  (
-    req,
-    res
-  ) =>
+app.post('/api/chatbot', async (req, res) => {
+  try {
+    const { message, topic } = req.body;
+
+    const reply = await chatbotAnswer(message, topic);
+
     res.json({
-      reply:
-        chatbotAnswer(
-          req.body.message,
-          req.body.topic
-        )
-    })
-);
+      reply: String(reply)
+    });
+  } catch (error) {
+    console.error('Chatbot route error:', error);
+
+    res.status(500).json({
+      reply: 'Sorry, something went wrong. Please try again.'
+    });
+  }
+});
 
 
 /* =========================================================
