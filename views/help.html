@@ -22,7 +22,7 @@
         <div><span class="card-eyebrow">CONTACT SUPPORT</span><h2>Send a support request</h2><p>Tell us what happened and we'll have the details needed to understand your issue.</p></div>
       </div>
 
-      <form method="POST" enctype="multipart/form-data" class="helpdesk-form" id="helpdesk-form">
+      <form method="POST" class="helpdesk-form" id="helpdesk-form">
         <div class="helpdesk-form-grid">
           <label class="form-group">
             <span>What do you need help with?</span>
@@ -51,13 +51,6 @@
           <span>Your question</span>
           <textarea name="message" id="help-message" rows="7" maxlength="2000" required placeholder="Describe the problem, what you expected to happen, and what you see instead..."></textarea>
           <small class="character-count"><span id="help-count">0</span>/2000</small>
-        </label>
-
-        <label class="form-group">
-          <span>Attachment (optional)</span>
-          <input type="file" name="help_attachment" id="help-attachment"
-                 accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,text/plain,.doc,.docx">
-          <small>Attach a screenshot or document if it helps explain the problem. Maximum 4 MB.</small>
         </label>
 
         <div class="helpdesk-submit-row">
@@ -97,6 +90,207 @@
        YOUR SUPPORT REQUESTS / ADMIN RESPONSES
   ====================================================== -->
 
+  <style>
+    /* Support responses only: this stylesheet sits outside #support-response-root
+       so the live-refresh renderer cannot remove it. */
+    .support-response-card {
+      margin-top: 22px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .support-response-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .support-response-item {
+      padding: 18px 18px 20px;
+      border: 1px solid var(--theme-line, var(--line));
+      border-radius: 16px;
+      background: var(--theme-surface, var(--card, #fff));
+    }
+
+    .support-response-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 13px;
+      border-bottom: 1px solid var(--theme-line, var(--line));
+    }
+
+    .support-ticket-heading strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--theme-text, var(--ink));
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .support-ticket-heading small {
+      display: block;
+      color: var(--theme-muted, var(--muted));
+      font-size: 12px;
+    }
+
+    .support-student-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    .support-student-status.open,
+    .support-student-status.pending,
+    .support-student-status.under-review,
+    .support-student-status.in-progress {
+      background: #eef4ff;
+      border-color: #dbe6ff;
+      color: #3867ff;
+    }
+
+    .support-student-status.approved,
+    .support-student-status.resolved {
+      background: #e9f9f0;
+      border-color: #d4f1e1;
+      color: #168652;
+    }
+
+    .support-student-status.rejected {
+      background: #fff1f1;
+      border-color: #f6d7d7;
+      color: #c23a3a;
+    }
+
+    .support-conversation {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding-top: 18px;
+    }
+
+    .support-message {
+      width: min(82%, 720px);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .support-message-user {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .support-message-admin {
+      align-self: flex-end;
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .support-message-label {
+      color: var(--theme-muted, var(--muted));
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .support-message-bubble {
+      width: 100%;
+      padding: 13px 15px;
+      border-radius: 13px;
+      border: 1px solid var(--theme-line, var(--line));
+      color: var(--theme-text, var(--ink));
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: var(--theme-bg, #f8f9fd);
+      box-sizing: border-box;
+    }
+
+    .support-message-admin .support-message-bubble {
+      background: #eef7ff;
+      border-color: #d8eaff;
+      text-align: left;
+    }
+
+    .support-message time {
+      color: var(--theme-muted, var(--muted));
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    .support-waiting-message {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 0;
+      padding: 11px 13px;
+      border: 1px solid #eadfb0;
+      border-radius: 12px;
+      background: #faf8ef;
+      color: #77682a;
+      font-size: 13px;
+    }
+
+    html[data-theme="dark"] .support-message-bubble {
+      background: var(--theme-surface-2, #141c30);
+    }
+
+    html[data-theme="dark"] .support-message-admin .support-message-bubble {
+      background: #1a2b42;
+      border-color: rgba(115, 170, 232, .24);
+    }
+
+    html[data-theme="dark"] .support-student-status.open,
+    html[data-theme="dark"] .support-student-status.pending,
+    html[data-theme="dark"] .support-student-status.under-review,
+    html[data-theme="dark"] .support-student-status.in-progress {
+      background: rgba(56, 103, 255, .14);
+      border-color: rgba(101, 133, 255, .22);
+    }
+
+    html[data-theme="dark"] .support-student-status.approved,
+    html[data-theme="dark"] .support-student-status.resolved {
+      background: rgba(22, 134, 82, .14);
+      border-color: rgba(71, 179, 126, .22);
+    }
+
+    html[data-theme="dark"] .support-student-status.rejected {
+      background: rgba(194, 58, 58, .14);
+      border-color: rgba(235, 107, 107, .22);
+    }
+
+    html[data-theme="dark"] .support-waiting-message {
+      background: rgba(119, 104, 42, .13);
+      border-color: rgba(210, 190, 101, .2);
+      color: #d7cb89;
+    }
+
+    @media(max-width:600px) {
+      .support-response-item {
+        padding: 15px;
+      }
+
+      .support-response-head {
+        align-items: flex-start;
+      }
+
+      .support-message {
+        width: 94%;
+      }
+    }
+  </style>
+
   <div id="support-response-root">
   {% if support_tickets %}
   <section class="helpdesk-card support-response-card">
@@ -125,11 +319,6 @@
         <div class="support-student-question">
           <span>Your request</span>
           <p>{{ ticket.message or '—' }}</p>
-          {% if ticket.attachment and ticket.attachment.name %}
-          <a href="{{ '/api/helpdesk/tickets/' + ticket.id + '/attachment' }}" target="_blank" rel="noopener" style="display:inline-flex;margin-top:9px;font-size:12px;font-weight:700;">
-            View attachment: {{ ticket.attachment.name }}
-          </a>
-          {% endif %}
         </div>
 
         {% if ticket.admin_message %}
@@ -151,118 +340,6 @@
     </div>
   </section>
 
-  <style>
-    .support-response-card {
-      margin-top: 22px;
-      margin-bottom: 28px;
-    }
-
-    .support-response-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .support-response-item {
-      padding: 17px;
-      border: 1px solid var(--theme-line, var(--line));
-      border-radius: 16px;
-      background: var(--theme-bg, #f8f9fd);
-    }
-
-    .support-response-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .support-response-head strong {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 15px;
-    }
-
-    .support-response-head small {
-      color: var(--theme-muted, var(--muted));
-      font-size: 12px;
-    }
-
-    .support-student-status {
-      display: inline-flex;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: capitalize;
-      white-space: nowrap;
-    }
-
-    .support-student-status.open {
-      background: #eef4ff;
-      color: #3867ff;
-    }
-
-    .support-student-status.approved {
-      background: #e9f9f0;
-      color: #168652;
-    }
-
-    .support-student-question {
-      margin-top: 15px;
-      padding: 13px 14px;
-      border-radius: 12px;
-      background: #fff;
-      border: 1px solid #e3e8f2;
-    }
-
-    .support-student-question span {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--theme-muted, var(--muted));
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-    }
-
-    .support-student-question p,
-    .support-admin-message p {
-      margin: 0;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .support-admin-message {
-      margin-top: 12px;
-      padding: 13px 14px;
-      border-radius: 12px;
-      background: #eef7ff;
-      border: 1px solid #d8eaff;
-    }
-
-    .support-admin-message-title {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      margin-bottom: 7px;
-      font-size: 12px;
-    }
-
-    .support-waiting-message {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px;
-      padding: 11px 13px;
-      border-radius: 12px;
-      background: #faf8ef;
-      color: #77682a;
-      font-size: 13px;
-    }
-  </style>
   {% endif %}
   </div>
 
@@ -297,7 +374,34 @@
     if (!tickets.length) { root.innerHTML = ''; return; }
     root.innerHTML = `<section class="helpdesk-card support-response-card">
       <div class="helpdesk-card-top"><div class="helpdesk-icon purple"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-8 8 8.7 8.7 0 0 1-3.4-.7L4 20l1.2-4.2A8 8 0 1 1 20 11.5Z"/></svg></div><div><span class="card-eyebrow">YOUR SUPPORT REQUESTS</span><h2>Support responses</h2><p>See your submitted requests and messages from the Learnora admin team.</p></div></div>
-      <div class="support-response-list">${tickets.map(ticket => `<article class="support-response-item"><div class="support-response-head"><div><strong>${escapeHtml(ticket.topic || 'General help')}</strong><small>${escapeHtml(formatDate(ticket.created_at))}</small></div><span class="support-student-status ${ticket.status === 'approved' ? 'approved' : 'open'}">${escapeHtml(ticket.status || 'open')}</span></div><div class="support-student-question"><span>Your request</span><p>${escapeHtml(ticket.message || '—')}</p>${ticket.attachment?.name ? `<a href="/api/helpdesk/tickets/${encodeURIComponent(ticket.id)}/attachment" target="_blank" rel="noopener" style="display:inline-flex;margin-top:9px;font-size:12px;font-weight:700;">View attachment: ${escapeHtml(ticket.attachment.name)}</a>` : ''}</div>${ticket.admin_message ? `<div class="support-admin-message"><div class="support-admin-message-title">${icon('badge-check')}<strong>Message from Learnora Admin</strong></div><p>${escapeHtml(ticket.admin_message)}</p></div>` : `<div class="support-waiting-message">${icon('clock')}<span>Waiting for the Learnora support team to review your request.</span></div>`}</article>`).join('')}</div>
+      <div class="support-response-list">${tickets.map(ticket => {
+        const rawStatus = String(ticket.status || 'open');
+        const statusClass = rawStatus.toLowerCase().replace(/\s+/g, '-');
+        const statusLabel = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1);
+        return `<article class="support-response-item">
+          <div class="support-response-head">
+            <div class="support-ticket-heading">
+              <strong>${escapeHtml(ticket.topic || 'General help')}</strong>
+              <small>${escapeHtml(formatDate(ticket.created_at))}</small>
+            </div>
+            <span class="support-student-status ${escapeHtml(statusClass)}">${statusLabel === 'Resolved' ? '✓ ' : ''}${escapeHtml(statusLabel)}</span>
+          </div>
+
+          <div class="support-conversation">
+            <div class="support-message support-message-user">
+              <span class="support-message-label">YOU</span>
+              <div class="support-message-bubble">${escapeHtml(ticket.message || '—')}</div>
+              <time>${escapeHtml(formatDate(ticket.created_at))}</time>
+            </div>
+
+            ${ticket.admin_message ? `<div class="support-message support-message-admin">
+              <span class="support-message-label">LEARNORA ADMIN</span>
+              <div class="support-message-bubble">${escapeHtml(ticket.admin_message)}</div>
+              <time>${escapeHtml(formatDate(ticket.updated_at || ticket.created_at))}</time>
+            </div>` : `<div class="support-waiting-message">${icon('clock')}<span>Waiting for the Learnora support team to review your request.</span></div>`}
+          </div>
+        </article>`;
+      }).join('')}</div>
     </section>`;
   };
 
