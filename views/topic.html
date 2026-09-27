@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ meta.display }} — Learnora{% endblock %}
+{% block topbar_title %}{{ meta.display }}{% endblock %}
+{% block topbar_sub %}{{ skill.display_name }}{% endblock %}
+
+{% block crumbs %}
+<div class="app-crumbs">
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  <span class="sep">/</span>
+  <a href="{{ url_for('roadmap', skill_id=skill_id) }}">{{ skill.display_name }}</a>
+  <span class="sep">/</span>
+  <span>{{ meta.display }}</span>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="topic-hero">
+  <span class="auth-badge">{{ icon("book-open", 14) }} Topic {{ meta.difficulty }}/5 · ~{{ meta.hours }} hrs</span>
+  <h1>{{ meta.display }}</h1>
+  <p>{{ meta.keywords }}</p>
+</div>
+
+<!-- ================================================= playlists ==== -->
+{% if playlists %}
+<div class="playlist-section">
+  <div class="playlist-section-header">
+    <h2 class="section-title" style="margin:0;">{{ icon("youtube", 17) }} Choose a playlist</h2>
+    <div class="level-toggle">
+      <button type="button" class="level-btn active" onclick="filterLevel('all', this)">All</button>
+      <button type="button" class="level-btn" onclick="filterLevel('basic', this)">Basic</button>
+      <button type="button" class="level-btn" onclick="filterLevel('advanced', this)">Advanced</button>
+    </div>
+  </div>
+
+  <div class="playlist-row" id="playlist-row">
+    {% for p in playlists %}
+    <div class="playlist-card" data-level="{{ p.level }}"
+         onclick="selectPlaylist('{{ p.playlist_id or '' }}', '{{ p.creator|e }}', '{{ p.title|e }}', {{ 'true' if p.playlist_id else 'false' }})">
+      <div class="playlist-card-thumb">{{ icon("play", 18) }}</div>
+      <div class="playlist-card-body">
+        <span class="badge {{ p.level }}">{{ p.level }}</span>
+        <strong>{{ p.creator }}</strong>
+        <p>{{ p.title }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="playlist-player-wrap" style="display:none; margin-top:18px;">
+    <div class="video-frame-wrap">
+      <iframe id="playlist-player" src="" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <p id="playlist-status" class="video-caption"></p>
+  </div>
+</div>
+{% endif %}
+
+<!-- ================================================== creators ==== -->
+{% if videos %}
+<h2 class="section-title">{{ icon("play", 17) }} Watch this topic</h2>
+
+<div class="creator-tabs">
+  {% for v in videos %}
+  <button type="button" class="creator-tab {{ 'active' if loop.first }}" onclick="showCreator({{ loop.index0 }})">
+    {{ v.creator }}
+  </button>
+  {% endfor %}
+</div>
+
+{% for v in videos %}
+<div class="creator-panel" id="creator-panel-{{ loop.index0 }}" style="display:{{ 'block' if loop.first else 'none' }}">
+  {% if v.mode == 'embed' %}
+    <div class="video-frame-wrap">
+      <iframe id="player-{{ loop.index0 }}"
+              src="{{ v.embed_url or ('https://www.youtube-nocookie.com/embed/' ~ v.video_id) }}"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+    </div>
+
+    {% if v.timestamp_available %}
+    <div class="estimate-badge" style="background:rgba(59,130,246,.08); border-color:rgba(59,130,246,.18);">
+      ▶ <strong>Starts at {{ v.start_timestamp }}</strong>
+      {% if v.target_subtopic %} · {{ v.target_subtopic }}{% endif %}
+      · {{ v.timestamp_source|replace('_',' ')|title }} evidence
+      · {{ (v.timestamp_confidence * 100)|round(0) }}% confidence
+    </div>
+    {% else %}
+    <div class="estimate-badge">
+      ⏱ No trustworthy timestamp was found for this video. Learnora starts at 00:00 rather than inventing a timestamp.
+    </div>
+    {% endif %}
+
+    <p class="video-caption">{{ v.title }}{% if v.student_mastery is defined %} · Your mastery: {{ v.student_mastery|round(1) }}%{% endif %}</p>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 18px;">
+      <a href="{{ v.url }}" target="_blank" rel="noopener" class="btn secondary small">
+        Watch on YouTube{% if v.timestamp_available %} from {{ v.start_timestamp }}{% endif %} {{ icon("arrow-right", 15) }}
+      </a>
+    </div>
+
+    <div class="transcript-box" data-video-id="{{ v.video_id }}" data-panel-index="{{ loop.index0 }}">
+      <div class="transcript-header">
+        <div class="transcript-title">
+          {{ icon("file-text", 15) }}
+          <span>Full transcript</span>
+          <span class="transcript-language" id="transcript-language-{{ loop.index0 }}">Loading…</span>
+        </div>
+        <div class="transcript-actions">
+          <input
+            class="transcript-search"
+            id="transcript-search-{{ loop.index0 }}"
+            type="search"
+            placeholder="Search in transcript"
+            aria-label="Search in transcript"
+            oninput="filterTranscript({{ loop.index0 }}, this.value)"
+          >
+          <select class="transcript-lang" aria-label="Transcript language" onchange="loadTranscript('{{ v.video_id }}', {{ loop.index0 }}, this.value)">
+            {% for code, label in languages %}
+            <option value="{{ code }}" {{ 'selected' if code == 'en' else '' }}>{{ label }}</option>
+            {% endfor %}
+          </select>
+          <button type="button" class="btn secondary small transcript-control" onclick="copyTranscript({{ loop.index0 }})">Copy transcript</button>
+          <button type="button" class="btn secondary small transcript-control" onclick="toggleTranscript({{ loop.index0 }}, this)">Expand</button>
+        </div>
+      </div>
+      <div class="transcript-meta" id="transcript-meta-{{ loop.index0 }}">
+        Fetching the video's actual YouTube captions…
+      </div>
+      <div class="transcript-body" id="transcript-{{ loop.index0 }}">
+        <span class="transcript-hint">Fetching transcript…</span>
+      </div>
+    </div>
+  {% else %}
+    <div class="search-link-card">
+      <p>{{ v.title }}</p>
+      <a href="{{ v.url }}" target="_blank" rel="noopener" class="btn secondary">
+        Open on YouTube {{ icon("arrow-right", 15) }}
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- ====================================================== docs ==== -->
+{% if docs %}
+<h2 class="section-title">{{ icon("file-text", 17) }} Blogs &amp; docs</h2>
+<div class="docs-grid">
+  {% for d in docs %}
+  <a href="{{ d.url }}" target="_blank" rel="noopener" class="docs-card">
+    <strong>{{ icon("arrow-right", 14) }} {{ d.label }}</strong>
+    <p>{{ d.blurb }}</p>
+  </a>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ================================================ self-check ==== -->
+{% if test_questions %}
+<h2 class="section-title">{{ icon("list-checks", 17) }} Quick check — test yourself</h2>
+<p style="color:var(--muted); font-size:13.5px; margin:0 0 16px;">
+  Your score contributes to this topic's mastery. A topic reaches Mastered at 90% demonstrated mastery; opening a lesson alone does not count as mastery.
+</p>
+
+<form method="POST" action="{{ url_for('topic_page', skill_id=skill_id, topic_id=topic_id) }}">
+  <div class="quiz-topic">
+    {% for q in test_questions %}
+    {% set qi = loop.index0 %}
+    <div class="quiz-q">
+      <p>{{ loop.index }}. {{ q.q }}</p>
+      <div class="quiz-options">
+        {% for opt in q.options %}
+        <label>
+          <input type="radio" name="answer_{{ qi }}_group" onclick="setTestAnswer({{ q.idx }}, {{ loop.index0 }})">
+          <span>{{ opt }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="hidden-answers"></div>
+  <button type="submit" class="btn secondary block btn-big">Submit test {{ icon("check", 17) }}</button>
+</form>
+{% endif %}
+
+<a href="{{ url_for('roadmap', skill_id=skill_id) }}" class="btn ghost" style="margin:26px 0 10px;">
+  {{ icon("arrow-left", 15) }} Back to roadmap
+</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function filterLevel(level, btn) {
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.playlist-card').forEach(card => {
+      card.style.display = (level === 'all' || card.dataset.level === level) ? 'flex' : 'none';
+    });
+  }
+
+  async function selectPlaylist(playlistId, creator, title, hasRealId) {
+    const wrap = document.getElementById('playlist-player-wrap');
+    const status = document.getElementById('playlist-status');
+    const player = document.getElementById('playlist-player');
+    wrap.style.display = 'block';
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    if (!hasRealId) {
+      status.textContent = `${creator}'s "${title}" isn't wired to a specific playlist ID yet in this demo — add its real playlist ID in data/curriculum.json to enable playback here.`;
+      player.src = '';
+      return;
+    }
+
+    status.textContent = `Loading ${creator} — checking if we can jump straight to this topic...`;
+    player.src = `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}`;
+
+    try {
+      const res = await fetch(`/api/playlist-jump?playlist_id=${encodeURIComponent(playlistId)}&topic_id={{ topic_id }}`);
+      const data = await res.json();
+      if (data.ok && data.video_id) {
+        player.src = `https://www.youtube-nocookie.com/embed/${data.video_id}?list=${playlistId}&origin=${encodeURIComponent(window.location.origin)}&widget_referrer=${encodeURIComponent(window.location.origin)}`;
+        status.textContent = `Jumped to: "${data.title}" (video ${data.index + 1} in ${creator}'s playlist). Use the player's own playlist panel to browse other videos.`;
+      } else {
+        status.textContent = `Playing from the start of ${creator}'s playlist — add a free YOUTUBE_API_KEY in .env to auto-jump to the exact topic next time. Use the player's own playlist panel to pick a different video manually.`;
+      }
+    } catch (e) {
+      status.textContent = `Playing from the start of ${creator}'s playlist. Use the player's own playlist panel to browse other videos.`;
+    }
+  }
+
+  function showCreator(i) {
+    document.querySelectorAll('.creator-panel').forEach((el, idx) => el.style.display = idx === i ? 'block' : 'none');
+    document.querySelectorAll('.creator-tab').forEach((el, idx) => el.classList.toggle('active', idx === i));
+  }
+
+  const transcriptState = {};
+
+  function formatTranscriptTime(seconds) {
+    const total = Math.max(0, Math.floor(Number(seconds) || 0));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return h > 0
+      ? `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+      : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  function setTranscriptMessage(panelIdx, message, isError = false) {
+    const box = document.getElementById('transcript-' + panelIdx);
+    const meta = document.getElementById('transcript-meta-' + panelIdx);
+    const language = document.getElementById('transcript-language-' + panelIdx);
+    if (language) language.textContent = '';
+    if (meta) meta.textContent = message;
+    if (box) box.innerHTML = `<div class="transcript-empty ${isError ? 'is-error' : ''}">${escapeHtmlLocal(message)}</div>`;
+  }
+
+  async function loadTranscript(videoId, panelIdx, lang) {
+    const box = document.getElementById('transcript-' + panelIdx);
+    const meta = document.getElementById('transcript-meta-' + panelIdx);
+    const languageBadge = document.getElementById('transcript-language-' + panelIdx);
+    const search = document.getElementById('transcript-search-' + panelIdx);
+    if (!box) return;
+
+    box.innerHTML = '<span class="transcript-hint">Fetching the video\'s actual YouTube captions…</span>';
+    if (meta) meta.textContent = 'Reading the available YouTube caption track and preserving its timestamps…';
+    if (languageBadge) languageBadge.textContent = 'Loading…';
+    if (search) search.value = '';
+
+    try {
+      const res = await fetch(`/api/transcript?video_id=${encodeURIComponent(videoId)}&lang=${encodeURIComponent(lang || 'en')}`);
+      const data = await res.json();
+
+      if (!data.ok || !Array.isArray(data.lines) || !data.lines.length) {
+        transcriptState[panelIdx] = null;
+        setTranscriptMessage(panelIdx, data.error || 'Transcript unavailable for this video.', true);
+        return;
+      }
+
+      const lines = data.lines
+        .filter(line => line && Number.isFinite(Number(line.start)) && String(line.text || '').trim())
+        .map(line => ({
+          start: Number(line.start),
+          text: String(line.text).replace(/\s+/g, ' ').trim()
+        }));
+
+      if (!lines.length) {
+        transcriptState[panelIdx] = null;
+        setTranscriptMessage(panelIdx, 'Transcript unavailable for this video.', true);
+        return;
+      }
+
+      transcriptState[panelIdx] = {
+        videoId,
+        lines,
+        languageCode: data.language_code || lang || 'en',
+        languageName: data.language_name || lang || 'English',
+        translated: Boolean(data.translated),
+        sourceLanguageName: data.source_language_name || '',
+        sourceLanguageCode: data.source_language_code || ''
+      };
+
+      if (languageBadge) {
+        languageBadge.textContent = data.translated
+          ? `${data.language_name || lang} · translated from ${data.source_language_name || data.source_language_code || 'source captions'}`
+          : `${data.language_name || data.source_language_name || lang}`;
+      }
+
+      if (meta) {
+        meta.textContent = `${lines.length} transcript segments · ${data.translated ? 'YouTube-translated captions' : 'original YouTube captions'} · Click any timestamp to jump the video.`;
+      }
+
+      renderTranscript(panelIdx, '');
+    } catch (e) {
+      transcriptState[panelIdx] = null;
+      setTranscriptMessage(panelIdx, 'Transcript unavailable for this video.', true);
+    }
+  }
+
+  function renderTranscript(panelIdx, query = '') {
+    const state = transcriptState[panelIdx];
+    const box = document.getElementById('transcript-' + panelIdx);
+    if (!state || !box) return;
+
+    const needle = String(query || '').trim().toLowerCase();
+    const filtered = needle
+      ? state.lines.filter(line => line.text.toLowerCase().includes(needle))
+      : state.lines;
+
+    if (!filtered.length) {
+      box.innerHTML = '<div class="transcript-empty">No transcript segment matches your search.</div>';
+      return;
+    }
+
+    box.innerHTML = filtered.map((line, index) => `
+      <button type="button" class="transcript-segment" onclick="jumpVideoFromTranscript(${panelIdx}, ${line.start})" title="Jump video to ${formatTranscriptTime(line.start)}">
+        <span class="transcript-time">${formatTranscriptTime(line.start)}</span>
+        <span class="transcript-text">${escapeHtmlLocal(line.text)}</span>
+      </button>
+    `).join('');
+  }
+
+  function filterTranscript(panelIdx, query) {
+    renderTranscript(panelIdx, query);
+  }
+
+  function toggleTranscript(panelIdx, button) {
+    const body = document.getElementById('transcript-' + panelIdx);
+    if (!body) return;
+    body.classList.toggle('expanded');
+    button.textContent = body.classList.contains('expanded') ? 'Collapse' : 'Expand';
+  }
+
+  async function copyTranscript(panelIdx) {
+    const state = transcriptState[panelIdx];
+    if (!state?.lines?.length) return;
+    const text = state.lines.map(line => `[${formatTranscriptTime(line.start)}] ${line.text}`).join('\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      const button = document.querySelector(`[data-panel-index="${panelIdx}"] .transcript-control`);
+      if (button) {
+        const old = button.textContent;
+        button.textContent = 'Copied';
+        setTimeout(() => { button.textContent = old; }, 1200);
+      }
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+  }
+
+  function jumpVideoFromTranscript(panelIdx, seconds) {
+    const state = transcriptState[panelIdx];
+    const iframe = document.getElementById('player-' + panelIdx);
+    if (!state?.videoId || !iframe) return;
+
+    const start = Math.max(0, Math.floor(Number(seconds) || 0));
+    const origin = encodeURIComponent(window.location.origin);
+    iframe.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(state.videoId)}?enablejsapi=1&cc_load_policy=1&origin=${origin}&widget_referrer=${origin}&start=${start}`;
+  }
+
+  function escapeHtmlLocal(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.transcript-box[data-video-id]').forEach(panel => {
+      const videoId = panel.dataset.videoId;
+      const panelIdx = Number(panel.dataset.panelIndex);
+      if (videoId && Number.isFinite(panelIdx)) {
+        loadTranscript(videoId, panelIdx, 'en');
+      }
+    });
+  });
+
+  // build hidden qidx / answer inputs as the learner picks options
+  const testAnswers = {};
+  function setTestAnswer(qidx, optionIdx) {
+    testAnswers[qidx] = optionIdx;
+    const container = document.getElementById('hidden-answers');
+    container.innerHTML = '';
+    Object.entries(testAnswers).forEach(([qi, ans]) => {
+      const i1 = document.createElement('input'); i1.type = 'hidden'; i1.name = 'qidx'; i1.value = qi;
+      const i2 = document.createElement('input'); i2.type = 'hidden'; i2.name = 'answer'; i2.value = ans;
+      container.appendChild(i1); container.appendChild(i2);
+    });
+  }
+</script>
+{% endblock %}

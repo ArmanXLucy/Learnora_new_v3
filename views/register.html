@@ -1,0 +1,122 @@
+{% extends "auth_base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Create account — Learnora{% endblock %}
+{% block active_tab %}register{% endblock %}
+{% block card_class %}auth-card-wide register-card{% endblock %}
+{% block auth_title %}Create your learning profile{% endblock %}
+{% block auth_subtitle %}Create your secure Firebase account and start your personalized learning journey.{% endblock %}
+{% block visual_title %}Learn at your pace. Grow with purpose.{% endblock %}
+{% block visual_text %}Create your free Learnora account and receive a personalized learning path based on your interests, experience, and goals.{% endblock %}
+{% block visual_badge %}Your personalized learning journey{% endblock %}
+
+{% block auth_body %}
+<div id="firebase-error" class="otp-hint" style="display:none;"></div>
+<form class="auth-form register-form" id="register-form">
+  <section class="register-section">
+    <div class="register-section-heading"><span class="section-number">01</span><div><h3>Basic information</h3><p>Tell us a little about yourself.</p></div></div>
+    <div class="form-group"><label>Full name</label><label class="input-field">{{ icon("user", 16) }}<input type="text" id="name" required placeholder="Jane Doe" pattern="[A-Za-z ]{2,50}"></label></div>
+    <div class="form-group"><label>Username</label><label class="input-field">{{ icon("badge-check", 16) }}<input type="text" id="username" required placeholder="janedoe" pattern="[A-Za-z0-9_]{3,20}"></label><div class="form-hint">3–20 characters: letters, numbers, and underscores.</div></div>
+    <div class="auth-form-grid"><div class="form-group"><label>Age</label><input type="number" id="age" min="10" max="100" placeholder="21"></div><div class="form-group"><label>Location</label><select id="location"><option value="India" selected>India</option><option value="Other">Other</option></select></div></div>
+  </section>
+
+  <section class="register-section">
+    <div class="register-section-heading"><span class="section-number">02</span><div><h3>Learning profile</h3><p>Help us understand your interests.</p></div></div>
+    <div class="form-group"><label>Profession / field of study</label><label class="input-field">{{ icon("briefcase", 16) }}<input type="text" id="profession" placeholder="Student, Software Engineer, ..."></label></div>
+    <div class="form-group"><label>Phone number <span class="optional-label">Optional</span></label><label class="input-field">{{ icon("phone", 16) }}<input type="tel" id="phone" placeholder="9876543210" pattern="[0-9]{7,15}"></label></div>
+    <div class="form-group"><label>Email</label><label class="input-field">{{ icon("mail", 16) }}<input type="email" id="email" required placeholder="you@example.com" autocomplete="email"></label></div>
+  </section>
+
+  <section class="register-section">
+    <div class="register-section-heading"><span class="section-number">03</span><div><h3>Secure your account</h3><p>Firebase securely manages your password and authentication.</p></div></div>
+    <div class="form-group"><label>Password</label><label class="input-field">{{ icon("lock", 16) }}<input type="password" id="password" required minlength="6" placeholder="At least 6 characters" autocomplete="new-password"><button type="button" class="toggle-visibility" aria-label="Toggle password visibility"><span class="eye-on">{{ icon("eye", 16) }}</span><span class="eye-off" style="display:none">{{ icon("eye-off", 16) }}</span></button></label></div>
+  </section>
+
+  <div class="register-trust">{{ icon("shield-check", 16) }} Authentication is securely handled by Firebase. Learnora never stores your password.</div>
+  <button type="submit" class="primary-button full-button register-submit" id="register-button">Create my account {{ icon("arrow-right", 17) }}</button>
+</form>
+<div class="auth-footer">Already have an account? <a href="{{ url_for('login') }}">Log in</a></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/firebase-rest.js') }}"></script>
+<script>
+(function () {
+  'use strict';
+
+  const config = {{ firebase_config|tojson|safe }};
+  const api = window.learnoraFirebaseRest;
+  const errorBox = document.getElementById('firebase-error');
+  const form = document.getElementById('register-form');
+  const button = document.getElementById('register-button');
+
+  function showError(message) {
+    errorBox.textContent = message;
+    errorBox.style.display = 'block';
+  }
+
+  const firebaseReady = Boolean(config?.apiKey && config?.authDomain && config?.projectId && config?.appId);
+
+  if (!firebaseReady) {
+    showError('Firebase is not configured. Check the Firebase settings in .env.');
+  } else if (!api) {
+    showError('Learnora authentication script did not load. Refresh the page.');
+  }
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!firebaseReady || !api) return;
+
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value.trim().toLowerCase();
+
+    if (!/^[A-Za-z ]{2,50}$/.test(name)) return showError('Name can only contain letters and spaces.');
+    if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) return showError('Username must be 3–20 characters: letters, numbers, and underscores only.');
+
+    button.disabled = true;
+    button.textContent = 'Creating account...';
+
+    try {
+      let auth = await api.signUp(config.apiKey, email, password);
+
+      // Save the display name in Firebase. updateProfile returns a fresh
+      // token; use that token to request the verification email.
+      try {
+        const updated = await api.updateProfile(config.apiKey, auth.idToken, name);
+        if (updated?.idToken) auth = { ...auth, ...updated };
+      } catch (profileError) {
+        console.warn('[Learnora] Firebase display-name update failed:', profileError);
+        // The account was created successfully, so continue with email verification.
+      }
+
+      await api.sendVerification(config.apiKey, auth.idToken);
+
+      const profile = {
+        name,
+        username,
+        email,
+        age: document.getElementById('age').value || null,
+        profession: document.getElementById('profession').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        location: document.getElementById('location').value
+      };
+
+      localStorage.setItem('learnora_pending_profile', JSON.stringify(profile));
+      button.textContent = 'Verification email sent ✓';
+      showError('Account created. We sent a verification email to ' + email + '. Please verify your email, then log in. Check spam/junk if needed.');
+
+      setTimeout(function () {
+        window.location.replace('{{ url_for("login") }}');
+      }, 2500);
+    } catch (error) {
+      console.error('[Learnora] Registration error:', error);
+      showError(api.friendlyError(error, 'Registration failed.'));
+      button.disabled = false;
+      button.textContent = 'Create my account →';
+    }
+  });
+})();
+</script>
+{% endblock %}

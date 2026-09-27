@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Profile — Learnora{% endblock %}
+{% block topbar_title %}Your profile{% endblock %}
+{% block topbar_sub %}Keep your learning profile up to date so Learnora can personalize your journey.{% endblock %}
+{% block content %}
+<div class="settings-shell">
+  <div class="page-hero compact-hero">
+    <div>
+      <span class="eyebrow">ACCOUNT / PROFILE</span>
+      <h2>Personal learning profile</h2>
+      <p>Update the details you gave during registration, plus the preferences Learnora uses for recommendations.</p>
+    </div>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" class="profile-form">
+    <section class="settings-card profile-photo-card">
+      <div class="settings-card-head"><div class="settings-card-icon blue">{{ icon("user", 19) }}</div><div><h3>Profile picture</h3><p>Choose the photo that appears on your Learnora account menu.</p></div></div>
+      <div class="profile-photo-editor">
+        <div class="profile-photo-preview">{% if user.avatar_path %}<img src="{{ '/api/avatar/' + user.id }}" alt="Current profile photo">{% else %}<span>{{ (user.name[0]|upper) if user.name else 'U' }}</span>{% endif %}</div>
+        <div class="profile-photo-copy"><strong>Update your picture</strong><p>PNG, JPG, JPEG, WEBP or GIF · up to 4 MB.</p><label class="btn ghost small photo-upload-label">Choose photo<input type="file" name="avatar" accept="image/png,image/jpeg,image/webp,image/gif" hidden></label></div>
+      </div>
+    </section>
+
+    <section class="settings-card">
+      <div class="settings-card-head"><div class="settings-card-icon blue">{{ icon("user", 19) }}</div><div><h3>Basic information</h3><p>Your public learning identity.</p></div></div>
+      <div class="profile-grid">
+        <label class="form-group"><span>Full name</span><input name="name" value="{{ user.name }}" required pattern="[A-Za-z ]{2,50}"></label>
+        <label class="form-group"><span>Username</span><input value="@{{ user.username }}" disabled><small>Username is kept fixed for account consistency.</small></label>
+        <label class="form-group"><span>Age</span><input type="number" name="age" min="10" max="100" value="{{ user.age or '' }}"></label>
+        <label class="form-group"><span>Location</span><input name="location" value="{{ user.location or 'India' }}"></label>
+        <label class="form-group"><span>Profession / field of study</span><input name="profession" value="{{ user.profession or '' }}" placeholder="Student, Software Engineer..."></label>
+        <label class="form-group"><span>Phone</span><input name="phone" value="{{ user.phone or '' }}" pattern="[0-9]{7,15}"></label>
+        <label class="form-group full"><span>Email</span><input type="email" name="email" value="{{ user.email or '' }}"></label>
+      </div>
+    </section>
+
+    <section class="settings-card">
+      <div class="settings-card-head"><div class="settings-card-icon purple">{{ icon("sparkles", 19) }}</div><div><h3>Learning preferences</h3><p>These help recommendations and roadmaps fit you better.</p></div></div>
+      <div class="profile-grid">
+        <label class="form-group"><span>Learning goal</span><input name="learning_goal" value="{{ prefs.learning_goal }}" placeholder="Interview prep, college, career..."></label>
+        <label class="form-group"><span>Weekly learning time</span><select name="hours_per_week"><option value="2" {{ 'selected' if prefs.hours_per_week == 2 }}>2 hours</option><option value="5" {{ 'selected' if prefs.hours_per_week == 5 }}>5 hours</option><option value="8" {{ 'selected' if prefs.hours_per_week == 8 }}>8 hours</option><option value="10" {{ 'selected' if prefs.hours_per_week == 10 }}>10 hours</option><option value="15" {{ 'selected' if prefs.hours_per_week == 15 }}>15+ hours</option></select></label>
+        <label class="form-group"><span>Preferred learning style</span><select name="learning_style"><option value="mixed" {{ 'selected' if prefs.learning_style == 'mixed' }}>Mixed — videos + practice</option><option value="practice" {{ 'selected' if prefs.learning_style == 'practice' }}>Practice first</option><option value="visual" {{ 'selected' if prefs.learning_style == 'visual' }}>Visual / video</option><option value="reading" {{ 'selected' if prefs.learning_style == 'reading' }}>Reading / notes</option></select></label>
+        <label class="form-group full"><span>What are you currently trying to improve?</span><textarea name="learning_focus" rows="4" placeholder="Tell Learnora what you want to become better at...">{{ prefs.learning_focus }}</textarea></label>
+      </div>
+    </section>
+
+
+    <section class="settings-card">
+      <div class="settings-card-head"><div class="settings-card-icon orange">{{ icon("shield-check", 19) }}</div><div><h3>Account recovery question</h3><p>Your answer is stored securely and is never displayed back as plain text.</p></div></div>
+      <div class="profile-grid">
+        <label class="form-group full"><span>Security question</span><select name="security_question" required><option value="What was the name of your first school?" {{ 'selected' if user.security_question == 'What was the name of your first school?' }}>What was the name of your first school?</option><option value="What is your favorite skill you want to learn?" {{ 'selected' if user.security_question == 'What is your favorite skill you want to learn?' }}>What is your favorite skill you want to learn?</option><option value="What city were you born in?" {{ 'selected' if user.security_question == 'What city were you born in?' }}>What city were you born in?</option><option value="What was your childhood nickname?" {{ 'selected' if user.security_question == 'What was your childhood nickname?' }}>What was your childhood nickname?</option></select></label>
+        <label class="form-group full"><span>Security answer</span><input type="password" name="security_answer" placeholder="Leave blank to keep your current answer" autocomplete="off"><small>For security, your existing answer cannot be recovered or shown. Enter a new answer only if you want to replace it.</small></label>
+      </div>
+    </section>
+
+    <div class="form-actions"><a class="btn ghost" href="{{ url_for('dashboard') }}">Cancel</a><button class="btn primary-button" type="submit">Save profile {{ icon("check", 15) }}</button></div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  const input=document.querySelector('input[name="avatar"]');
+  const preview=document.querySelector('.profile-photo-preview');
+  if(!input||!preview) return;
+  input.addEventListener('change', function(){
+    const file=this.files && this.files[0];
+    if(!file) return;
+    if(file.size > 4*1024*1024){ alert('Please choose an image smaller than 4 MB.'); this.value=''; return; }
+    const url=URL.createObjectURL(file);
+    preview.innerHTML='<img src="'+url+'" alt="New profile photo preview">';
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Roadmap — {{ skill.display_name }}{% endblock %}
+{% block topbar_title %}Your roadmap{% endblock %}
+{% block topbar_sub %}{{ skill.display_name }} · {{ hours_per_week }} hrs/week{% endblock %}
+
+{% block crumbs %}
+<div class="app-crumbs">
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  <span class="sep">/</span>
+  <span>{{ skill.display_name }}</span>
+  <span class="sep">/</span>
+  <span>Roadmap</span>
+</div>
+{% endblock %}
+
+{% block content %}
+{% set mastered_count = mastered_count %}
+{% set total = roadmap | length %}
+{% set pct = pct %}
+
+<div class="page-head">
+  <h1>Exactly where you stand — and what's next</h1>
+  <p>Built from your syllabus and capability assessment against the {{ skill.display_name }} skill graph.</p>
+</div>
+
+<div class="rec-card" style="margin-bottom:18px;">
+  <div class="rec-head">
+    <div><h3>Detected level: {{ enrollment.level|title }}</h3><div class="rec-sub">{{ enrollment.level_score|round(1) }}% diagnostic score{% if enrollment.level_reason %} · {{ enrollment.level_reason }}{% endif %}</div></div>
+    <span class="badge {{ enrollment.level }}">{{ enrollment.level|title }}</span>
+  </div>
+</div>
+
+<div class="rec-card" style="margin-bottom:26px;">
+  <div class="rec-head">
+    <div style="flex:1; min-width:0;">
+      <h3>{{ mastered_count }} of {{ total }} topics mastered</h3>
+      <div class="rec-sub"><span>{{ icon("clock", 13) }} {{ hours_per_week }} hrs/week budget</span></div>
+      <div class="progress-bar-bg" style="margin-bottom:0;"><span class="progress-bar-fill" style="width:{{ pct }}%"></span></div>
+    </div>
+    <div class="match-box">
+      <div class="match">{{ pct }}%</div>
+      <small>complete</small>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================== recommendations ==== -->
+<h2 class="section-title">{{ icon("sparkles", 17) }} Recommended next</h2>
+{% if recommendations %}
+  {% for r in recommendations %}
+  <article class="rec-card">
+    <div class="rec-head">
+      <div>
+        <h3>{{ r.display }}</h3>
+        <div class="rec-sub">
+          <span>{{ icon("bar-chart", 13) }} Difficulty {{ r.difficulty }}/5</span>
+          <span>{{ icon("clock", 13) }} ~{{ r.hours }} hrs</span>
+          <span class="badge {{ r.status }}">{{ r.status }}</span>
+        </div>
+      </div>
+      <div class="match-box">
+        <div class="match">{{ r.ai_match }}%</div>
+        <small>AI match</small>
+      </div>
+    </div>
+
+    <div class="explain">{{ r.explanation }}</div>
+
+    <div class="scores">
+      <span>Similarity: {{ r.similarity_score }}</span>
+      <span>Gap weight: {{ r.gap_weight }}</span>
+      <span>Prereq score: {{ r.prereq_score }}</span>
+      <span>Fits your time budget: {{ "Yes" if r.context_ok else "No" }}</span>
+    </div>
+
+    <a href="{{ url_for('topic_page', skill_id=skill_id, topic_id=r.topic_id) }}"
+       class="btn secondary small" style="margin-top:16px;">
+      Start learning {{ icon("arrow-right", 15) }}
+    </a>
+  </article>
+  {% endfor %}
+{% else %}
+  <div class="empty-state">🎉 You've mastered everything in this skill's roadmap!</div>
+{% endif %}
+
+<!-- ============================================== full roadmap ==== -->
+<h2 class="section-title">{{ icon("map", 17) }} Full roadmap</h2>
+<div class="roadmap-list">
+  {% for t in roadmap %}
+  <div class="roadmap-item {{ t.status }}">
+    <div style="min-width:0;">
+      <strong>{{ t.display }}</strong>
+      <div class="rm-sub">Difficulty {{ t.difficulty }}/5 · ~{{ t.hours }} hrs</div>
+    </div>
+    <div class="roadmap-actions">
+      <span class="badge {{ t.status }}">
+        {% if t.status == 'mastered' %}{{ icon("check", 12) }}{% elif t.status == 'locked' %}{{ icon("lock", 12) }}{% endif %}
+        {{ t.status }}
+      </span>
+      <span class="badge" title="Your demonstrated mastery of this topic">
+        {{ t.mastery|default(0)|round(1) }}% mastery
+      </span>
+      {% if t.status != 'locked' %}
+      <a href="{{ url_for('topic_page', skill_id=skill_id, topic_id=t.topic_id) }}" class="btn ghost small">Open</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<a href="{{ url_for('start_skill', skill_id=skill_id, reset=1) }}" class="btn ghost" style="margin:26px 10px 10px 0;">{{ icon("refresh-cw", 15) }} Change syllabus / retest</a>
+
+<a href="{{ url_for('dashboard') }}" class="btn ghost" style="margin:26px 0 10px;">
+  {{ icon("arrow-left", 15) }} Back to dashboard
+</a>
+{% endblock %}

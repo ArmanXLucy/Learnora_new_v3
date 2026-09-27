@@ -1,0 +1,2130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="description"
+    content="Learnora — know where you are, learn what's next."
+  >
+
+  <title>Learnora | Learn Without Limits</title>
+
+  <link rel="stylesheet" href="/css/learnora.css">
+  <link rel="stylesheet" href="/css/landing-theme.css">
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+
+<body>
+  {% from "_icons.html" import icon %}
+
+<main class="app-shell">
+
+  <!-- =========================================================
+       NAVBAR
+  ========================================================== -->
+
+  <header class="navbar">
+
+    <a class="brand" href="#home">
+      <span class="brand-mark">
+        {{ icon("graduation-cap", 23) }}
+      </span>
+      <span>Learnora</span>
+    </a>
+
+    <button
+      class="mobile-menu"
+      id="menu-btn"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+      type="button"
+    >
+      {{ icon("menu", 24) }}
+    </button>
+
+    <nav class="nav-links" id="nav-links">
+
+      <button
+        class="theme-toggle"
+        type="button"
+        data-theme-toggle
+      >
+        <span class="theme-icon">☾</span>
+        <span class="theme-label">Dark</span>
+      </button>
+
+      <a href="#courses">Courses</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#paths">Learning Paths</a>
+      <a href="/ppt-upload">PPT Upload</a>
+
+      {% if session and session.user_id %}
+
+        <a class="nav-cta" href="/dashboard">
+          Dashboard
+          {{ icon("arrow-right", 16) }}
+        </a>
+
+      {% elif session and session.is_admin %}
+
+        <a class="nav-cta" href="/admin">
+          Admin
+          {{ icon("arrow-right", 16) }}
+        </a>
+
+      {% else %}
+
+        <a class="nav-cta" href="/login">
+          Log in
+          {{ icon("arrow-right", 16) }}
+        </a>
+
+      {% endif %}
+
+    </nav>
+  </header>
+
+
+  <!-- =========================================================
+       HERO
+  ========================================================== -->
+
+  <section class="hero" id="home">
+
+    <!-- Technology animation layer -->
+
+    <div
+      class="tech-motion-layer"
+      aria-hidden="true"
+    >
+
+      <div class="tech-float tech-code-card">
+
+        <div class="tech-window-head">
+          <i></i>
+          <i></i>
+          <i></i>
+          <span>app.js</span>
+        </div>
+
+        <div class="tech-code-line w-80"></div>
+        <div class="tech-code-line w-58"></div>
+        <div class="tech-code-line w-70"></div>
+        <div class="tech-code-line w-42"></div>
+
+        <span class="tech-cursor"></span>
+
+      </div>
+
+
+      <div class="tech-float tech-terminal-card">
+
+        <div class="tech-window-head">
+          <i></i>
+          <i></i>
+          <i></i>
+          <span>terminal</span>
+        </div>
+
+        <div class="tech-terminal-line">
+          &gt; booting system
+          <span class="tech-blink">_</span>
+        </div>
+
+        <div class="tech-terminal-line">
+          [ OK ] modules loaded
+        </div>
+
+        <div class="tech-terminal-progress">
+          <span></span>
+        </div>
+
+      </div>
+
+
+      <div class="tech-float tech-browser-card">
+
+        <div class="tech-window-head">
+          <i></i>
+          <i></i>
+          <i></i>
+          <span>preview</span>
+        </div>
+
+        <div class="tech-browser-body">
+
+          <span class="tech-browser-nav"></span>
+
+          <span class="tech-browser-block large"></span>
+
+          <span class="tech-browser-block"></span>
+
+          <span class="tech-browser-block short"></span>
+
+        </div>
+
+      </div>
+
+
+      <div class="tech-float tech-gear">
+        ⚙
+      </div>
+
+
+      <div class="tech-float tech-connectors">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DECORATIONS
+    ====================================================== -->
+
+    <div
+      class="sketch-deco sketch-draw sketch-dash deco-path"
+      aria-hidden="true"
+    >
+      <svg
+        width="150"
+        height="96"
+        viewBox="0 0 150 96"
+      >
+        <path
+          d="M6 84 C34 84,26 30,58 30 S92 72,120 46 S134 16,146 14"
+        />
+
+        <circle
+          cx="6"
+          cy="84"
+          r="4"
+          style="stroke-dasharray:none"
+        />
+
+        <circle
+          cx="58"
+          cy="30"
+          r="4"
+          style="stroke-dasharray:none"
+        />
+
+        <circle
+          cx="120"
+          cy="46"
+          r="4"
+          style="stroke-dasharray:none"
+        />
+
+        <circle
+          cx="146"
+          cy="14"
+          r="5.5"
+          style="stroke-dasharray:none"
+        />
+      </svg>
+    </div>
+
+
+    <!-- Book -->
+
+    <div
+      class="sketch-deco sketch-draw deco-book"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="74"
+        height="58"
+        viewBox="0 0 74 58"
+      >
+
+        <path d="M37 14 C29 7,17 5,6 7 L6 48 C17 46,29 48,37 54"/>
+
+        <path d="M37 14 C45 7,57 5,68 7 L68 48 C57 46,45 48,37 54"/>
+
+        <path d="M37 14 V54"/>
+
+        <path d="M14 18 H26 M14 27 H26 M48 18 H60 M48 27 H60"/>
+
+      </svg>
+
+    </div>
+
+
+    <!-- Graduation cap -->
+
+    <div
+      class="sketch-deco sketch-draw deco-cap"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="82"
+        height="62"
+        viewBox="0 0 82 62"
+      >
+
+        <path d="M41 8 L76 24 L41 40 L6 24 Z"/>
+
+        <path d="M18 30 V44 C18 52,64 52,64 44 V30"/>
+
+        <path d="M76 24 V42"/>
+
+        <circle
+          cx="76"
+          cy="46"
+          r="4"
+        />
+
+      </svg>
+
+    </div>
+
+
+    <!-- Pencil -->
+
+    <div
+      class="sketch-deco sketch-draw deco-pencil"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="66"
+        height="66"
+        viewBox="0 0 66 66"
+      >
+
+        <path d="M14 52 L18 38 L46 10 L56 20 L28 48 Z"/>
+
+        <path d="M46 10 L56 20"/>
+
+        <path d="M18 38 L28 48"/>
+
+        <path d="M8 60 C16 54,26 58,34 54"/>
+
+      </svg>
+
+    </div>
+
+
+    <!-- Code brackets -->
+
+    <div
+      class="sketch-deco sketch-draw deco-brackets"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="78"
+        height="46"
+        viewBox="0 0 78 46"
+      >
+
+        <path d="M22 8 L6 23 L22 38"/>
+        <path d="M56 8 L72 23 L56 38"/>
+        <path d="M44 6 L34 40"/>
+
+      </svg>
+
+    </div>
+
+
+    <!-- Dotted grid -->
+
+    <div
+      class="sketch-deco sketch-draw deco-grid"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="58"
+        height="58"
+        viewBox="0 0 58 58"
+      >
+
+        {% for r in range(4) %}
+
+          {% for c in range(4) %}
+
+            <circle
+              cx="{{ 6 + c * 15 }}"
+              cy="{{ 6 + r * 15 }}"
+              r="1.9"
+              fill="currentColor"
+              stroke="none"
+            />
+
+          {% endfor %}
+
+        {% endfor %}
+
+      </svg>
+
+    </div>
+
+
+    <!-- Squiggle -->
+
+    <div
+      class="sketch-deco sketch-draw deco-squiggle"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="120"
+        height="20"
+        viewBox="0 0 120 20"
+      >
+
+        <path
+          d="M4 12 C18 2,30 20,44 11 S72 2,86 12 S108 18,116 8"
+        />
+
+      </svg>
+
+    </div>
+
+
+    <!-- Stars -->
+
+    <div
+      class="sketch-deco sketch-draw deco-star-one"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+
+        <path
+          d="M12 2 C13 9,15 11,22 12 C15 13,13 15,12 22 C11 15,9 13,2 12 C9 11,11 9,12 2 Z"
+        />
+
+      </svg>
+
+    </div>
+
+
+    <div
+      class="sketch-deco sketch-draw deco-star-two"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+      >
+
+        <path
+          d="M12 2 C13 9,15 11,22 12 C15 13,13 15,12 22 C11 15,9 13,2 12 C9 11,11 9,12 2 Z"
+        />
+
+      </svg>
+
+    </div>
+
+
+    <div
+      class="sketch-deco sketch-draw deco-star-three"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+      >
+
+        <path
+          d="M12 2 C13 9,15 11,22 12 C15 13,13 15,12 22 C11 15,9 13,2 12 C9 11,11 9,12 2 Z"
+        />
+
+      </svg>
+
+    </div>
+
+
+    <!-- Ring -->
+
+    <div
+      class="sketch-deco sketch-draw deco-ring-sm"
+      aria-hidden="true"
+    >
+
+      <svg
+        width="46"
+        height="46"
+        viewBox="0 0 46 46"
+      >
+
+        <path
+          d="M23 4 C34 4,42 12,42 23 C42 34,34 42,23 42 C12 42,4 34,4 23 C4 13,11 5,21 4"
+        />
+
+      </svg>
+
+    </div>
+
+
+    <div class="progress-orbit orbit-one">
+      75%
+    </div>
+
+    <div class="progress-orbit orbit-two">
+      60%
+    </div>
+
+
+    <!-- =====================================================
+         HERO COPY
+    ====================================================== -->
+
+    <div class="hero-copy">
+
+      <div class="eyebrow">
+        {{ icon("sparkles", 15) }}
+        Know where you are. Learn what's next.
+      </div>
+
+      <h1>
+        Your Future Starts With
+        <span>Learning</span>
+      </h1>
+
+      <p>
+        Take a short assessment, get a roadmap built around what
+        you already know, and learn only the topics that actually
+        close your skill gap.
+      </p>
+
+      <div class="hero-actions">
+
+        {% if session and session.user_id %}
+
+          <a
+            class="primary-button"
+            href="/dashboard"
+          >
+            Continue learning
+            {{ icon("arrow-right", 18) }}
+          </a>
+
+        {% else %}
+
+          <a
+            class="primary-button"
+            href="/register"
+          >
+            Start free assessment
+            {{ icon("arrow-right", 18) }}
+          </a>
+
+        {% endif %}
+
+        <a
+          class="secondary-button"
+          href="#courses"
+        >
+          {{ icon("play", 16) }}
+          Browse skills
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DASHBOARD PREVIEW
+    ====================================================== -->
+
+    <div
+      class="dashboard-preview"
+      id="preview"
+    >
+
+      <aside class="dashboard-sidebar">
+
+        <div class="mini-brand">
+          {{ icon("graduation-cap", 17) }}
+          Learnora
+        </div>
+
+        <span class="side-item active">
+          {{ icon("layout-dashboard", 15) }}
+          Dashboard
+        </span>
+
+        <span class="side-item">
+          {{ icon("book-open", 15) }}
+          My Skills
+        </span>
+
+        <span class="side-item">
+          {{ icon("map", 15) }}
+          Roadmap
+        </span>
+
+        <span class="side-item">
+          {{ icon("list-checks", 15) }}
+          Assessment
+        </span>
+
+        <span class="side-item">
+          {{ icon("bar-chart", 15) }}
+          Progress
+        </span>
+
+        <span class="side-item">
+          {{ icon("bell", 15) }}
+          Notifications
+        </span>
+
+      </aside>
+
+
+      <div class="dashboard-main">
+
+        <div class="dashboard-topbar">
+
+          <div>
+
+            <h3>
+              Hello there 👋
+            </h3>
+
+            <span>
+              Let's close a skill gap today!
+            </span>
+
+          </div>
+
+          <div class="dashboard-search">
+
+            {{ icon("search", 15) }}
+
+            <input
+              placeholder="Search skills..."
+              aria-label="Search skills"
+              readonly
+            >
+
+          </div>
+
+          <span class="icon-button">
+            {{ icon("bell", 17) }}
+          </span>
+
+        </div>
+
+
+        <div class="course-heading">
+
+          <h3>
+            My Skills
+          </h3>
+
+          <span>
+            View all
+            {{ icon("chevron-right", 14) }}
+          </span>
+
+        </div>
+
+
+        <div class="course-grid">
+
+          {% if preview_skills %}
+
+            {% for sid, meta in preview_skills %}
+
+              <article
+                class="mini-course {{ ['blue','purple','green'][loop.index0 % 3] }}"
+              >
+
+                <div class="course-icon">
+
+                  {{ icon(
+                    ["code","bar-chart","terminal"][loop.index0 % 3],
+                    20
+                  ) }}
+
+                </div>
+
+                <h4>
+                  {{ meta.display_name }}
+                </h4>
+
+                <p>
+                  {{ meta.topics|length }} topics mapped
+                </p>
+
+                <div class="progress-line">
+
+                  <span
+                    style="width:{{ [68,42,75][loop.index0 % 3] }}%"
+                  ></span>
+
+                </div>
+
+                <div class="course-meta">
+
+                  <span>
+                    {{ [68,42,75][loop.index0 % 3] }}% complete
+                  </span>
+
+                  {{ icon("chevron-right", 14) }}
+
+                </div>
+
+              </article>
+
+            {% endfor %}
+
+          {% else %}
+
+            <article class="mini-course blue">
+
+              <div class="course-icon">
+                {{ icon("code", 20) }}
+              </div>
+
+              <h4>
+                Web Development
+              </h4>
+
+              <p>
+                Personalized learning
+              </p>
+
+              <div class="progress-line">
+                <span style="width:68%"></span>
+              </div>
+
+              <div class="course-meta">
+                <span>68% complete</span>
+                {{ icon("chevron-right", 14) }}
+              </div>
+
+            </article>
+
+
+            <article class="mini-course purple">
+
+              <div class="course-icon">
+                {{ icon("bar-chart", 20) }}
+              </div>
+
+              <h4>
+                Data Science
+              </h4>
+
+              <p>
+                Personalized learning
+              </p>
+
+              <div class="progress-line">
+                <span style="width:42%"></span>
+              </div>
+
+              <div class="course-meta">
+                <span>42% complete</span>
+                {{ icon("chevron-right", 14) }}
+              </div>
+
+            </article>
+
+
+            <article class="mini-course green">
+
+              <div class="course-icon">
+                {{ icon("terminal", 20) }}
+              </div>
+
+              <h4>
+                Programming
+              </h4>
+
+              <p>
+                Personalized learning
+              </p>
+
+              <div class="progress-line">
+                <span style="width:75%"></span>
+              </div>
+
+              <div class="course-meta">
+                <span>75% complete</span>
+                {{ icon("chevron-right", 14) }}
+              </div>
+
+            </article>
+
+          {% endif %}
+
+        </div>
+
+
+        <!-- Analytics -->
+
+        <div class="analytics-grid">
+
+          <div class="analytics-card">
+
+            <div class="card-heading">
+
+              <h4>
+                Weekly Learning Progress
+              </h4>
+
+              <span>
+                +24%
+              </span>
+
+            </div>
+
+            <div class="bar-chart">
+
+              {% for h in [35,52,74,46,67,56,83] %}
+
+                <div class="bar-column">
+
+                  <span
+                    style="height:{{ h }}%"
+                  ></span>
+
+                  <small>
+                    {{ ["M","T","W","T","F","S","S"][loop.index0] }}
+                  </small>
+
+                </div>
+
+              {% endfor %}
+
+            </div>
+
+          </div>
+
+
+          <div class="analytics-card performance-card">
+
+            <div class="card-heading">
+
+              <h4>
+                Your Performance
+              </h4>
+
+              {{ icon("trophy", 16) }}
+
+            </div>
+
+            <div class="score-ring">
+              <strong>92%</strong>
+            </div>
+
+            <small>
+              Overall roadmap progress
+            </small>
+
+          </div>
+
+
+          <div class="analytics-card calendar-card">
+
+            <div class="card-heading">
+
+              <h4>
+                Streak
+              </h4>
+
+              {{ icon("calendar-days", 16) }}
+
+            </div>
+
+            <div class="calendar-days">
+
+              {% for i in range(21) %}
+
+                <span
+                  class="{% if i == 12 %}selected-day{% endif %}"
+                >
+                  {{ i + 1 }}
+                </span>
+
+              {% endfor %}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- Right panel -->
+
+      <aside class="dashboard-right">
+
+        <div class="profile-summary">
+
+          <div class="avatar">
+            L
+          </div>
+
+          <h3>
+            Your profile
+          </h3>
+
+          <span>
+            Learner · Level 3
+          </span>
+
+          <div class="profile-progress">
+            <span></span>
+          </div>
+
+        </div>
+
+
+        <div class="todo-panel">
+
+          <div class="card-heading">
+
+            <h4>
+              Up Next
+            </h4>
+
+            {{ icon("circle-help", 15) }}
+
+          </div>
+
+
+          {% for task in [
+            "Take the cold-start assessment",
+            "Watch the recommended lesson",
+            "Pass the topic check",
+            "Unlock the next topic"
+          ] %}
+
+            <span class="todo-row">
+
+              <span
+                class="todo-check {% if loop.last %}checked{% endif %}"
+              >
+
+                {% if loop.last %}
+                  {{ icon("check", 12) }}
+                {% endif %}
+
+              </span>
+
+              <span>
+
+                <strong
+                  class="{% if loop.last %}done-text{% endif %}"
+                >
+                  {{ task }}
+                </strong>
+
+                <small>
+                  {% if loop.last %}
+                    Completed
+                  {% else %}
+                    Pending
+                  {% endif %}
+                </small>
+
+              </span>
+
+            </span>
+
+          {% endfor %}
+
+        </div>
+
+      </aside>
+
+    </div>
+
+
+    <!-- Trusted strip -->
+
+    <div class="trusted-strip">
+
+      <strong>
+        Built on
+      </strong>
+
+      <span>
+        {{ icon("map", 17) }}
+        Skill graphs
+      </span>
+
+      <span>
+        {{ icon("target", 17) }}
+        Cold-start assessment
+      </span>
+
+      <span>
+        {{ icon("sparkles", 17) }}
+        AI recommendations
+      </span>
+
+      <span>
+        {{ icon("youtube", 17) }}
+        Curated video paths
+      </span>
+
+      <span>
+        {{ icon("award", 17) }}
+        Progress tracking
+      </span>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       HOW IT WORKS
+  ========================================================== -->
+
+  <section
+    class="how-it-works"
+    id="how-it-works"
+  >
+
+    <div class="section-heading process-heading">
+
+      <div>
+
+        <span class="section-label">
+          HOW LEARNORA WORKS
+        </span>
+
+        <h2>
+          A simple path from curious to confident.
+        </h2>
+
+      </div>
+
+      <p>
+        Follow a clear learning flow with small milestones,
+        guided practice, and visible progress.
+      </p>
+
+    </div>
+
+
+    <div class="process-track">
+
+      <article class="process-step">
+
+        <div class="sketch-scene">
+
+          <div class="sketch-circle">
+            {{ icon("mouse-pointer", 30) }}
+          </div>
+
+          <span class="sketch-line line-one"></span>
+
+          <span class="sketch-dot dot-one"></span>
+
+          <span class="sketch-dot dot-two"></span>
+
+        </div>
+
+        <span class="step-number">
+          01
+        </span>
+
+        <h3>
+          Pick your skill
+        </h3>
+
+        <p>
+          Choose a skill and tell us how many hours a week
+          you can realistically give it.
+        </p>
+
+      </article>
+
+
+      <div class="process-arrow">
+        {{ icon("arrow-right", 24) }}
+      </div>
+
+
+      <article class="process-step">
+
+        <div class="sketch-scene">
+
+          <div class="sketch-window">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+            <div class="sketch-progress"></div>
+
+          </div>
+
+          <span class="sketch-pencil">
+            ✎
+          </span>
+
+        </div>
+
+        <span class="step-number">
+          02
+        </span>
+
+        <h3>
+          Take the assessment
+        </h3>
+
+        <p>
+          A short cold-start quiz finds what you already know,
+          so nothing gets recommended twice.
+        </p>
+
+      </article>
+
+
+      <div class="process-arrow">
+        {{ icon("arrow-right", 24) }}
+      </div>
+
+
+      <article class="process-step">
+
+        <div class="sketch-scene">
+
+          <div class="sketch-check">
+            {{ icon("circle-check", 40) }}
+          </div>
+
+          <span class="sketch-star">
+            ✦
+          </span>
+
+          <span class="sketch-star star-two">
+            ✧
+          </span>
+
+        </div>
+
+        <span class="step-number">
+          03
+        </span>
+
+        <h3>
+          Follow your roadmap
+        </h3>
+
+        <p>
+          Learn the next unlocked topic, pass the check,
+          and watch the roadmap open up ahead of you.
+        </p>
+
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       CAPABILITIES
+  ========================================================== -->
+
+  <section
+    class="capability-section"
+    id="capabilities"
+  >
+
+    <div class="section-heading process-heading">
+
+      <div>
+
+        <span class="section-label">
+          WHAT LEARNORA CAN DO
+        </span>
+
+        <h2>
+          Built to actually move your skills forward.
+        </h2>
+
+      </div>
+
+      <p>
+        Four small systems working quietly behind every roadmap,
+        so learning sticks instead of slipping away.
+      </p>
+
+    </div>
+
+
+    <div class="capability-grid">
+
+      <article class="capability-card">
+
+        <div class="capability-sketch sketch-map">
+
+          <svg
+            class="capability-path"
+            viewBox="0 0 120 80"
+            fill="none"
+          >
+            <path
+              d="M8 62 C28 62,22 22,44 22 S66 58,88 46 S96 18,112 18"
+            />
+          </svg>
+
+          <span class="map-pin">
+            {{ icon("route", 16) }}
+          </span>
+
+        </div>
+
+        <h3>
+          Personalised learning paths
+        </h3>
+
+        <p>
+          Every roadmap reshapes itself around what you already
+          know and where you want to end up.
+        </p>
+
+      </article>
+
+
+      <article class="capability-card">
+
+        <div class="capability-sketch sketch-terminal">
+
+          <div class="terminal-box">
+
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+
+            <div class="terminal-line">
+              {{ icon("terminal", 14) }}
+              <em>topic_check.js</em>
+            </div>
+
+            <div class="terminal-caret"></div>
+
+          </div>
+
+        </div>
+
+        <h3>
+          Real, hands-on practice
+        </h3>
+
+        <p>
+          Watch a curated lesson, then prove it with a quick
+          topic check before the next one unlocks.
+        </p>
+
+      </article>
+
+
+      <article class="capability-card">
+
+        <div class="capability-sketch sketch-chart">
+
+          <div class="mini-chart">
+
+            {% for h in [30,55,40,70,50,85] %}
+
+              <span
+                style="
+                  height:{{ h }}%;
+                  animation-delay:{{ loop.index0 * 0.15 }}s;
+                "
+              ></span>
+
+            {% endfor %}
+
+            <span class="chart-glyph">
+              {{ icon("sliders", 16) }}
+            </span>
+
+          </div>
+
+        </div>
+
+        <h3>
+          Live progress tracking
+        </h3>
+
+        <p>
+          A quiet dashboard keeps score of streaks,
+          mastered topics, and skill growth as you go.
+        </p>
+
+      </article>
+
+
+      <article class="capability-card">
+
+        <div class="capability-sketch sketch-badge">
+
+          <div class="badge-scene">
+
+            {{ icon("badge-check", 38) }}
+
+            <span class="badge-star star-a">
+              ✦
+            </span>
+
+            <span class="badge-star star-b">
+              ✧
+            </span>
+
+            <span class="badge-star star-c">
+              ✦
+            </span>
+
+          </div>
+
+        </div>
+
+        <h3>
+          Milestones that count
+        </h3>
+
+        <p>
+          Every mastered topic is recorded against the skill graph,
+          so your progress is always explainable.
+        </p>
+
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       COURSES
+  ========================================================== -->
+
+  <section
+    class="content-section"
+    id="courses"
+  >
+
+    <div class="section-heading">
+
+      <div>
+
+        <span class="section-label">
+          LEARN AT YOUR PACE
+        </span>
+
+        <h2>
+          Skills for your next chapter
+        </h2>
+
+      </div>
+
+      <a
+        class="text-button"
+        href="/register"
+      >
+        Browse all skills
+        {{ icon("arrow-right", 16) }}
+      </a>
+
+    </div>
+
+
+    <div class="large-course-grid">
+
+      {% if skills %}
+
+        {% for sid, meta in skills %}
+
+          {% set sketch = ["code","design","motion"][loop.index0 % 3] %}
+
+          <article class="large-course-card">
+
+            <div
+              class="capability-sketch course-sketch course-sketch-{{ sketch }}"
+            >
+
+              {% if sketch == "code" %}
+
+                <div class="code-sketch-box">
+
+                  <span class="code-bracket left">
+                    &lt;
+                  </span>
+
+                  <span class="code-caret"></span>
+
+                  <span class="code-bracket right">
+                    &gt;
+                  </span>
+
+                </div>
+
+              {% elif sketch == "design" %}
+
+                <svg
+                  class="design-loop"
+                  viewBox="0 0 90 90"
+                  fill="none"
+                >
+
+                  <path
+                    d="M45 8 C70 8,82 30,82 45 C82 68,60 82,45 82 C22 82,8 60,8 45 C8 26,24 8,45 8"
+                  />
+
+                </svg>
+
+                <span class="design-spark spark-one">
+                  ✦
+                </span>
+
+                <span class="design-spark spark-two">
+                  ✧
+                </span>
+
+              {% else %}
+
+                <div class="motion-scene">
+
+                  <span class="motion-ring ring-a"></span>
+                  <span class="motion-ring ring-b"></span>
+
+                  <span class="motion-play">
+                    {{ icon("play", 20) }}
+                  </span>
+
+                </div>
+
+              {% endif %}
+
+            </div>
+
+
+            <span class="course-tag">
+
+              {% if meta.topics %}
+                {{ meta.topics|length }}
+              {% else %}
+                0
+              {% endif %}
+
+              topics · adaptive
+
+            </span>
+
+
+            <h3>
+              {{ meta.display_name }}
+            </h3>
+
+
+            <p>
+              {{ meta.description }}
+            </p>
+
+
+            <div class="large-course-bottom">
+
+              <span>
+                {{ icon("clock", 14) }}
+                Self-paced
+              </span>
+
+              <a
+                href="/start-skill/{{ sid }}"
+              >
+                Start
+                {{ icon("arrow-right", 15) }}
+              </a>
+
+            </div>
+
+          </article>
+
+        {% endfor %}
+
+      {% else %}
+
+        <!-- Fallback cards -->
+
+        <article class="large-course-card">
+
+          <div class="capability-sketch course-sketch course-sketch-code">
+
+            <div class="code-sketch-box">
+
+              <span class="code-bracket left">
+                &lt;
+              </span>
+
+              <span class="code-caret"></span>
+
+              <span class="code-bracket right">
+                &gt;
+              </span>
+
+            </div>
+
+          </div>
+
+          <span class="course-tag">
+            Adaptive learning
+          </span>
+
+          <h3>
+            Web Development
+          </h3>
+
+          <p>
+            Build practical web development skills with
+            structured learning and personalized progression.
+          </p>
+
+          <div class="large-course-bottom">
+
+            <span>
+              {{ icon("clock", 14) }}
+              Self-paced
+            </span>
+
+            <a href="/register">
+              Start
+              {{ icon("arrow-right", 15) }}
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <article class="large-course-card">
+
+          <div class="capability-sketch course-sketch course-sketch-design">
+
+            <svg
+              class="design-loop"
+              viewBox="0 0 90 90"
+              fill="none"
+            >
+              <path
+                d="M45 8 C70 8,82 30,82 45 C82 68,60 82,45 82 C22 82,8 60,8 45 C8 26,24 8,45 8"
+              />
+            </svg>
+
+            <span class="design-spark spark-one">
+              ✦
+            </span>
+
+          </div>
+
+          <span class="course-tag">
+            Adaptive learning
+          </span>
+
+          <h3>
+            Data Science
+          </h3>
+
+          <p>
+            Learn statistics, analysis, visualization,
+            and machine learning through a structured path.
+          </p>
+
+          <div class="large-course-bottom">
+
+            <span>
+              {{ icon("clock", 14) }}
+              Self-paced
+            </span>
+
+            <a href="/register">
+              Start
+              {{ icon("arrow-right", 15) }}
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <article class="large-course-card">
+
+          <div class="capability-sketch course-sketch course-sketch-motion">
+
+            <div class="motion-scene">
+
+              <span class="motion-ring ring-a"></span>
+              <span class="motion-ring ring-b"></span>
+
+              <span class="motion-play">
+                {{ icon("play", 20) }}
+              </span>
+
+            </div>
+
+          </div>
+
+          <span class="course-tag">
+            Adaptive learning
+          </span>
+
+          <h3>
+            Programming
+          </h3>
+
+          <p>
+            Strengthen programming fundamentals and build
+            problem-solving ability step by step.
+          </p>
+
+          <div class="large-course-bottom">
+
+            <span>
+              {{ icon("clock", 14) }}
+              Self-paced
+            </span>
+
+            <a href="/register">
+              Start
+              {{ icon("arrow-right", 15) }}
+            </a>
+
+          </div>
+
+        </article>
+
+      {% endif %}
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       LEARNING PATHS
+  ========================================================== -->
+
+  <section
+    class="content-section soft-section"
+    id="paths"
+  >
+
+    <div class="section-heading">
+
+      <div>
+
+        <span class="section-label">
+          STRUCTURED LEARNING
+        </span>
+
+        <h2>
+          Follow a path, not a guess
+        </h2>
+
+      </div>
+
+    </div>
+
+
+    <div class="path-grid">
+
+      <div>
+
+        {{ icon("code", 24) }}
+
+        <h3>
+          Become a Developer
+        </h3>
+
+        <p>
+          Move from programming and web fundamentals
+          to building real applications.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        {{ icon("bar-chart", 24) }}
+
+        <h3>
+          Become a Data Scientist
+        </h3>
+
+        <p>
+          Statistics, analysis, and machine learning,
+          sequenced by prerequisite.
+        </p>
+
+      </div>
+
+
+      <div>
+
+        {{ icon("trophy", 24) }}
+
+        <h3>
+          Crack the Interview
+        </h3>
+
+        <p>
+          Data structures, algorithms, DBMS and
+          system design, in the right order.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       GUIDANCE
+  ========================================================== -->
+
+  <section
+    class="content-section"
+    id="instructors"
+  >
+
+    <div class="simple-banner">
+
+      <div>
+
+        <span class="section-label">
+          EXPERT GUIDANCE
+        </span>
+
+        <h2>
+          Learn from people who build.
+        </h2>
+
+        <p>
+          Every topic points to hand-picked video playlists
+          and documentation from creators who teach it best.
+        </p>
+
+      </div>
+
+      <a
+        class="primary-button"
+        href="/register"
+      >
+        Get started
+        {{ icon("arrow-right", 17) }}
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       PRICING
+  ========================================================== -->
+
+  <section
+    class="content-section soft-section"
+    id="pricing"
+  >
+
+    <div class="pricing-card">
+
+      <div>
+
+        <span class="section-label">
+          SIMPLE PRICING
+        </span>
+
+        <h2>
+          Start learning for free.
+        </h2>
+
+        <p>
+          Every skill, every roadmap, every assessment.
+          No card, no trial timer.
+        </p>
+
+      </div>
+
+
+      <div class="price">
+
+        <strong>
+          ₹0
+        </strong>
+
+        <span>
+          / forever
+        </span>
+
+      </div>
+
+
+      <a
+        class="primary-button"
+        href="/register"
+      >
+        Create free account
+        {{ icon("arrow-right", 17) }}
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================================
+       FOOTER
+  ========================================================== -->
+
+  <footer class="footer">
+
+    <span class="footer-accent"></span>
+
+
+    <div class="footer-cta">
+
+      <span class="footer-eyebrow">
+
+        {{ icon("sparkles", 13) }}
+
+        GET STARTED
+
+      </span>
+
+      <h2>
+        Ready to
+        <span>start?</span>
+      </h2>
+
+      <p>
+        Join learners building real skills with Learnora —
+        at your pace, your way.
+      </p>
+
+      <a
+        class="footer-button"
+        href="/register"
+      >
+        Start learning
+        {{ icon("arrow-right", 17) }}
+      </a>
+
+    </div>
+
+
+    <svg
+      class="footer-rule"
+      viewBox="0 0 1100 22"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+
+      <path
+        d="M0 11 C180 3,360 19,540 11 S900 3,1100 11"
+      />
+
+      <circle
+        cx="540"
+        cy="11"
+        r="3"
+      />
+
+    </svg>
+
+
+    <div class="footer-grid">
+
+      <div class="footer-about">
+
+        <span class="brand">
+
+          <span class="brand-mark">
+            {{ icon("graduation-cap", 23) }}
+          </span>
+
+          <span>
+            Learnora
+          </span>
+
+        </span>
+
+        <p>
+          Learn without limits.
+          Know where you are, learn what's next.
+        </p>
+
+        <div class="social-links">
+
+          <a
+            href="#home"
+            aria-label="Instagram"
+          >
+            {{ icon("instagram", 17) }}
+          </a>
+
+          <a
+            href="#home"
+            aria-label="Twitter"
+          >
+            {{ icon("twitter", 17) }}
+          </a>
+
+          <a
+            href="#home"
+            aria-label="YouTube"
+          >
+            {{ icon("youtube", 17) }}
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div>
+
+        <h4>
+          Explore
+        </h4>
+
+        <a href="#courses">
+          Skills
+        </a>
+
+        <a href="#paths">
+          Learning Paths
+        </a>
+
+        <a href="/ppt-upload">
+          PPT Upload
+        </a>
+
+      </div>
+
+
+      <div>
+
+        <h4>
+          Account
+        </h4>
+
+        <a href="/login">
+          Log in
+        </a>
+
+        <a href="/register">
+          Create account
+        </a>
+
+        <a href="/forgot-password">
+          Reset password
+        </a>
+
+      </div>
+
+
+      <div>
+
+        <h4>
+          Contact
+        </h4>
+
+        <a href="mailto:support@learnora.example">
+
+          {{ icon("mail", 14) }}
+
+          support@learnora.example
+
+        </a>
+
+        <a href="tel:+918001234567">
+
+          {{ icon("phone", 14) }}
+
+          +91 800 123 4567
+
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      <span>
+        Made for curious minds.
+      </span>
+
+      <span>
+        © {{ year | default(2026) }} Learnora.
+        All rights reserved.
+      </span>
+
+    </div>
+
+  </footer>
+
+</main>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script>
+
+  /* ---------------------------------------------------------
+     Mobile navigation
+  --------------------------------------------------------- */
+
+  const menuBtn = document.getElementById("menu-btn");
+  const navLinks = document.getElementById("nav-links");
+
+  if (menuBtn && navLinks) {
+
+    menuBtn.addEventListener("click", () => {
+
+      const open =
+        navLinks.classList.toggle("open");
+
+      menuBtn.setAttribute(
+        "aria-expanded",
+        String(open)
+      );
+
+    });
+
+
+    navLinks
+      .querySelectorAll("a")
+      .forEach((link) => {
+
+        link.addEventListener("click", () => {
+
+          navLinks.classList.remove("open");
+
+          menuBtn.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+
+        });
+
+      });
+
+  }
+
+
+  /* ---------------------------------------------------------
+     Scroll reveal
+  --------------------------------------------------------- */
+
+  const revealTargets =
+    document.querySelectorAll(
+      ".how-it-works, " +
+      ".capability-section, " +
+      ".content-section, " +
+      ".process-step, " +
+      ".capability-card, " +
+      ".large-course-card, " +
+      ".path-grid > div, " +
+      ".simple-banner, " +
+      ".pricing-card, " +
+      ".trusted-strip, " +
+      ".dashboard-preview"
+    );
+
+
+  revealTargets.forEach((element) => {
+
+    element.classList.add(
+      "reveal-on-scroll"
+    );
+
+  });
+
+
+  if ("IntersectionObserver" in window) {
+
+    const observer =
+      new IntersectionObserver(
+        (entries) => {
+
+          entries.forEach((entry) => {
+
+            if (entry.isIntersecting) {
+
+              entry.target.classList.add(
+                "is-visible"
+              );
+
+              observer.unobserve(
+                entry.target
+              );
+
+            }
+
+          });
+
+        },
+        {
+          threshold: 0.12,
+          rootMargin:
+            "0px 0px -40px 0px"
+        }
+      );
+
+
+    revealTargets.forEach((element) => {
+
+      observer.observe(element);
+
+    });
+
+  } else {
+
+    revealTargets.forEach((element) => {
+
+      element.classList.add(
+        "is-visible"
+      );
+
+    });
+
+  }
+
+</script>
+
+
+<script src="/js/theme.js"></script>
+
+</body>
+</html>

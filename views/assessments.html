@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Assessments — Learnora{% endblock %}
+{% block topbar_title %}Assessments{% endblock %}
+{% block topbar_sub %}Measure what you know, find gaps, and see what to learn next.{% endblock %}
+{% block content %}
+<div class="assessment-page">
+  <div class="page-hero assessment-hero">
+    <div>
+      <span class="eyebrow">KNOWLEDGE CHECKS</span>
+      <h2>Assessments</h2>
+      <p>Assessments are based on the actual topics inside each skill — not separate courses.</p>
+    </div>
+  </div>
+
+  <div class="assessment-overview">
+    <div class="assessment-overview-card">
+      <div class="overview-icon blue">{{ icon('target',18) }}</div>
+      <div><strong>Skill assessment</strong><span>Check your level across all topics in a skill.</span></div>
+    </div>
+    <div class="assessment-overview-card">
+      <div class="overview-icon purple">{{ icon('list-checks',18) }}</div>
+      <div><strong>Topic-based questions</strong><span>Questions are mapped to the topics you need to master.</span></div>
+    </div>
+    <div class="assessment-overview-card">
+      <div class="overview-icon green">{{ icon('route',18) }}</div>
+      <div><strong>Gap → roadmap</strong><span>Your results can guide the next learning topics.</span></div>
+    </div>
+  </div>
+
+  <div class="assessment-section-head">
+    <div>
+      <span class="eyebrow">SKILL DIAGNOSTICS</span>
+      <h3>Choose what you want to assess</h3>
+    </div>
+    <span class="assessment-count">{{ all_skills|length }} skills</span>
+  </div>
+
+  <div class="assessment-grid">
+    {% set tones=['blue','purple','green','amber'] %}
+    {% for sid, meta in all_skills %}
+    <article class="assessment-card">
+      <div class="assessment-card-top">
+        <div class="skill-icon {{ tones[loop.index0 % 4] }}">{{ icon('list-checks',21) }}</div>
+        <span class="assessment-type">{{ 'CONTINUE' if sid in enrolled_ids else 'DIAGNOSTIC' }}</span>
+      </div>
+      <h3>{{ meta.display_name }}</h3>
+      <p>{{ meta.description }}</p>
+      <div class="assessment-meta">
+        <span>{{ icon('map',14) }} {{ meta.topics|length }} topics</span>
+        <span>{{ icon('circle-help',14) }} Topic-based quiz</span>
+      </div>
+      <div class="assessment-topic-preview">
+        {% for tid in meta.topics %}{% if loop.index <= 4 %}
+          {% if TOPIC_META is defined and tid in TOPIC_META %}
+            <span>{{ TOPIC_META[tid].display }}</span>
+          {% else %}
+            <span>{{ tid|replace('_',' ')|title }}</span>
+          {% endif %}
+        {% endif %}{% endfor %}
+        {% if meta.topics|length > 4 %}<span>+{{ meta.topics|length - 4 }} more</span>{% endif %}
+      </div>
+      <a href="{{ url_for('start_skill', skill_id=sid) }}" class="btn secondary assessment-action">
+        {{ 'Continue assessment' if sid in enrolled_ids else 'Start assessment' }} {{ icon('arrow-right',15) }}
+      </a>
+    </article>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

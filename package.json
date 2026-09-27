@@ -1,0 +1,30 @@
+{
+  "name": "learnora-js-firebase",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "set-admin": "node server/utils/setAdminClaim.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "firebase-admin": "^13.5.0",
+    "groq-sdk": "^0.34.0",
+    "helmet": "^8.1.0",
+    "mammoth": "^1.10.0",
+    "multer": "^2.0.2",
+    "nunjucks": "^3.2.4",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

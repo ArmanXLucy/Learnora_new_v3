@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}My Skills — Learnora{% endblock %}
+{% block topbar_title %}My Skills{% endblock %}
+{% block topbar_sub %}Your active learning paths, all in one place.{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <div><span class="eyebrow">LEARNING LIBRARY</span><h2>Your Skills</h2><p>Continue where you left off or explore another skill.</p></div>
+  <a class="btn primary" href="{{ url_for('dashboard') }}">Explore skills {{ icon('arrow-right', 15) }}</a>
+</div>
+{% if skills %}
+<div class="skill-grid page-grid">
+{% set tones=['blue','purple','green','amber'] %}
+{% for s in skills %}
+<article class="skill-card">
+  <div class="skill-card-top"><div class="skill-icon {{ tones[loop.index0 % 4] }}">{{ icon('book-open',22) }}</div><span class="pct-pill">{{ s.percent }}%</span></div>
+  <h3>{{ s.display_name }}</h3><p>{{ s.description }}</p>
+  <div class="progress-bar-bg"><span class="progress-bar-fill" style="width:{{ s.percent }}%"></span></div>
+  <div class="skill-meta">{{ s.mastered }}/{{ s.total }} topics mastered</div>
+  <a href="{{ url_for('roadmap', skill_id=s.skill_id) }}" class="btn secondary small">Continue learning {{ icon('arrow-right',14) }}</a>
+</article>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state page-empty"><h3>No skills started yet</h3><p>Choose a skill from Explore and take your first assessment.</p><a class="btn primary" href="{{ url_for('dashboard') }}">Explore skills {{ icon('arrow-right',15) }}</a></div>
+{% endif %}
+{% endblock %}

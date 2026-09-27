@@ -1,0 +1,766 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+
+{% block title %}Admin — Help Desk{% endblock %}
+{% block topbar_title %}Help Desk{% endblock %}
+{% block topbar_sub %}Review student support requests and preserve every action.{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Help Desk</h1>
+  <p>Manage current support requests and review the complete history of previously handled requests.</p>
+</div>
+
+<div class="helpdesk-admin-tabs" role="tablist" aria-label="Help Desk views">
+  <button type="button" class="helpdesk-admin-tab active" data-view="active" role="tab" aria-selected="true">
+    Active Requests <span id="active-count" class="helpdesk-tab-count">0</span>
+  </button>
+  <button type="button" class="helpdesk-admin-tab" data-view="history" role="tab" aria-selected="false">
+    History <span id="history-count" class="helpdesk-tab-count">0</span>
+  </button>
+</div>
+
+<section class="admin-table-wrap support-admin-wrap">
+  <div id="support-admin-content"></div>
+</section>
+
+<section class="support-detail-section" id="support-detail-section" hidden aria-labelledby="support-detail-title">
+  <div class="support-detail-head">
+    <div>
+      <span class="card-eyebrow">HELP DESK REQUEST</span>
+      <h2 id="support-detail-title">Request details</h2>
+      <p id="support-detail-subtitle"></p>
+    </div>
+    <button type="button" class="support-detail-close" id="support-detail-close">Back to requests</button>
+  </div>
+
+  <div class="support-detail-grid">
+    <div class="support-detail-main">
+      <section class="support-detail-card">
+        <div class="support-detail-card-title">Original request</div>
+        <div class="support-detail-meta" id="support-detail-meta"></div>
+        <div class="support-original-message support-detail-message" id="support-detail-message"></div>
+        <div id="support-detail-attachment"></div>
+      </section>
+
+      <section class="support-detail-card">
+        <div class="support-detail-card-title">Activity history</div>
+        <div class="support-activity" id="support-activity"></div>
+      </section>
+    </div>
+
+    <aside class="support-detail-side">
+      <section class="support-detail-card">
+        <div class="support-detail-card-title">Admin actions</div>
+
+        <label class="support-field">
+          <span>Priority</span>
+          <select id="support-edit-priority">
+            <option value="normal">Normal</option>
+            <option value="important">Important</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </label>
+
+        <label class="support-field">
+          <span>Status</span>
+          <select id="support-edit-status">
+            <option value="open">Open</option>
+            <option value="under_review">Under Review</option>
+            <option value="approved">Approved</option>
+            <option value="resolved">Resolved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </label>
+
+        <label class="support-field">
+          <span>Admin response</span>
+          <textarea id="support-edit-message" rows="7" maxlength="2000" placeholder="Write a response to the student..."></textarea>
+        </label>
+
+        <button type="button" class="support-action approve support-save-button" id="support-save-button">
+          {{ icon("check", 14) }} Save update
+        </button>
+
+        <p class="support-save-note">Every response, priority change, and status change is added to the activity history with its date and time. Reopening a request keeps all previous activity.</p>
+      </section>
+    </aside>
+  </div>
+</section></div>
+
+<style>
+.helpdesk-admin-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.helpdesk-admin-tab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 10px 13px 12px;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.helpdesk-admin-tab.active {
+  color: var(--text);
+  border-bottom-color: currentColor;
+}
+
+.helpdesk-tab-count {
+  display: inline-flex;
+  min-width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--theme-bg, #f3f5fa);
+  font-size: 11px;
+}
+
+.support-admin-wrap {
+  overflow-x: auto;
+}
+
+.support-admin-table {
+  min-width: 1160px;
+}
+
+.support-message-cell {
+  min-width: 260px;
+  max-width: 410px;
+}
+
+.support-original-message {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.support-admin-response {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #eef7ff;
+  border: 1px solid #d8eaff;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 1.45;
+}
+
+.support-admin-response strong {
+  font-size: 12px;
+}
+
+.support-admin-response span {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.support-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.priority-normal { background: #eef2ff; color: #5366d8; }
+.priority-important { background: #fff6df; color: #a26b00; }
+.priority-urgent { background: #fff0f0; color: #c13e3e; }
+
+.status-open { background: #eef4ff; color: #3867ff; }
+.status-under_review { background: #fff6df; color: #a26b00; }
+.status-approved { background: #e9f9f0; color: #168652; }
+.status-resolved { background: #e9f9f0; color: #168652; }
+.status-rejected { background: #fff0f0; color: #c13e3e; }
+
+.support-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.support-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 11px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .16s ease, opacity .16s ease;
+}
+
+.support-action:hover { transform: translateY(-1px); }
+.support-action:disabled { cursor: default; opacity: .75; transform: none; }
+.support-action.approve { background: #e9f9f0; color: #168652; }
+.support-action.view { background: var(--theme-bg, #f3f5fa); color: var(--text); }
+.support-save-button { width: 100%; margin-top: 4px; padding: 10px 12px; }
+
+.support-attachment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.support-detail-section {
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface, #fff);
+  color: var(--text);
+  overflow: hidden;
+}
+
+.support-detail-section[hidden] { display: none !important; }
+
+.support-detail-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface, #fff);
+}
+
+.support-detail-head h2 { margin: 5px 0 4px; }
+.support-detail-head p { margin: 0; color: var(--muted); font-size: 13px; }
+
+.support-detail-close {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--theme-bg, #f3f5fa);
+  color: var(--text);
+  padding: 9px 12px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.support-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(280px, .75fr);
+  gap: 16px;
+  padding: 18px 24px 24px;
+  border-top: 1px solid var(--line);
+}
+
+.support-detail-main,
+.support-detail-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.support-detail-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  background: var(--surface, #fff);
+}
+
+.support-detail-card-title {
+  margin-bottom: 13px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.support-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.support-detail-meta-item {
+  padding: 10px 11px;
+  border-radius: 10px;
+  background: var(--theme-bg, #f8f9fd);
+}
+
+.support-detail-meta-item span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.support-detail-meta-item strong {
+  font-size: 12px;
+  word-break: break-word;
+}
+
+.support-detail-message {
+  padding: 13px 14px;
+  border-radius: 12px;
+  background: var(--theme-bg, #f8f9fd);
+  border: 1px solid var(--line);
+}
+
+.support-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 13px;
+}
+
+.support-field > span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.support-field select,
+.support-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 11px;
+  background: var(--surface, #fff);
+  color: var(--text);
+  font: inherit;
+}
+
+.support-field textarea { resize: vertical; }
+
+.support-save-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.support-attachment {
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+}
+
+.support-attachment img {
+  display: block;
+  max-width: 100%;
+  max-height: 360px;
+  margin-top: 9px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  object-fit: contain;
+}
+
+.support-attachment a {
+  display: inline-flex;
+  margin-top: 7px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.support-activity {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.support-activity-item {
+  position: relative;
+  padding: 0 0 17px 22px;
+}
+
+.support-activity-item::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 4px;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+.support-activity-item:last-child { padding-bottom: 0; }
+.support-activity-item:last-child::before { display: none; }
+
+.support-activity-item::after {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.support-activity-time {
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 3px;
+}
+
+.support-activity-title {
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.support-activity-message {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.support-empty {
+  padding: 34px 18px;
+  text-align: center;
+}
+
+@media (max-width: 850px) {
+  .support-detail-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .helpdesk-admin-tabs { overflow-x: auto; }
+  .support-detail-head { padding: 18px; }
+  .support-detail-grid { padding: 12px 18px 18px; }
+  .support-detail-meta { grid-template-columns: 1fr; }
+}
+</style>
+
+<script>
+(function () {
+  const container = document.getElementById('support-admin-content');
+  const detailSection = document.getElementById('support-detail-section');
+  const closeButton = document.getElementById('support-detail-close');
+  const saveButton = document.getElementById('support-save-button');
+  const tabs = Array.from(document.querySelectorAll('.helpdesk-admin-tab'));
+
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[char]));
+
+  const formatDate = (value) => {
+    let dateValue = value;
+    if (value && typeof value === 'object') {
+      if (typeof value._seconds === 'number') dateValue = value._seconds * 1000;
+      else if (typeof value.seconds === 'number') dateValue = value.seconds * 1000;
+    }
+    const d = new Date(dateValue);
+    if (Number.isNaN(d.getTime())) return '—';
+    return d.toLocaleString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+  };
+
+  const statusLabel = (value) =>
+    String(value || 'open').replaceAll('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+  const priorityLabel = (value) =>
+    String(value || 'normal').replace(/\b\w/g, c => c.toUpperCase());
+
+  const iconCheck = '<svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg>';
+  const iconEye = '<svg class="ic" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></svg>';
+  const iconPaperclip = '<svg class="ic" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m20.5 11.5-8.2 8.2a5 5 0 0 1-7.1-7.1l9.4-9.4a3.5 3.5 0 0 1 5 5L10 17.8a2 2 0 0 1-2.8-2.8l8.7-8.7"/></svg>';
+
+  let tickets = [];
+  let currentView = 'active';
+  let currentTicketId = null;
+
+  const isActive = (ticket) => ['open', 'under_review'].includes(String(ticket.status || 'open'));
+
+  const render = () => {
+    const visible = tickets.filter(ticket => currentView === 'active' ? isActive(ticket) : !isActive(ticket));
+
+    document.getElementById('active-count').textContent = String(tickets.filter(isActive).length);
+    document.getElementById('history-count').textContent = String(tickets.filter(ticket => !isActive(ticket)).length);
+
+    if (!visible.length) {
+      container.innerHTML = `<div class="support-empty empty-state">${
+        currentView === 'active'
+          ? 'No active Help Desk requests require attention.'
+          : 'No handled Help Desk requests are in History yet.'
+      }</div>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <table class="admin-table support-admin-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Topic</th>
+            <th>Priority</th>
+            <th>Message</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${visible.map(ticket => {
+            const status = ticket.status || 'open';
+            const priority = ticket.priority || 'normal';
+            return `
+              <tr>
+                <td>
+                  <strong>${escapeHtml(ticket.user_name || 'Learner')}</strong>
+                  <div style="font-size:11.5px;color:var(--muted);">${escapeHtml(ticket.user_email || ticket.user_id || '—')}</div>
+                </td>
+                <td>${escapeHtml(ticket.topic || 'General help')}</td>
+                <td><span class="support-pill priority-${escapeHtml(priority)}">${escapeHtml(priorityLabel(priority))}</span></td>
+                <td class="support-message-cell">
+                  <div class="support-original-message">${escapeHtml(ticket.message || '—')}</div>
+                  ${ticket.attachment ? `<div class="support-attachment-badge">${iconPaperclip} ${escapeHtml(ticket.attachment.name || 'Attachment')}</div>` : ''}
+                  ${ticket.admin_message ? `<div class="support-admin-response"><strong>Latest admin response</strong><span>${escapeHtml(ticket.admin_message)}</span></div>` : ''}
+                </td>
+                <td><span class="support-pill status-${escapeHtml(status)}">${escapeHtml(statusLabel(status))}</span></td>
+                <td>${escapeHtml(formatDate(ticket.created_at))}</td>
+                <td>
+                  <div class="support-actions">
+                    <button type="button" class="support-action view" data-ticket-id="${escapeHtml(ticket.id)}">${iconEye} View</button>
+                    ${currentView === 'history' ? `<button type="button" class="support-action" data-delete-history="${escapeHtml(ticket.id)}">Delete</button>` : ''}
+                  </div>
+                </td>
+              </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  };
+
+  const load = async () => {
+    try {
+      const response = await fetch('/api/admin/support-tickets', {
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      });
+      if (!response.ok) throw new Error('Failed to load Help Desk requests.');
+      const data = await response.json();
+      tickets = Array.isArray(data.tickets) ? data.tickets : [];
+      render();
+    } catch (error) {
+      console.error('[admin helpdesk]', error);
+      container.innerHTML = '<div class="support-empty empty-state">Could not load Help Desk requests.</div>';
+    }
+  };
+
+  const renderActivity = (activity) => {
+    const items = Array.isArray(activity) ? [...activity].sort((a, b) =>
+      String(a.timestamp || '').localeCompare(String(b.timestamp || ''))
+    ) : [];
+
+    if (!items.length) {
+      return '<div class="support-empty">No activity recorded.</div>';
+    }
+
+    return items.map(item => {
+      let title = 'Activity';
+      let message = item.message || '';
+
+      if (item.type === 'submitted') title = 'Student submitted problem';
+      else if (item.type === 'response') title = 'Admin response';
+      else if (item.type === 'status_changed') {
+        title = `Status changed to ${statusLabel(item.to)}`;
+        message = item.message || `Status changed from ${statusLabel(item.from)} to ${statusLabel(item.to)}.`;
+      } else if (item.type === 'priority_changed') {
+        title = `Priority changed to ${priorityLabel(item.to)}`;
+        message = item.message || `Priority changed from ${priorityLabel(item.from)} to ${priorityLabel(item.to)}.`;
+      }
+
+      const actor = item.actor === 'student' ? 'Student' : 'Admin';
+      return `
+        <div class="support-activity-item">
+          <div class="support-activity-time">${escapeHtml(formatDate(item.timestamp))}</div>
+          <div class="support-activity-title">${escapeHtml(title)} <span style="font-weight:500;color:var(--muted);">• ${escapeHtml(actor)}</span></div>
+          ${message ? `<div class="support-activity-message">${escapeHtml(message)}</div>` : ''}
+        </div>`;
+    }).join('');
+  };
+
+  const openTicket = async (ticketId) => {
+    currentTicketId = ticketId;
+    try {
+      const response = await fetch('/api/admin/support-tickets/' + encodeURIComponent(ticketId), {
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' },
+        cache: 'no-store'
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Could not open the request.');
+
+      const ticket = data.ticket;
+      document.getElementById('support-detail-title').textContent = ticket.topic || 'Help Desk request';
+      document.getElementById('support-detail-subtitle').textContent =
+        `${ticket.user_name || 'Learner'} • ${ticket.user_email || 'No email'}`;
+
+      document.getElementById('support-detail-meta').innerHTML = `
+        <div class="support-detail-meta-item"><span>Student</span><strong>${escapeHtml(ticket.user_name || 'Learner')}</strong></div>
+        <div class="support-detail-meta-item"><span>Email</span><strong>${escapeHtml(ticket.user_email || '—')}</strong></div>
+        <div class="support-detail-meta-item"><span>Topic</span><strong>${escapeHtml(ticket.topic || 'General help')}</strong></div>
+        <div class="support-detail-meta-item"><span>Priority</span><strong>${escapeHtml(priorityLabel(ticket.priority))}</strong></div>
+        <div class="support-detail-meta-item"><span>Status</span><strong>${escapeHtml(statusLabel(ticket.status))}</strong></div>
+        <div class="support-detail-meta-item"><span>Submitted</span><strong>${escapeHtml(formatDate(ticket.created_at))}</strong></div>
+        <div class="support-detail-meta-item"><span>Reviewed</span><strong>${escapeHtml(ticket.reviewed_at ? formatDate(ticket.reviewed_at) : '—')}</strong></div>
+        <div class="support-detail-meta-item"><span>Last updated</span><strong>${escapeHtml(formatDate(ticket.updated_at))}</strong></div>
+        <div class="support-detail-meta-item"><span>Resolved</span><strong>${escapeHtml(ticket.resolved_at ? formatDate(ticket.resolved_at) : '—')}</strong></div>
+      `;
+
+      document.getElementById('support-detail-message').textContent = ticket.message || '—';
+
+      const attachmentRoot = document.getElementById('support-detail-attachment');
+      if (ticket.attachment?.path) {
+        const url = '/api/admin/support/' + encodeURIComponent(ticket.id) + '/attachment';
+        const name = escapeHtml(ticket.attachment.name || 'Attachment');
+        if (String(ticket.attachment.content_type || '').startsWith('image/')) {
+          attachmentRoot.innerHTML = `
+            <div class="support-attachment">
+              <strong style="font-size:12px;">Attachment</strong>
+              <img src="${url}" alt="${name}">
+              <a href="${url}" target="_blank" rel="noopener">Open attachment</a>
+            </div>`;
+        } else {
+          attachmentRoot.innerHTML = `
+            <div class="support-attachment">
+              <strong style="font-size:12px;">Attachment</strong>
+              <div><a href="${url}" target="_blank" rel="noopener">${name}</a></div>
+            </div>`;
+        }
+      } else {
+        attachmentRoot.innerHTML = '';
+      }
+
+      document.getElementById('support-activity').innerHTML = renderActivity(ticket.activity);
+      document.getElementById('support-edit-priority').value = ticket.priority || 'normal';
+      document.getElementById('support-edit-status').value = ticket.status || 'open';
+      document.getElementById('support-edit-message').value = '';
+      detailSection.hidden = false;
+      detailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (error) {
+      console.error('[admin helpdesk] open', error);
+      window.alert(error.message);
+    }
+  };
+
+  const close = () => {
+    detailSection.hidden = true;
+    currentTicketId = null;
+  };
+
+  const deleteHistoryTicket = async (ticketId) => {
+    const ticket = tickets.find(item => String(item.id) === String(ticketId));
+    const student = ticket?.user_name || 'this student';
+    if (!window.confirm(`Delete this Help Desk history record from ${student}? This removes the request from Firestore.`)) return;
+
+    try {
+      const response = await fetch('/admin/support/' + encodeURIComponent(ticketId) + '/history', {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        headers: { 'Accept': 'application/json' }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Could not delete the history record.');
+      if (currentTicketId === ticketId) close();
+      await load();
+    } catch (error) {
+      console.error('[admin helpdesk] delete history', error);
+      window.alert(error.message);
+    }
+  };
+
+  container.addEventListener('click', (event) => {
+    const deleteButton = event.target.closest('[data-delete-history]');
+    if (deleteButton) {
+      event.preventDefault();
+      deleteHistoryTicket(deleteButton.dataset.deleteHistory);
+      return;
+    }
+    const button = event.target.closest('[data-ticket-id]');
+    if (button) openTicket(button.dataset.ticketId);
+  });
+
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    currentView = tab.dataset.view;
+    tabs.forEach(item => {
+      const active = item === tab;
+      item.classList.toggle('active', active);
+      item.setAttribute('aria-selected', String(active));
+    });
+    render();
+  }));
+
+  closeButton.addEventListener('click', close);
+
+  saveButton.addEventListener('click', async () => {
+    if (!currentTicketId) return;
+
+    const adminMessage = document.getElementById('support-edit-message').value.trim();
+    const status = document.getElementById('support-edit-status').value;
+    const priority = document.getElementById('support-edit-priority').value;
+
+    saveButton.disabled = true;
+    const oldText = saveButton.innerHTML;
+    saveButton.textContent = 'Saving...';
+
+    try {
+      const response = await fetch('/admin/support/' + encodeURIComponent(currentTicketId) + '/update', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ admin_message: adminMessage, status, priority })
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Could not save the Help Desk update.');
+
+      await load();
+      await openTicket(currentTicketId);
+    } catch (error) {
+      console.error('[admin helpdesk] save', error);
+      window.alert(error.message);
+    } finally {
+      saveButton.disabled = false;
+      saveButton.innerHTML = oldText;
+    }
+  });
+
+  load();
+  window.setInterval(load, 5000);
+})();
+</script>
+{% endblock %}

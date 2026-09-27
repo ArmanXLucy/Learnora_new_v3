@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}PPT Upload{% endblock %}
+{% block topbar_title %}PPT Upload{% endblock %}
+{% block topbar_sub %}Presentation files shared through Learnora.{% endblock %}
+
+{% block content %}
+<div style="max-width:1100px;">
+  {% if current_presentation %}
+  <section class="card" style="padding:24px; margin-bottom:22px;">
+    <div class="card-heading">
+      <div>
+        <h4>{{ icon("presentation", 17) }} {{ current_presentation.original_name }}</h4>
+        <span>Currently selected by the administrator.</span>
+      </div>
+      <a class="btn ghost small" href="{{ url_for('ppt_download', id=current_presentation.id) }}">
+        {{ icon("download", 15) }} Download
+      </a>
+    </div>
+
+    <div id="presentation-viewer-wrap" style="margin-top:18px; position:relative;">
+      <button class="btn ghost small" id="presentation-fullscreen" type="button" style="margin-bottom:10px;">
+        Fullscreen
+      </button>
+
+      {% if current_presentation.file_type == 'PDF' %}
+        <iframe
+          id="presentation-viewer"
+          src="{{ url_for('ppt_view', id=current_presentation.id) }}#toolbar=1&navpanes=1&view=FitH"
+          title="{{ current_presentation.original_name }}"
+          style="display:block; width:100%; min-height:720px; border:1px solid rgba(100,120,160,.22); border-radius:12px; background:#fff;"
+        ></iframe>
+      {% else %}
+        <iframe
+          id="presentation-viewer"
+          data-file-url="{{ viewer_url }}"
+          title="{{ current_presentation.original_name }}"
+          allowfullscreen
+          style="display:block; width:100%; min-height:720px; border:1px solid rgba(100,120,160,.22); border-radius:12px; background:#fff;"
+        ></iframe>
+        <div style="margin-top:10px; font-size:13px; opacity:.72;">
+          PPT/PPTX viewing uses the browser's supported online presentation viewer. The file remains stored in Supabase Storage.
+        </div>
+      {% endif %}
+    </div>
+  </section>
+  {% else %}
+  <section class="card" style="padding:24px; margin-bottom:22px;">
+    <div class="empty-state">No presentation has been selected by the administrator yet.</div>
+  </section>
+  {% endif %}
+
+  {% if can_upload %}
+  <section class="card" style="padding:24px; margin-bottom:22px;">
+    <div class="card-heading">
+      <div>
+        <h4>{{ icon("upload", 17) }} Upload presentation</h4>
+        <span>Admin-only upload. PPT, PPTX, and PDF files up to 25 MB.</span>
+      </div>
+    </div>
+    <form method="POST" action="{{ url_for('ppt_upload') }}" enctype="multipart/form-data" style="margin-top:18px;">
+      <div class="form-group">
+        <label for="ppt_file">Choose PPT / PPTX / PDF</label>
+        <input id="ppt_file" name="ppt_file" type="file" accept=".ppt,.pptx,.pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/pdf" required>
+      </div>
+      <div class="form-actions">
+        <button class="btn" type="submit">{{ icon("upload", 16) }} Upload PPT</button>
+      </div>
+    </form>
+  </section>
+  {% endif %}
+
+  {% if is_admin %}
+  <section class="card" style="padding:24px;">
+    <div class="card-heading">
+      <div>
+        <h4>{{ icon("presentation", 17) }} Available presentations</h4>
+        <span>Select one uploaded file to display to students. Only one file can be current at a time.</span>
+      </div>
+    </div>
+
+    {% if presentations and presentations.length %}
+      <div class="admin-table-wrap" style="margin-top:18px;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Presentation</th>
+              <th>Uploaded by</th>
+              <th>Date</th>
+              <th>Size</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ppt in presentations %}
+            <tr>
+              <td>
+                <strong>{{ ppt.original_name }}</strong>
+                {% if ppt.is_current %}<div style="font-size:12px; margin-top:4px; opacity:.72;">Currently displayed to students</div>{% endif %}
+              </td>
+              <td>{{ ppt.uploaded_by_name }}</td>
+              <td>{{ ppt.uploaded_at | replace('T', ' ') | replace('Z', '') }}</td>
+              <td>{{ ((ppt.size or 0) / 1024 / 1024) | round(2) }} MB</td>
+              <td>
+                {% if not ppt.is_current %}
+                <form method="POST" action="{{ url_for('ppt_set_current', id=ppt.id) }}" style="display:inline;">
+                  <button class="btn ghost small" type="submit">Set as Current</button>
+                </form>
+                {% else %}
+                <span style="font-size:13px; opacity:.72;">Current</span>
+                {% endif %}
+                <a class="btn ghost small" href="{{ url_for('ppt_download', id=ppt.id) }}">
+                  {{ icon("download", 15) }} Download
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state" style="margin-top:18px;">No presentations have been uploaded yet.</div>
+    {% endif %}
+  </section>
+  {% endif %}
+</div>
+
+<script>
+(function () {
+  const viewer = document.getElementById('presentation-viewer');
+  const fullscreenButton = document.getElementById('presentation-fullscreen');
+  if (!viewer) return;
+
+  if (viewer.dataset.fileUrl) {
+    const fileUrl = viewer.dataset.fileUrl;
+    viewer.src = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(fileUrl);
+  }
+
+  if (fullscreenButton) {
+    fullscreenButton.addEventListener('click', async function () {
+      const target = document.getElementById('presentation-viewer-wrap');
+      try {
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+        } else if (target && target.requestFullscreen) {
+          await target.requestFullscreen();
+        }
+      } catch (error) {
+        console.error('Presentation fullscreen failed:', error);
+      }
+    });
+  }
+})();
+</script>
+{% endblock %}

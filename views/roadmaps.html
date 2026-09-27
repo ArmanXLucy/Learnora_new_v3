@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Roadmaps — Learnora{% endblock %}
+{% block topbar_title %}Your Roadmaps{% endblock %}
+{% block topbar_sub %}Track completion time and continue the learning paths you actually started.{% endblock %}
+{% block content %}
+<div class="page-hero"><div><span class="eyebrow">YOUR LEARNING PATHS</span><h2>Roadmaps</h2><p>This page only shows skills you have started. Each roadmap tracks completion, study time, remaining hours, and your next topic.</p></div><a class="btn ghost" href="{{ url_for('dashboard') }}">Explore skills {{ icon('arrow-right',15) }}</a></div>
+{% if enrolled %}
+<div class="roadmap-dashboard-grid">
+{% for r in enrolled %}
+<article class="roadmap-progress-card">
+  <div class="roadmap-progress-top"><div class="skill-icon {{ ['blue','purple','green','amber'][loop.index0 % 4] }}">{{ icon('map',21) }}</div><span class="pct-pill">{{ r.percent }}%</span></div>
+  <h3>{{ r.display_name }}</h3><p>{{ r.description }}</p>
+  <div class="roadmap-progress-bar"><span style="width:{{ r.percent }}%"></span></div>
+  <div class="roadmap-time-grid">
+    <div><strong>{{ r.mastered }}/{{ r.total }}</strong><span>topics complete</span></div>
+    <div><strong>{{ r.remaining_hours|round(1) }}h</strong><span>remaining study</span></div>
+    <div><strong>{{ r.remaining_weeks|round(1) }} wk</strong><span>estimated time</span></div>
+    <div><strong>{{ r.hours_week }}h/wk</strong><span>your study budget</span></div>
+  </div>
+  {% if r.next_topic %}<div class="roadmap-next"><span>{{ icon('route',14) }} Next</span><strong>{{ r.next_topic }}</strong></div>{% else %}<div class="roadmap-next complete"><span>{{ icon('check',14) }} Complete</span><strong>Everything in this roadmap is mastered.</strong></div>{% endif %}
+  <a href="{{ url_for('roadmap', skill_id=r.skill_id) }}" class="btn secondary small">Open roadmap {{ icon('arrow-right',14) }}</a>
+</article>
+{% endfor %}
+</div>
+{% else %}
+<div class="roadmaps-empty"><div class="empty-icon">{{ icon('map',24) }}</div><h3>No active roadmap yet</h3><p>Start a skill from the dashboard and take its assessment. Your personalized roadmap will appear here with completion time and remaining study hours.</p><a class="btn primary" href="{{ url_for('dashboard') }}">Choose a skill {{ icon('arrow-right',15) }}</a></div>
+{% endif %}
+{% endblock %}

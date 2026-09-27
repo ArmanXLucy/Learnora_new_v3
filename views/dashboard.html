@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Dashboard — Learnora{% endblock %}
+{% block topbar_title %}Hello, {{ user.name.split(' ')[0] }} 👋{% endblock %}
+{% block topbar_sub %}Let's close a skill gap today!{% endblock %}
+
+{% block topbar_extra %}
+<div class="streak-tab-wrap">
+  <button class="streak-tab" id="streak-tab" type="button" aria-expanded="false" aria-controls="streak-popover">
+    <span class="streak-tab-icon">{{ icon("flame", 16) }}</span>
+    <span class="streak-tab-copy">
+      <strong>{{ streak.current_streak }}</strong>
+      <span>day streak</span>
+    </span>
+    {{ icon("chevron-down", 14) }}
+  </button>
+  <div class="streak-popover" id="streak-popover" hidden>
+    <div class="streak-popover-head">
+      <div>
+        <span class="streak-eyebrow">YOUR STREAK</span>
+        <strong>Keep the momentum going 🔥</strong>
+      </div>
+      <span class="streak-popover-flame">{{ icon("flame", 19) }}</span>
+    </div>
+    <div class="streak-stats">
+      <div><strong>{{ streak.current_streak }}</strong><span>Current</span></div>
+      <div><strong>{{ streak.longest_streak }}</strong><span>Longest</span></div>
+      <div><strong>{{ streak.total_active_days }}</strong><span>Active days</span></div>
+    </div>
+    <div class="streak-week-label"><span>Last 28 days</span><span>{{ streak.total_active_days }} active</span></div>
+    <div class="streak-mini-grid">
+      {% set recent = recent_activity %}
+      {% for i in range(28 - recent|length) %}<span></span>{% endfor %}
+      {% for d in recent %}<span class="active" title="{{ d }}"></span>{% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+{% set tones = ["blue", "purple", "green", "amber"] %}
+
+<h2 class="section-title">What do you want to learn today?</h2>
+<div class="search-bar">
+  <div class="input-wrap">
+    {{ icon("search", 17) }}
+    <input type="text" id="skill-search" autocomplete="off"
+           placeholder="Search a skill (try 'py', 'dsa', 'system design', 'git'...)">
+  </div>
+  <div class="search-results" id="search-results" style="display:none;"></div>
+</div>
+
+<!-- ============================================= my skills ==== -->
+<div class="course-heading" id="my-skills">
+  <h3>My Skills</h3>
+  <a class="text-button" href="#explore">Explore all {{ icon("chevron-right", 14) }}</a>
+</div>
+
+{% if skill_progress %}
+<div class="skill-grid">
+  {% for s in skill_progress %}
+  <article class="skill-card">
+    <div class="skill-card-top">
+      <div class="skill-icon {{ tones[loop.index0 % 4] }}">{{ icon("map", 22) }}</div>
+      <span class="pct-pill">{{ s.percent }}%</span>
+    </div>
+    <h3>{{ s.display_name }}</h3>
+    <div class="progress-bar-bg"><span class="progress-bar-fill" style="width:{{ s.percent }}%"></span></div>
+    <div class="skill-meta">{{ s.mastered_count }}/{{ s.total_topics }} topics mastered</div>
+    <a href="{{ url_for('roadmap', skill_id=s.skill_id) }}" class="btn secondary small">
+      Continue learning {{ icon("arrow-right", 15) }}
+    </a>
+  </article>
+  {% endfor %}
+</div>
+
+<!-- ============================================= analytics ==== -->
+<div class="analytics-grid">
+  <div class="analytics-card">
+    <div class="card-heading">
+      <h4>This Week's Activity</h4>
+      <span>{{ streak.current_streak }} day streak</span>
+    </div>
+    <div class="bar-chart">
+      {% for d in week_activity %}
+      <div class="bar-column" title="{{ d.date }}">
+        <span style="height:{{ 82 if d.active else 14 }}%; {{ 'opacity:.35' if not d.active }}"></span>
+        <small>{{ d.label }}</small>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="analytics-card performance-card">
+    <div class="card-heading"><h4>Overall Progress</h4>{{ icon("trophy", 16) }}</div>
+    <div class="score-ring"><strong>{{ overall_percent }}%</strong></div>
+    <small>Across {{ skill_progress|length }} enrolled skill{{ '' if skill_progress|length == 1 else 's' }}</small>
+  </div>
+
+  <div class="analytics-card performance-card">
+    <div class="card-heading"><h4>Topics Mastered</h4>{{ icon("badge-check", 16) }}</div>
+    <div class="score-ring"><strong>{{ total_mastered }}</strong></div>
+    <small>of {{ total_topics }} topics on your roadmaps</small>
+  </div>
+</div>
+{% else %}
+<div class="empty-state">
+  You haven't started a skill yet — search above, or pick one from Explore below to take your first assessment.
+</div>
+{% endif %}
+
+<!-- =============================================== explore ==== -->
+<div class="course-heading" id="explore">
+  <h3>Explore All Skills</h3>
+</div>
+<div class="skill-grid">
+  {% for sid, meta in all_skills %}
+  <article class="skill-card">
+    <div class="skill-icon {{ tones[loop.index0 % 4] }}">{{ icon("book-open", 22) }}</div>
+    <h3>{{ meta.display_name }}</h3>
+    <p>{{ meta.description }}</p>
+    <div class="skill-meta">{{ icon("list-checks", 13) }} {{ meta.topics|length }} topics</div>
+    <a href="{{ url_for('start_skill', skill_id=sid) }}" class="btn ghost small">
+      Start / Continue {{ icon("arrow-right", 14) }}
+    </a>
+  </article>
+  {% endfor %}
+</div>
+{% endblock %}
+
+
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  (function () {
+    const button = document.getElementById('streak-tab');
+    const popover = document.getElementById('streak-popover');
+    if (!button || !popover) return;
+    const close = () => { popover.hidden = true; button.setAttribute('aria-expanded', 'false'); button.classList.remove('open'); };
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const next = popover.hidden;
+      popover.hidden = !next;
+      button.setAttribute('aria-expanded', String(next));
+      button.classList.toggle('open', next);
+    });
+    document.addEventListener('click', (event) => {
+      if (!popover.contains(event.target) && !button.contains(event.target)) close();
+    });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') close(); });
+  })();
+</script>
+
+{% endblock %}

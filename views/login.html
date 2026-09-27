@@ -1,0 +1,208 @@
+{% extends "auth_base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Log in — Learnora{% endblock %}
+{% block active_tab %}login{% endblock %}
+{% block auth_title %}Welcome back{% endblock %}
+{% block auth_subtitle %}Log in to pick up your roadmap right where you left off.{% endblock %}
+
+{% block auth_body %}
+<div class="role-toggle">
+  <label><input type="radio" name="role" value="user" checked onclick="setRole('user')"><span>Login as User</span></label>
+  <label><input type="radio" name="role" value="admin" onclick="setRole('admin')"><span>Login as Admin</span></label>
+</div>
+
+<div id="firebase-error" class="otp-hint" style="display:none;"></div>
+
+<form class="auth-form" id="login-form">
+  <label class="input-field">{{ icon("mail", 16) }}<input type="email" id="email" required placeholder="Email address" autocomplete="email"></label>
+  <label class="input-field">{{ icon("lock", 16) }}<input type="password" id="password" required placeholder="Password" autocomplete="current-password"><button type="button" class="toggle-visibility" aria-label="Toggle password visibility"><span class="eye-on">{{ icon("eye", 16) }}</span><span class="eye-off" style="display:none">{{ icon("eye-off", 16) }}</span></button></label>
+  <button type="submit" class="primary-button full-button" id="login-button">Log in {{ icon("arrow-right", 17) }}</button>
+</form>
+
+<form class="auth-form" id="admin-form" style="display:none;">
+  <label class="input-field">{{ icon("user", 16) }}<input type="email" id="admin-username" placeholder="Admin email address" autocomplete="email"></label>
+  <label class="input-field">{{ icon("lock", 16) }}<input type="password" id="admin-password" placeholder="Admin password"></label>
+  <button type="submit" class="primary-button full-button">Admin login {{ icon("arrow-right", 17) }}</button>
+</form>
+
+<div class="auth-links-row" id="user-links"><a href="{{ url_for('forgot_password') }}">Forgot password?</a><span><a href="{{ url_for('register') }}">Create an account</a></span></div>
+<div id="resend-verification" style="display:none; margin-top:12px;">
+  <button type="button" class="secondary-button full-button" id="resend-verification-button">Resend verification email</button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/firebase-rest.js') }}"></script>
+<script>
+(function () {
+  'use strict';
+
+  const config = {{ firebase_config|tojson|safe }};
+  const api = window.learnoraFirebaseRest;
+  const errorBox = document.getElementById('firebase-error');
+  const loginForm = document.getElementById('login-form');
+  const adminForm = document.getElementById('admin-form');
+  const loginButton = document.getElementById('login-button');
+  const resendWrap = document.getElementById('resend-verification');
+  const resendButton = document.getElementById('resend-verification-button');
+
+  function showError(message) {
+    errorBox.textContent = message;
+    errorBox.style.display = 'block';
+  }
+
+  function hideError() {
+    errorBox.textContent = '';
+    errorBox.style.display = 'none';
+  }
+
+  const firebaseReady = Boolean(config?.apiKey && config?.authDomain && config?.projectId && config?.appId);
+
+  if (!firebaseReady) {
+    showError('Firebase is not configured. Check FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID and FIREBASE_APP_ID in .env.');
+  } else if (!api) {
+    showError('Learnora authentication script did not load. Refresh the page.');
+  }
+
+  async function createLearnoraSession(idToken) {
+    let profile = {};
+    try {
+      profile = JSON.parse(localStorage.getItem('learnora_pending_profile') || '{}');
+    } catch (_) {}
+
+    const response = await fetch('{{ url_for("firebase_session") }}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify({ idToken, profile })
+    });
+
+    let data;
+    const type = response.headers.get('content-type') || '';
+    if (type.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      console.error('[Learnora] Session endpoint returned non-JSON:', response.status, text);
+      throw new Error('The server returned an unexpected response (' + response.status + '). Check the Node terminal.');
+    }
+
+    if (!response.ok || !data.ok) {
+      const message = data.details ? ((data.error || 'Authentication failed.') + ': ' + data.details) : (data.error || 'Authentication failed.');
+      throw new Error(message);
+    }
+
+    localStorage.removeItem('learnora_pending_profile');
+    window.location.replace(data.redirect || '/dashboard');
+  }
+
+  loginForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    hideError();
+    resendWrap.style.display = 'none';
+
+    if (!firebaseReady || !api) return;
+
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    if (!email || !password) return showError('Enter your email and password.');
+
+    loginButton.disabled = true;
+    const originalButton = loginButton.innerHTML;
+    loginButton.textContent = 'Signing in...';
+
+    try {
+      const signIn = await api.signIn(config.apiKey, email, password);
+      const lookup = await api.lookup(config.apiKey, signIn.idToken);
+      const account = lookup?.users?.[0];
+
+      if (!account) throw new Error('Firebase did not return the account information.');
+
+      if (account.emailVerified !== true) {
+        resendWrap.style.display = 'block';
+        throw new Error('Please verify your email before logging in. Check your inbox or spam folder.');
+      }
+
+      await createLearnoraSession(signIn.idToken);
+    } catch (error) {
+      console.error('[Learnora] Login error:', error);
+      showError(api.friendlyError(error, 'Login failed.'));
+      if (error?.firebaseCode === 'USER_DISABLED') resendWrap.style.display = 'none';
+      loginButton.disabled = false;
+      loginButton.innerHTML = originalButton;
+    }
+  });
+
+  resendButton.addEventListener('click', async function () {
+    hideError();
+    if (!firebaseReady || !api) return;
+
+    const email = document.getElementById('email').value.trim().toLowerCase();
+    const password = document.getElementById('password').value;
+    if (!email || !password) return showError('Enter your email and password first, then click Resend verification email.');
+
+    resendButton.disabled = true;
+    try {
+      const signIn = await api.signIn(config.apiKey, email, password);
+      const lookup = await api.lookup(config.apiKey, signIn.idToken);
+      const account = lookup?.users?.[0];
+
+      if (account?.emailVerified === true) {
+        showError('Your email is already verified. You can log in now.');
+      } else {
+        await api.sendVerification(config.apiKey, signIn.idToken);
+        showError('A new verification email has been sent to ' + email + '. Check your inbox and spam folder.');
+      }
+    } catch (error) {
+      console.error('[Learnora] Verification email error:', error);
+      showError(api.friendlyError(error, 'Could not send the verification email.'));
+    } finally {
+      resendButton.disabled = false;
+    }
+  });
+
+  adminForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    hideError();
+    if (!firebaseReady || !api) return;
+
+    try {
+      const email = document.getElementById('admin-username').value.trim().toLowerCase();
+      const password = document.getElementById('admin-password').value;
+      const signIn = await api.signIn(config.apiKey, email, password);
+      const lookup = await api.lookup(config.apiKey, signIn.idToken);
+      const account = lookup?.users?.[0];
+      if (!account?.emailVerified) throw new Error('Please verify the admin email before signing in.');
+
+      const response = await fetch('{{ url_for("admin_login") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ idToken: signIn.idToken })
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.error || 'Admin login failed.');
+      window.location.replace(data.redirect || '/admin');
+    } catch (error) {
+      console.error('[Learnora] Admin login error:', error);
+      showError(api.friendlyError(error, error.message || 'Admin login failed.'));
+    }
+  });
+
+  window.learnoraAuthStatus = {
+    firebaseReady,
+    restClientLoaded: Boolean(api)
+  };
+})();
+
+function setRole(role) {
+  document.getElementById('firebase-error').style.display = 'none';
+  document.getElementById('login-form').style.display = role === 'user' ? 'block' : 'none';
+  document.getElementById('admin-form').style.display = role === 'admin' ? 'block' : 'none';
+  document.getElementById('user-links').style.display = role === 'user' ? 'flex' : 'none';
+}
+</script>
+{% endblock %}
+

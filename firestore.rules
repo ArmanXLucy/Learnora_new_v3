@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function sameUser(uid) { return signedIn() && request.auth.uid == uid; }
+    function admin() { return signedIn() && request.auth.token.admin == true; }
+    function owns(data) { return signedIn() && (data.userId == request.auth.uid || data.firebaseUid == request.auth.uid || data.learnoraUserId == request.auth.uid); }
+
+    match /users/{uid} {
+      allow read: if sameUser(uid) || admin();
+      allow create: if sameUser(uid);
+      allow update: if sameUser(uid) || admin();
+      allow delete: if admin();
+    }
+    match /user_preferences/{uid} { allow read, write: if sameUser(uid); }
+    match /skills/{skillId} { allow read: if signedIn(); allow write: if admin(); }
+
+    match /syllabi/{id} {
+      allow read: if owns(resource.data) || admin();
+      allow create: if owns(request.resource.data) || admin();
+      allow update: if owns(resource.data) && owns(request.resource.data) || admin();
+      allow delete: if admin();
+    }
+    match /enrollments/{id} {
+      allow read: if owns(resource.data) || admin();
+      allow create: if owns(request.resource.data) || admin();
+      allow update: if owns(resource.data) && owns(request.resource.data) || admin();
+      allow delete: if admin();
+    }
+    match /assessments/{id} {
+      allow read: if owns(resource.data) || admin();
+      allow create: if owns(request.resource.data) || admin();
+      allow update: if owns(resource.data) && owns(request.resource.data) || admin();
+      allow delete: if admin();
+    }
+    match /roadmaps/{id} {
+      allow read: if owns(resource.data) || admin();
+      allow create: if owns(request.resource.data) || admin();
+      allow update: if owns(resource.data) && owns(request.resource.data) || admin();
+      allow delete: if admin();
+    }
+    match /topic_progress/{id} {
+      allow read: if owns(resource.data) || admin();
+      allow create: if owns(request.resource.data) || admin();
+      allow update: if owns(resource.data) && owns(request.resource.data) || admin();
+      allow delete: if admin();
+    }
+    match /activity_log/{id} {
+      allow read: if owns(resource.data) || admin();
+      allow create: if owns(request.resource.data) || admin();
+      allow update: if owns(resource.data) && owns(request.resource.data) || admin();
+      allow delete: if admin();
+    }
+    match /support_tickets/{id} {
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow read: if admin() || (signedIn() && resource.data.userId == request.auth.uid);
+    }
+  }
+}

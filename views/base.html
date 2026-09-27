@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Learnora{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/learnora.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+</head>
+<body class="app-page">
+{% from "_icons.html" import icon %}
+{% set is_admin = session.is_admin %}
+
+<div class="sidebar-scrim" id="sidebar-scrim"></div>
+
+<div class="app-dashboard no-right">
+
+  <!-- ================================================== sidebar ==== -->
+  <aside class="app-sidebar" id="app-sidebar">
+    <a class="mini-brand home-link" href="{{ url_for('intro') }}" title="Back to the Learnora home page">
+      {{ icon("graduation-cap", 18) }}<span class="brand-label">Learnora</span>
+    </a>
+
+    {% if user is defined and user %}
+    <div class="sidebar-profile-menu">
+      <button class="sidebar-avatar-button" id="sidebar-avatar-button" type="button" aria-expanded="false" aria-controls="profile-menu" title="Open profile menu">
+        {% if user.avatar_path %}<img class="sidebar-avatar avatar-photo" src="{{ '/api/avatar/' + user.id }}" alt="Profile photo">{% else %}<span class="sidebar-avatar">{{ (user.name[0]|upper) if user.name else 'U' }}</span>{% endif %}
+        <span class="avatar-online-dot"></span>
+      </button>
+      <div class="profile-menu" id="profile-menu" hidden>
+        <div class="profile-menu-head">{% if user.avatar_path %}<img class="menu-avatar avatar-photo" src="{{ '/api/avatar/' + user.id }}" alt="Profile photo">{% else %}<span class="menu-avatar">{{ (user.name[0]|upper) if user.name else 'U' }}</span>{% endif %}<div><strong>{{ user.name }}</strong><span>@{{ user.username }}</span></div></div>
+        <div class="profile-menu-divider"></div>
+        <a href="{{ url_for('profile') }}">{{ icon("user", 16) }}<span>Update profile</span>{{ icon("chevron-right", 14) }}</a>
+        <a href="{{ url_for('settings') }}">{{ icon("sliders", 16) }}<span>Settings</span>{{ icon("chevron-right", 14) }}</a>
+        <a href="{{ url_for('helpdesk') }}">{{ icon("headset", 16) }}<span>Help desk</span>{{ icon("chevron-right", 14) }}</a>
+      </div>
+    </div>
+    {% endif %}
+
+    <button class="desktop-sidebar-toggle" id="desktop-sidebar-toggle" type="button" aria-label="Collapse sidebar" aria-expanded="true">
+      {{ icon("arrow-left", 19) }}
+    </button>
+
+    {% if is_admin %}
+      <span class="sidebar-group">Admin</span>
+      <a class="side-item {{ 'active' if request.endpoint in ['admin_dashboard', 'admin_student_detail'] }}"
+         href="{{ url_for('admin_dashboard') }}">{{ icon("users", 16) }}<span class="side-label">Students</span></a>
+      <a class="side-item {{ 'active' if request.endpoint == 'ppt_upload' }}"
+         href="{{ url_for('ppt_upload') }}">{{ icon("upload", 16) }}<span class="side-label">PPT Upload</span></a>
+      <a class="side-item {{ 'active' if request.endpoint == 'admin_helpdesk' }}"
+         href="{{ url_for('admin_helpdesk') }}">{{ icon("headset", 16) }}<span class="side-label">Help Desk</span></a>
+    {% else %}
+      <span class="sidebar-group">Learning</span>
+      <a class="side-item {{ 'active' if request.endpoint == 'dashboard' }}"
+         href="{{ url_for('dashboard') }}">{{ icon("layout-dashboard", 16) }}<span class="side-label">Dashboard</span></a>
+      <a class="side-item {{ 'active' if request.endpoint in ['my_skills', 'start_skill'] }}"
+         href="{{ url_for('my_skills') }}">{{ icon("book-open", 16) }}<span class="side-label">My Skills</span></a>
+      <a class="side-item {{ 'active' if request.endpoint in ['roadmaps', 'roadmap'] }}"
+         href="{{ url_for('roadmaps') }}">{{ icon("map", 16) }}<span class="side-label">Roadmaps</span></a>
+      <a class="side-item {{ 'active' if request.endpoint in ['assessments', 'quiz', 'topic_page'] }}"
+         href="{{ url_for('assessments') }}">{{ icon("list-checks", 16) }}<span class="side-label">Assessments</span></a>
+    {% endif %}
+
+    <span class="sidebar-group">Account</span>
+    <a class="side-item home-item" href="{{ url_for('intro') }}">{{ icon("home", 16) }}<span class="side-label">Home</span></a>
+    <a class="side-item logout-item" href="{{ url_for('logout') }}">{{ icon("log-out", 16) }}<span class="side-label">Log out</span></a>
+  </aside>
+
+  <!-- ===================================================== main ==== -->
+  <div class="app-main">
+    <div class="app-topbar">
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Open menu">{{ icon("menu", 20) }}</button>
+      <div>
+        <h3>{% block topbar_title %}Learnora{% endblock %}</h3>
+        <span>{% block topbar_sub %}Know where you are. Learn what's next.{% endblock %}</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+          <span class="theme-icon">☾</span><span class="theme-label">Dark</span>
+        </button>
+        {% block topbar_extra %}{% endblock %}
+
+        {% if session.user_id %}
+        <div class="notification-wrap" id="notification-wrap">
+          <button class="notification-button" id="notification-button" type="button"
+                  aria-expanded="false" aria-controls="notification-popover"
+                  aria-label="Open notifications">
+            {{ icon("bell", 17) }}
+            <span class="notification-count" id="notification-count" hidden>0</span>
+          </button>
+
+          <div class="notification-popover" id="notification-popover" hidden>
+            <div class="notification-head">
+              <div>
+                <span class="notification-eyebrow">LEARNORA</span>
+                <h4>Notifications</h4>
+              </div>
+              <button type="button" id="notification-close" aria-label="Close notifications">
+                {{ icon("x", 15) }}
+              </button>
+            </div>
+
+            <div class="notification-list" id="notification-list">
+              <div class="notification-loading">Loading notifications…</div>
+            </div>
+
+            <div class="notification-footer">
+              <div class="notification-footer-actions"><button type="button" id="notification-read-all">Mark all as read</button><button type="button" id="notification-clear-all">Clear all</button></div>
+              <a href="{{ url_for('notifications') }}">View all {{ icon("chevron-right", 13) }}</a>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% block crumbs %}{% endblock %}
+
+    {% block content %}{% endblock %}
+  </div>
+
+</div>
+
+<!-- ==================================================== flashes ==== -->
+<div class="flashes" id="flashes">
+  {% for flash in flashes %}
+    {% set category = flash.category %}{% set message = flash.message %}
+    <div class="flash {{ category }}">
+      <span>{{ message }}</span>
+      <button class="flash-close" aria-label="Dismiss" onclick="this.parentElement.remove()">{{ icon("x", 15) }}</button>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- ==================================================== chatbot ==== -->
+{% if session.user_id %}
+<button id="chatbot-toggle" onclick="toggleChatbot()" aria-label="Open the Learnora assistant">
+  {{ icon("message-circle", 24) }}
+</button>
+<div id="chatbot-panel">
+  <div id="chatbot-header">
+    {{ icon("sparkles", 17) }}
+    <span>Learnora Assistant</span>
+    <button class="chat-close" onclick="toggleChatbot()" aria-label="Close assistant">{{ icon("x", 16) }}</button>
+  </div>
+  <div id="chatbot-messages">
+    <div class="chat-msg bot">Hi! Ask me about anything on your roadmap, or how the recommendations work.</div>
+  </div>
+  <div id="chatbot-input-row">
+    <input type="text" id="chatbot-input" placeholder="Ask a question..."
+           onkeydown="if(event.key==='Enter') sendChatMessage()">
+    <button onclick="sendChatMessage()" aria-label="Send">{{ icon("send", 17) }}</button>
+  </div>
+</div>
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+<script>
+  // Avatar account menu
+  (function () {
+    const button = document.getElementById('sidebar-avatar-button');
+    const menu = document.getElementById('profile-menu');
+    if (!button || !menu) return;
+    const close = () => { menu.hidden = true; button.setAttribute('aria-expanded', 'false'); };
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      menu.hidden = !menu.hidden;
+      button.setAttribute('aria-expanded', String(!menu.hidden));
+    });
+    menu.addEventListener('click', event => event.stopPropagation());
+    document.addEventListener('click', close);
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') close(); });
+  })();
+
+  // Desktop sidebar collapse + mobile drawer
+  (function () {
+    const dashboard = document.querySelector('.app-dashboard');
+    const sidebar = document.getElementById('app-sidebar');
+    const scrim = document.getElementById('sidebar-scrim');
+    const mobileToggle = document.getElementById('sidebar-toggle');
+    const desktopToggle = document.getElementById('desktop-sidebar-toggle');
+    const storageKey = 'learnora-sidebar-collapsed';
+
+    const setCollapsed = (collapsed) => {
+      dashboard.classList.toggle('sidebar-collapsed', collapsed);
+      desktopToggle.setAttribute('aria-expanded', String(!collapsed));
+      desktopToggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+      desktopToggle.innerHTML = collapsed
+        ? '<svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'
+        : '<svg class="ic" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>';
+      try { localStorage.setItem(storageKey, collapsed ? '1' : '0'); } catch (_) {}
+    };
+
+    try { setCollapsed(localStorage.getItem(storageKey) === '1'); } catch (_) { setCollapsed(false); }
+    desktopToggle.addEventListener('click', () => setCollapsed(!dashboard.classList.contains('sidebar-collapsed')));
+
+    const closeMobile = () => { sidebar.classList.remove('open'); scrim.classList.remove('open'); };
+    mobileToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      scrim.classList.toggle('open');
+    });
+    scrim.addEventListener('click', closeMobile);
+    sidebar.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      if (window.matchMedia('(max-width: 760px)').matches) closeMobile();
+    }));
+  })();
+
+  // auto-dismiss flash messages
+  setTimeout(() => {
+    document.querySelectorAll('#flashes .flash').forEach((el, i) => {
+      setTimeout(() => {
+        el.style.transition = 'opacity .4s ease, transform .4s ease';
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(22px)';
+        setTimeout(() => el.remove(), 420);
+      }, i * 120);
+    });
+  }, 6000);
+</script>
+
+<script>
+  /* Persistent Firestore notifications */
+  (function () {
+    const wrap = document.getElementById('notification-wrap');
+    const button = document.getElementById('notification-button');
+    const popover = document.getElementById('notification-popover');
+    const list = document.getElementById('notification-list');
+    const count = document.getElementById('notification-count');
+    const close = document.getElementById('notification-close');
+    const readAll = document.getElementById('notification-read-all');
+    const clearAll = document.getElementById('notification-clear-all');
+
+    if (!wrap || !button || !popover || !list) return;
+
+    let notifications = [];
+
+    const escapeHtml = (value) =>
+      String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[char]));
+
+    const iconSvg = (name) => {
+      const icons = {
+        bell: '<svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>',
+        book: '<svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"/><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/></svg>',
+        'book-open': '<svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4.5A2.5 2.5 0 0 1 4.5 2H11v18H4.5A2.5 2.5 0 0 0 2 22V4.5Z"/><path d="M22 4.5A2.5 2.5 0 0 0 19.5 2H13v18h6.5A2.5 2.5 0 0 1 22 22V4.5Z"/></svg>',
+        headset: '<svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M4 14v3a2 2 0 0 0 2 2h1v-6H6a2 2 0 0 0-2 2Zm16 0v3a2 2 0 0 1-2 2h-1v-6h1a2 2 0 0 1 2 2Z"/><path d="M19 19c0 1.7-1.8 3-4 3h-1"/></svg>',
+        user: '<svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+        sparkles: '<svg class="ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3-1.4 4.6L6 9l4.6 1.4L12 15l1.4-4.6L18 9l-4.6-1.4L12 3Z"/><path d="m19 14-.7 2.3L16 17l2.3.7L19 20l.7-2.3L19 14Z"/></svg>'
+      };
+      return icons[name] || icons.bell;
+    };
+
+    const relativeTime = (value) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+      if (seconds < 60) return 'Just now';
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      if (days < 7) return `${days}d ago`;
+      return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    };
+
+    const setBadge = () => {
+      const unread = notifications.filter((item) => !item.read).length;
+      count.hidden = unread === 0;
+      count.textContent = unread > 99 ? '99+' : String(unread);
+      button.classList.toggle('has-unread', unread > 0);
+    };
+
+    const render = () => {
+      setBadge();
+
+      if (!notifications.length) {
+        list.innerHTML = `
+          <div class="notification-empty">
+            <span class="notification-empty-icon">${iconSvg('bell')}</span>
+            <strong>You're all caught up</strong>
+            <span>New course activity, support replies and account updates will appear here.</span>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = notifications.slice(0, 8).map((item) => `
+        <a class="notification-item ${item.read ? '' : 'unread'}"
+           href="${escapeHtml(item.link || '/dashboard')}"
+           data-notification-id="${escapeHtml(item.id)}">
+          <span class="notification-item-icon">${iconSvg(item.icon)}</span>
+          <span class="notification-item-copy">
+            <strong>${escapeHtml(item.title)}</strong>
+            <span>${escapeHtml(item.message)}</span>
+            <span class="notification-time">${escapeHtml(relativeTime(item.created_at))}</span>
+          </span>
+          ${item.read ? '' : '<span class="notification-unread-dot"></span>'}
+        </a>
+      `).join('');
+    };
+
+    const load = async () => {
+      try {
+        const response = await fetch('/api/notifications?limit=50', {
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) throw new Error('Notification request failed');
+
+        const data = await response.json();
+        notifications = Array.isArray(data.notifications) ? data.notifications : [];
+        render();
+      } catch (error) {
+        console.error('[notifications]', error);
+        list.innerHTML = `
+          <div class="notification-empty">
+            <span class="notification-empty-icon">${iconSvg('bell')}</span>
+            <strong>Notifications unavailable</strong>
+            <span>Please refresh the page and try again.</span>
+          </div>`;
+      }
+    };
+
+    const markRead = async (id) => {
+      if (!id) return;
+      const item = notifications.find((entry) => entry.id === id);
+      if (!item || item.read) return;
+
+      item.read = true;
+      render();
+
+      try {
+        await fetch(`/api/notifications/${encodeURIComponent(id)}/read`, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json' },
+          keepalive: true
+        });
+      } catch (error) {
+        console.error('[notifications] mark read', error);
+      }
+    };
+
+    const markAllRead = async () => {
+      notifications.forEach((item) => { item.read = true; });
+      render();
+
+      try {
+        await fetch('/api/notifications/read-all', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json' }
+        });
+      } catch (error) {
+        console.error('[notifications] mark all read', error);
+      }
+    };
+
+    const clearAllNotifications = async () => {
+      if (!notifications.length) return;
+      if (!window.confirm('Clear all notifications? This cannot be undone.')) return;
+
+      try {
+        const response = await fetch('/api/notifications/clear-all', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || 'Could not clear notifications.');
+        notifications = [];
+        render();
+      } catch (error) {
+        console.error('[notifications] clear all', error);
+        window.alert(error.message);
+      }
+    };
+
+    const open = async () => {
+      popover.hidden = false;
+      button.setAttribute('aria-expanded', 'true');
+      await load();
+    };
+
+    const shut = () => {
+      popover.hidden = true;
+      button.setAttribute('aria-expanded', 'false');
+    };
+
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      popover.hidden ? open() : shut();
+    });
+
+    close?.addEventListener('click', shut);
+
+    list.addEventListener('click', (event) => {
+      const item = event.target.closest('.notification-item');
+      if (!item) return;
+      event.stopPropagation();
+      markRead(item.dataset.notificationId);
+    });
+
+    readAll?.addEventListener('click', (event) => {
+      event.preventDefault();
+      markAllRead();
+    });
+
+    clearAll?.addEventListener('click', (event) => {
+      event.preventDefault();
+      clearAllNotifications();
+    });
+
+    // Keep the bell and unread count live without a page refresh.
+    window.setInterval(load, 5000);
+
+    document.addEventListener('click', (event) => {
+      if (!wrap.contains(event.target)) shut();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') shut();
+    });
+
+    load();
+  })();
+</script>
+
+{% block scripts %}{% endblock %}
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>

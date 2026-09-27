@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Start {{ skill.display_name }} — Learnora{% endblock %}
+{% block topbar_title %}Personalize {{ skill.display_name }}{% endblock %}
+{% block topbar_sub %}Tell Learnora what you already need to learn.{% endblock %}
+
+{% block crumbs %}
+<div class="app-crumbs">
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  <span class="sep">/</span>
+  <span>{{ skill.display_name }}</span>
+</div>
+{% endblock %}
+
+{% block content %}
+<div style="max-width:760px;">
+  <div class="page-head">
+    <h1>What is your syllabus?</h1>
+    <p>Give Learnora your college/company syllabus or use the general Learnora syllabus. Groq AI will turn it into a focused roadmap before testing your current level.</p>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" id="syllabus-form">
+    <div class="rec-card" style="margin-bottom:18px;">
+      <h3 style="margin-top:0;">1. Choose your syllabus</h3>
+      <div style="display:grid; gap:12px;">
+        <label class="syllabus-option" id="general-option">
+          <input type="radio" name="syllabus_mode" value="general" checked onchange="toggleSyllabusMode()">
+          <span><strong>Use general syllabus</strong><small>Use Learnora's complete {{ skill.display_name }} curriculum and generate a generalized roadmap.</small></span>
+        </label>
+        <label class="syllabus-option" id="file-option">
+          <input type="radio" name="syllabus_mode" value="file" onchange="toggleSyllabusMode()">
+          <span><strong>Upload my syllabus</strong><small>JPG, JPEG, PNG, PDF, TXT, MD or DOCX.</small></span>
+        </label>
+        <label class="syllabus-option" id="text-option">
+          <input type="radio" name="syllabus_mode" value="text" onchange="toggleSyllabusMode()">
+          <span><strong>Paste syllabus text</strong><small>Paste your unit/module/topic list directly.</small></span>
+        </label>
+      </div>
+
+      <div id="file-panel" style="display:none; margin-top:18px;">
+        <label class="form-group"><strong>Syllabus file</strong>
+          <input type="file" name="syllabus_file" accept=".jpg,.jpeg,.png,.pdf,.txt,.md,.docx,image/jpeg,image/png,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+        </label>
+        <div class="form-hint">For an image/PDF, Groq AI reads the document and maps it to Learnora's exact course topics.</div>
+      </div>
+
+      <div id="text-panel" style="display:none; margin-top:18px;">
+        <label class="form-group"><strong>Syllabus text</strong>
+          <textarea name="syllabus_text" rows="10" placeholder="Unit 1: Variables, data types...&#10;Unit 2: Control flow...&#10;Unit 3: Functions..."></textarea>
+        </label>
+      </div>
+    </div>
+
+    <div class="rec-card" style="margin-bottom:18px;">
+      <h3 style="margin-top:0;">2. Study time</h3>
+      <label class="form-group"><strong>How many hours per week can you realistically study?</strong>
+        <input type="number" name="hours_per_week" min="1" max="40" value="5" required>
+      </label>
+    </div>
+
+    <div class="explain" style="margin-bottom:18px;">
+      <strong>Next:</strong> Learnora will show your syllabus roadmap first. Then Groq AI will generate a 7-question diagnostic from basic → intermediate → advanced. Your result decides which level of content you see.
+    </div>
+
+    <button type="submit" class="btn secondary block btn-big" id="build-btn">
+      <span id="build-btn-text">Build my syllabus roadmap {{ icon("arrow-right", 17) }}</span>
+      <span id="build-btn-loading" style="display:none;">Analyzing with AI… Please wait</span>
+    </button>
+    <div id="ai-loading" style="display:none; margin-top:14px; padding:14px 16px; border:1px solid var(--border,#e5e7eb); border-radius:14px; line-height:1.5;">
+      <strong>Learnora AI is working…</strong><br>
+      <span style="color:var(--muted);">Syllabus analysis can take 20–60 seconds, especially with free Groq models. Please keep this page open.</span>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleSyllabusMode() {
+  const mode = document.querySelector('input[name="syllabus_mode"]:checked')?.value;
+  document.getElementById('file-panel').style.display = mode === 'file' ? 'block' : 'none';
+  document.getElementById('text-panel').style.display = mode === 'text' ? 'block' : 'none';
+}
+toggleSyllabusMode();
+
+document.getElementById('syllabus-form')?.addEventListener('submit', function () {
+  const button = document.getElementById('build-btn');
+  const text = document.getElementById('build-btn-text');
+  const loading = document.getElementById('build-btn-loading');
+  const panel = document.getElementById('ai-loading');
+
+  if (button) button.disabled = true;
+  if (text) text.style.display = 'none';
+  if (loading) loading.style.display = 'inline';
+  if (panel) panel.style.display = 'block';
+});
+</script>
+<style>
+.syllabus-option{display:flex;gap:14px;align-items:flex-start;padding:16px;border:1px solid var(--border,#e5e7eb);border-radius:16px;cursor:pointer;background:rgba(255,255,255,.55)}
+.syllabus-option input{margin-top:4px}.syllabus-option strong{display:block;margin-bottom:4px}.syllabus-option small{display:block;color:var(--muted);line-height:1.5}
+</style>
+{% endblock %}

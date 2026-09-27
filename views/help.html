@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Help Center — Learnora{% endblock %}
+{% block topbar_title %}Help Center{% endblock %}
+{% block topbar_sub %}Get answers, troubleshoot your account, or contact the Learnora support team.{% endblock %}
+{% block content %}
+<div class="helpdesk-shell">
+  <section class="helpdesk-hero">
+    <div class="helpdesk-hero-copy">
+      <span class="helpdesk-kicker">LEARNORA SUPPORT</span>
+      <h1>How can we help?</h1>
+      <p>Find a quick answer or send us a support request. Your account, learning path and assessment questions all live here.</p>
+      <div class="helpdesk-status"><span class="status-dot"></span> Support center is available</div>
+    </div>
+    <div class="helpdesk-hero-orb" aria-hidden="true">{{ icon("headset", 42) }}</div>
+  </section>
+
+  <div class="helpdesk-layout">
+    <section class="helpdesk-card helpdesk-contact">
+      <div class="helpdesk-card-top">
+        <div class="helpdesk-icon blue">{{ icon("message-circle", 20) }}</div>
+        <div><span class="card-eyebrow">CONTACT SUPPORT</span><h2>Send a support request</h2><p>Tell us what happened and we'll have the details needed to understand your issue.</p></div>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" class="helpdesk-form" id="helpdesk-form">
+        <div class="helpdesk-form-grid">
+          <label class="form-group">
+            <span>What do you need help with?</span>
+            <select name="topic" id="help-topic">
+              <option>Account & profile</option>
+              <option>Skills & courses</option>
+              <option>Assessments</option>
+              <option>Roadmaps</option>
+              <option>Technical issue</option>
+              <option>Notifications & settings</option>
+              <option>Feedback / suggestion</option>
+              <option>Something else</option>
+            </select>
+          </label>
+          <label class="form-group">
+            <span>Priority</span>
+            <select name="priority" id="help-priority">
+              <option>Normal</option>
+              <option>Important</option>
+              <option>Urgent</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="form-group">
+          <span>Your question</span>
+          <textarea name="message" id="help-message" rows="7" maxlength="2000" required placeholder="Describe the problem, what you expected to happen, and what you see instead..."></textarea>
+          <small class="character-count"><span id="help-count">0</span>/2000</small>
+        </label>
+
+        <label class="form-group">
+          <span>Attachment (optional)</span>
+          <input type="file" name="help_attachment" id="help-attachment"
+                 accept="image/png,image/jpeg,image/webp,image/gif,application/pdf,text/plain,.doc,.docx">
+          <small>Attach a screenshot or document if it helps explain the problem. Maximum 4 MB.</small>
+        </label>
+
+        <div class="helpdesk-submit-row">
+          <div class="secure-note">{{ icon("shield-check", 16) }} Your request is linked to your Learnora account.</div>
+          <button class="helpdesk-submit" type="submit">Send request {{ icon("send", 16) }}</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="helpdesk-side">
+      <section class="helpdesk-card support-status-card">
+        <div class="side-card-title"><div class="helpdesk-icon purple">{{ icon("life-buoy", 19) }}</div><div><span class="card-eyebrow">SUPPORT CENTER</span><h3>Need a place to start?</h3></div></div>
+        <div class="support-step"><span>01</span><div><strong>Choose a topic</strong><small>Pick the area closest to your question.</small></div></div>
+        <div class="support-step"><span>02</span><div><strong>Describe the issue</strong><small>Include the screen, feature or action involved.</small></div></div>
+        <div class="support-step"><span>03</span><div><strong>Send your request</strong><small>Your request is saved for the support team.</small></div></div>
+      </section>
+
+      <section class="helpdesk-card faq-card">
+        <div class="side-card-title"><div class="helpdesk-icon green">{{ icon("book-open", 19) }}</div><div><span class="card-eyebrow">HELP TOPICS</span><h3>Quick answers</h3></div></div>
+        <div class="faq-list">
+          <a href="{{ url_for('profile') }}"><span>Update profile & picture</span>{{ icon("arrow-up-right", 14) }}</a>
+          <a href="{{ url_for('settings') }}"><span>Notifications & settings</span>{{ icon("arrow-up-right", 14) }}</a>
+          <a href="{{ url_for('assessments') }}"><span>How assessments work</span>{{ icon("arrow-up-right", 14) }}</a>
+          <a href="{{ url_for('roadmaps') }}"><span>Understanding my roadmap</span>{{ icon("arrow-up-right", 14) }}</a>
+        </div>
+      </section>
+
+      <section class="helpdesk-card feature-help-card">
+        <div class="feature-help-icon">?</div>
+        <div><strong>Can't find what you need?</strong><p>Send the request anyway. Add screenshots or exact steps in your message when useful.</p></div>
+      </section>
+    </aside>
+  </div>
+
+
+  <!-- =====================================================
+       YOUR SUPPORT REQUESTS / ADMIN RESPONSES
+  ====================================================== -->
+
+  <div id="support-response-root">
+  {% if support_tickets %}
+  <section class="helpdesk-card support-response-card">
+    <div class="helpdesk-card-top">
+      <div class="helpdesk-icon purple">{{ icon("message-circle", 20) }}</div>
+      <div>
+        <span class="card-eyebrow">YOUR SUPPORT REQUESTS</span>
+        <h2>Support responses</h2>
+        <p>See your submitted requests and messages from the Learnora admin team.</p>
+      </div>
+    </div>
+
+    <div class="support-response-list">
+      {% for ticket in support_tickets %}
+      <article class="support-response-item">
+        <div class="support-response-head">
+          <div>
+            <strong>{{ ticket.topic or 'General help' }}</strong>
+            <small>{{ ticket.created_at|dt }}</small>
+          </div>
+          <span class="support-student-status {{ 'approved' if ticket.status == 'approved' else 'open' }}">
+            {{ ticket.status or 'open' }}
+          </span>
+        </div>
+
+        <div class="support-student-question">
+          <span>Your request</span>
+          <p>{{ ticket.message or '—' }}</p>
+          {% if ticket.attachment and ticket.attachment.name %}
+          <a href="{{ '/api/helpdesk/tickets/' + ticket.id + '/attachment' }}" target="_blank" rel="noopener" style="display:inline-flex;margin-top:9px;font-size:12px;font-weight:700;">
+            View attachment: {{ ticket.attachment.name }}
+          </a>
+          {% endif %}
+        </div>
+
+        {% if ticket.admin_message %}
+        <div class="support-admin-message">
+          <div class="support-admin-message-title">
+            {{ icon("badge-check", 15) }}
+            <strong>Message from Learnora Admin</strong>
+          </div>
+          <p>{{ ticket.admin_message }}</p>
+        </div>
+        {% else %}
+        <div class="support-waiting-message">
+          {{ icon("clock", 15) }}
+          <span>Waiting for the Learnora support team to review your request.</span>
+        </div>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <style>
+    .support-response-card {
+      margin-top: 22px;
+      margin-bottom: 28px;
+    }
+
+    .support-response-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .support-response-item {
+      padding: 17px;
+      border: 1px solid var(--theme-line, var(--line));
+      border-radius: 16px;
+      background: var(--theme-bg, #f8f9fd);
+    }
+
+    .support-response-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .support-response-head strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 15px;
+    }
+
+    .support-response-head small {
+      color: var(--theme-muted, var(--muted));
+      font-size: 12px;
+    }
+
+    .support-student-status {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    .support-student-status.open {
+      background: #eef4ff;
+      color: #3867ff;
+    }
+
+    .support-student-status.approved {
+      background: #e9f9f0;
+      color: #168652;
+    }
+
+    .support-student-question {
+      margin-top: 15px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #e3e8f2;
+    }
+
+    .support-student-question span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--theme-muted, var(--muted));
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .support-student-question p,
+    .support-admin-message p {
+      margin: 0;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .support-admin-message {
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: #eef7ff;
+      border: 1px solid #d8eaff;
+    }
+
+    .support-admin-message-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 7px;
+      font-size: 12px;
+    }
+
+    .support-waiting-message {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 11px 13px;
+      border-radius: 12px;
+      background: #faf8ef;
+      color: #77682a;
+      font-size: 13px;
+    }
+  </style>
+  {% endif %}
+  </div>
+
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(function(){
+  const box = document.getElementById('help-message');
+  const count = document.getElementById('help-count');
+  if(box && count){ const update=()=>count.textContent=box.value.length; box.addEventListener('input',update); update(); }
+
+  const root = document.getElementById('support-response-root');
+  if (!root) return;
+
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[char]));
+
+  const formatDate = (value) => {
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return '';
+    return d.toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+  };
+
+  const icon = (name) => name === 'badge-check'
+    ? '<svg class="ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.2 5l3-.3.8 2.9 2.5 1.6-1.3 2.7 1.3 2.7-2.5 1.6-.8 2.9-3-.3L12 21l-2.2-2-3 .3-.8-2.9-2.5-1.6 1.3-2.7-1.3-2.7 2.5-1.6.8-2.9 3 .3L12 3Z"/><path d="m8 12 2.5 2.5L16 9"/></svg>'
+    : '<svg class="ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+
+  let lastSignature = '';
+  const render = (tickets) => {
+    if (!tickets.length) { root.innerHTML = ''; return; }
+    root.innerHTML = `<section class="helpdesk-card support-response-card">
+      <div class="helpdesk-card-top"><div class="helpdesk-icon purple"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-8 8 8.7 8.7 0 0 1-3.4-.7L4 20l1.2-4.2A8 8 0 1 1 20 11.5Z"/></svg></div><div><span class="card-eyebrow">YOUR SUPPORT REQUESTS</span><h2>Support responses</h2><p>See your submitted requests and messages from the Learnora admin team.</p></div></div>
+      <div class="support-response-list">${tickets.map(ticket => `<article class="support-response-item"><div class="support-response-head"><div><strong>${escapeHtml(ticket.topic || 'General help')}</strong><small>${escapeHtml(formatDate(ticket.created_at))}</small></div><span class="support-student-status ${ticket.status === 'approved' ? 'approved' : 'open'}">${escapeHtml(ticket.status || 'open')}</span></div><div class="support-student-question"><span>Your request</span><p>${escapeHtml(ticket.message || '—')}</p>${ticket.attachment?.name ? `<a href="/api/helpdesk/tickets/${encodeURIComponent(ticket.id)}/attachment" target="_blank" rel="noopener" style="display:inline-flex;margin-top:9px;font-size:12px;font-weight:700;">View attachment: ${escapeHtml(ticket.attachment.name)}</a>` : ''}</div>${ticket.admin_message ? `<div class="support-admin-message"><div class="support-admin-message-title">${icon('badge-check')}<strong>Message from Learnora Admin</strong></div><p>${escapeHtml(ticket.admin_message)}</p></div>` : `<div class="support-waiting-message">${icon('clock')}<span>Waiting for the Learnora support team to review your request.</span></div>`}</article>`).join('')}</div>
+    </section>`;
+  };
+
+  const load = async () => {
+    try {
+      const response = await fetch('/api/helpdesk/tickets', { credentials: 'same-origin', headers: { 'Accept': 'application/json' }, cache: 'no-store' });
+      if (!response.ok) throw new Error('Failed to load support requests');
+      const data = await response.json();
+      const tickets = Array.isArray(data.tickets) ? data.tickets : [];
+      const signature = JSON.stringify(tickets.map(t => [t.id, t.status, t.admin_message, t.message, t.updated_at]));
+      if (signature !== lastSignature) { lastSignature = signature; render(tickets); }
+    } catch (error) { console.error('[help] live refresh', error); }
+  };
+
+  load();
+  window.setInterval(load, 4000);
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,668 @@
+{
+  "skills": {
+    "python": {
+      "display_name": "Python Programming",
+      "description": "Learn Python from fundamentals to object-oriented programming.",
+      "aliases": ["python", "py", "py3", "python programming"],
+      "topics": [
+        "variables_datatypes",
+        "operators",
+        "control_flow",
+        "strings",
+        "lists_arrays",
+        "dictionaries_sets",
+        "functions",
+        "oop",
+        "file_handling",
+        "exception_handling",
+        "modules_packages"
+      ]
+    },
+    "web_dev": {
+      "display_name": "Web Development",
+      "description": "Learn front-end and back-end web development.",
+      "aliases": ["web dev", "webdev", "web development", "js", "javascript", "html", "css", "frontend", "front-end"],
+      "topics": [
+        "html_basics",
+        "css_basics",
+        "css_layout",
+        "javascript_basics",
+        "dom_events",
+        "responsive_design",
+        "apis_fetch",
+        "frontend_frameworks",
+        "backend_basics",
+        "databases_basics"
+      ]
+    },
+    "data_science": {
+      "display_name": "Data Science & Machine Learning",
+      "description": "Learn statistics, data analysis, and machine learning fundamentals.",
+      "aliases": ["data science", "ml", "machine learning", "py ds", "python for ds", "ds", "ai"],
+      "topics": [
+        "python_for_ds",
+        "statistics_basics",
+        "numpy_pandas",
+        "data_visualization",
+        "data_cleaning",
+        "ml_basics",
+        "supervised_learning",
+        "unsupervised_learning",
+        "model_evaluation",
+        "ml_projects"
+      ]
+    },
+    "dsa": {
+      "display_name": "Data Structures & Algorithms",
+      "description": "Master the core data structures and algorithms used in technical interviews and system design.",
+      "aliases": ["dsa", "data structures", "algorithms", "data structures and algorithms"],
+      "topics": [
+        "big_o",
+        "arrays_ds",
+        "linked_lists",
+        "stacks_queues",
+        "recursion",
+        "sorting_algorithms",
+        "trees",
+        "graphs",
+        "dynamic_programming"
+      ]
+    },
+    "dbms": {
+      "display_name": "Databases & SQL",
+      "description": "Learn relational database design, SQL, and how databases work under the hood.",
+      "aliases": ["dbms", "sql", "database", "databases", "database management"],
+      "topics": [
+        "db_basics",
+        "sql_basics",
+        "joins",
+        "normalization",
+        "indexes",
+        "transactions",
+        "er_modeling"
+      ]
+    },
+    "operating_systems": {
+      "display_name": "Operating Systems",
+      "description": "Understand how operating systems manage processes, memory, and files.",
+      "aliases": ["os", "operating systems", "operating system"],
+      "topics": [
+        "os_basics",
+        "processes_threads",
+        "cpu_scheduling",
+        "memory_management",
+        "virtual_memory",
+        "deadlocks",
+        "file_systems"
+      ]
+    },
+    "computer_networks": {
+      "display_name": "Computer Networks",
+      "description": "Learn how data travels across networks, from cabling to HTTP.",
+      "aliases": ["cn", "computer networks", "networking", "networks"],
+      "topics": [
+        "networking_basics",
+        "osi_model",
+        "tcp_ip",
+        "dns_http",
+        "routing_switching",
+        "network_security"
+      ]
+    },
+    "system_design": {
+      "display_name": "System Design",
+      "description": "Learn to design scalable, reliable software systems for interviews and real-world engineering.",
+      "aliases": ["system design", "hld", "high level design", "distributed systems"],
+      "topics": [
+        "system_design_basics",
+        "scalability",
+        "load_balancing",
+        "caching",
+        "databases_at_scale",
+        "microservices",
+        "system_design_case_studies"
+      ]
+    },
+    "git_github": {
+      "display_name": "Git & GitHub",
+      "description": "Learn version control with Git and collaboration workflows on GitHub.",
+      "aliases": ["git", "github", "version control", "git and github"],
+      "topics": [
+        "git_basics",
+        "branching_merging",
+        "remote_repos",
+        "pull_requests",
+        "git_workflows"
+      ]
+    }
+  },
+
+  "prerequisites": {
+    "operators": ["variables_datatypes"],
+    "control_flow": ["operators"],
+    "strings": ["control_flow"],
+    "lists_arrays": ["strings"],
+    "dictionaries_sets": ["lists_arrays"],
+    "functions": ["control_flow"],
+    "oop": ["functions", "dictionaries_sets"],
+    "file_handling": ["functions"],
+    "exception_handling": ["functions"],
+    "modules_packages": ["oop"],
+
+    "css_basics": ["html_basics"],
+    "css_layout": ["css_basics"],
+    "javascript_basics": ["html_basics"],
+    "dom_events": ["javascript_basics"],
+    "responsive_design": ["css_layout"],
+    "apis_fetch": ["dom_events"],
+    "frontend_frameworks": ["apis_fetch"],
+    "backend_basics": ["javascript_basics"],
+    "databases_basics": ["backend_basics"],
+
+    "statistics_basics": ["python_for_ds"],
+    "numpy_pandas": ["python_for_ds"],
+    "data_visualization": ["numpy_pandas"],
+    "data_cleaning": ["numpy_pandas"],
+    "ml_basics": ["statistics_basics", "data_cleaning"],
+    "supervised_learning": ["ml_basics"],
+    "unsupervised_learning": ["ml_basics"],
+    "model_evaluation": ["supervised_learning"],
+    "ml_projects": ["model_evaluation", "unsupervised_learning"],
+
+    "arrays_ds": ["big_o"],
+    "linked_lists": ["arrays_ds"],
+    "stacks_queues": ["linked_lists"],
+    "recursion": ["big_o"],
+    "sorting_algorithms": ["arrays_ds"],
+    "trees": ["linked_lists"],
+    "graphs": ["trees"],
+    "dynamic_programming": ["recursion"],
+
+    "sql_basics": ["db_basics"],
+    "joins": ["sql_basics"],
+    "normalization": ["db_basics"],
+    "indexes": ["joins"],
+    "transactions": ["joins"],
+    "er_modeling": ["normalization"],
+
+    "processes_threads": ["os_basics"],
+    "cpu_scheduling": ["processes_threads"],
+    "memory_management": ["os_basics"],
+    "virtual_memory": ["memory_management"],
+    "deadlocks": ["processes_threads"],
+    "file_systems": ["memory_management"],
+
+    "osi_model": ["networking_basics"],
+    "tcp_ip": ["osi_model"],
+    "dns_http": ["tcp_ip"],
+    "routing_switching": ["tcp_ip"],
+    "network_security": ["dns_http"],
+
+    "scalability": ["system_design_basics"],
+    "load_balancing": ["scalability"],
+    "caching": ["scalability"],
+    "databases_at_scale": ["caching"],
+    "microservices": ["load_balancing"],
+    "system_design_case_studies": ["microservices"],
+
+    "branching_merging": ["git_basics"],
+    "remote_repos": ["git_basics"],
+    "pull_requests": ["remote_repos"],
+    "git_workflows": ["pull_requests"]
+  },
+
+  "topic_meta": {
+    "variables_datatypes": {"display": "Variables & Data Types", "difficulty": 1, "hours": 2, "keywords": "variables data types int float string boolean type casting"},
+    "operators": {"display": "Operators", "difficulty": 1, "hours": 1.5, "keywords": "arithmetic operators comparison logical operators precedence"},
+    "control_flow": {"display": "Control Flow (if/else, loops)", "difficulty": 2, "hours": 3, "keywords": "if else elif for loop while loop break continue"},
+    "strings": {"display": "Strings", "difficulty": 2, "hours": 2, "keywords": "string manipulation slicing formatting methods"},
+    "lists_arrays": {"display": "Lists / Arrays", "difficulty": 2, "hours": 3, "keywords": "list array indexing slicing append sort iteration"},
+    "dictionaries_sets": {"display": "Dictionaries & Sets", "difficulty": 3, "hours": 2.5, "keywords": "dictionary key value set hashmap lookup"},
+    "functions": {"display": "Functions", "difficulty": 3, "hours": 3, "keywords": "function def parameters return scope arguments recursion"},
+    "oop": {"display": "Object-Oriented Programming", "difficulty": 4, "hours": 4, "keywords": "class object inheritance polymorphism encapsulation constructor"},
+    "file_handling": {"display": "File Handling", "difficulty": 3, "hours": 2, "keywords": "file read write open close csv json"},
+    "exception_handling": {"display": "Exception Handling", "difficulty": 3, "hours": 1.5, "keywords": "try except finally error handling exceptions"},
+    "modules_packages": {"display": "Modules & Packages", "difficulty": 4, "hours": 2, "keywords": "import module package pip library"},
+
+    "html_basics": {"display": "HTML Basics", "difficulty": 1, "hours": 2, "keywords": "html tags elements structure semantic markup"},
+    "css_basics": {"display": "CSS Basics", "difficulty": 1, "hours": 2, "keywords": "css selectors properties styling colors fonts"},
+    "css_layout": {"display": "CSS Layout (Flexbox/Grid)", "difficulty": 2, "hours": 3, "keywords": "flexbox grid layout positioning"},
+    "javascript_basics": {"display": "JavaScript Basics", "difficulty": 2, "hours": 3, "keywords": "javascript variables functions loops conditionals"},
+    "dom_events": {"display": "DOM & Events", "difficulty": 3, "hours": 2.5, "keywords": "dom manipulation event listener click handler"},
+    "responsive_design": {"display": "Responsive Design", "difficulty": 3, "hours": 2, "keywords": "media queries responsive mobile first breakpoints"},
+    "apis_fetch": {"display": "APIs & Fetch", "difficulty": 3, "hours": 2.5, "keywords": "fetch api ajax json http request async"},
+    "frontend_frameworks": {"display": "Frontend Frameworks (React basics)", "difficulty": 4, "hours": 4, "keywords": "react components state props jsx hooks"},
+    "backend_basics": {"display": "Backend Basics (Node/Flask)", "difficulty": 4, "hours": 3.5, "keywords": "server backend routes rest api node flask express"},
+    "databases_basics": {"display": "Databases Basics", "difficulty": 4, "hours": 3, "keywords": "sql database query table schema crud"},
+
+    "python_for_ds": {"display": "Python for Data Science", "difficulty": 2, "hours": 3, "keywords": "python data science basics syntax"},
+    "statistics_basics": {"display": "Statistics Basics", "difficulty": 2, "hours": 3.5, "keywords": "mean median mode variance standard deviation probability distribution"},
+    "numpy_pandas": {"display": "NumPy & Pandas", "difficulty": 3, "hours": 3.5, "keywords": "numpy array pandas dataframe series indexing"},
+    "data_visualization": {"display": "Data Visualization", "difficulty": 3, "hours": 2.5, "keywords": "matplotlib seaborn plotting charts graphs visualization"},
+    "data_cleaning": {"display": "Data Cleaning & Preprocessing", "difficulty": 3, "hours": 3, "keywords": "missing values outliers normalization preprocessing"},
+    "ml_basics": {"display": "Machine Learning Basics", "difficulty": 4, "hours": 4, "keywords": "machine learning basics supervised unsupervised model training"},
+    "supervised_learning": {"display": "Supervised Learning", "difficulty": 4, "hours": 4, "keywords": "regression classification linear regression decision tree"},
+    "unsupervised_learning": {"display": "Unsupervised Learning", "difficulty": 4, "hours": 3.5, "keywords": "clustering kmeans pca dimensionality reduction"},
+    "model_evaluation": {"display": "Model Evaluation", "difficulty": 4, "hours": 2.5, "keywords": "precision recall f1 accuracy auc roc cross validation"},
+    "ml_projects": {"display": "ML Projects & Deployment", "difficulty": 5, "hours": 5, "keywords": "end to end project deployment pipeline model"},
+
+    "big_o": {"display": "Big O Notation", "difficulty": 2, "hours": 2, "keywords": "time complexity space complexity big o notation efficiency"},
+    "arrays_ds": {"display": "Arrays", "difficulty": 2, "hours": 2, "keywords": "array indexing static dynamic arrays traversal"},
+    "linked_lists": {"display": "Linked Lists", "difficulty": 3, "hours": 3, "keywords": "singly doubly linked list node pointer traversal"},
+    "stacks_queues": {"display": "Stacks & Queues", "difficulty": 3, "hours": 2.5, "keywords": "stack queue lifo fifo push pop enqueue dequeue"},
+    "recursion": {"display": "Recursion", "difficulty": 3, "hours": 3, "keywords": "recursion base case call stack recursive function"},
+    "sorting_algorithms": {"display": "Sorting Algorithms", "difficulty": 3, "hours": 3.5, "keywords": "bubble sort merge sort quicksort insertion sort selection sort"},
+    "trees": {"display": "Trees & Binary Search Trees", "difficulty": 4, "hours": 4, "keywords": "binary tree binary search tree traversal bst height"},
+    "graphs": {"display": "Graphs", "difficulty": 4, "hours": 4, "keywords": "graph bfs dfs adjacency list adjacency matrix shortest path"},
+    "dynamic_programming": {"display": "Dynamic Programming", "difficulty": 5, "hours": 5, "keywords": "dynamic programming memoization tabulation optimal substructure"},
+
+    "db_basics": {"display": "Database Basics", "difficulty": 1, "hours": 2, "keywords": "database table row column relational database dbms"},
+    "sql_basics": {"display": "SQL Basics", "difficulty": 2, "hours": 3, "keywords": "select insert update delete where sql query"},
+    "joins": {"display": "SQL Joins", "difficulty": 3, "hours": 2.5, "keywords": "inner join left join right join full outer join"},
+    "normalization": {"display": "Normalization", "difficulty": 3, "hours": 2.5, "keywords": "1nf 2nf 3nf normalization redundancy database design"},
+    "indexes": {"display": "Indexes", "difficulty": 3, "hours": 2, "keywords": "index b-tree query performance indexing database"},
+    "transactions": {"display": "Transactions & ACID", "difficulty": 4, "hours": 2.5, "keywords": "acid atomicity consistency isolation durability transaction"},
+    "er_modeling": {"display": "ER Modeling", "difficulty": 3, "hours": 2.5, "keywords": "entity relationship diagram er model database schema design"},
+
+    "os_basics": {"display": "OS Basics", "difficulty": 1, "hours": 2, "keywords": "operating system kernel basics what is an os"},
+    "processes_threads": {"display": "Processes & Threads", "difficulty": 3, "hours": 3, "keywords": "process thread multithreading context switch pcb"},
+    "cpu_scheduling": {"display": "CPU Scheduling", "difficulty": 4, "hours": 3, "keywords": "cpu scheduling fcfs round robin priority scheduling algorithm"},
+    "memory_management": {"display": "Memory Management", "difficulty": 3, "hours": 3, "keywords": "memory management paging segmentation allocation"},
+    "virtual_memory": {"display": "Virtual Memory", "difficulty": 4, "hours": 3, "keywords": "virtual memory page fault swapping demand paging"},
+    "deadlocks": {"display": "Deadlocks", "difficulty": 4, "hours": 2.5, "keywords": "deadlock mutual exclusion circular wait deadlock prevention"},
+    "file_systems": {"display": "File Systems", "difficulty": 3, "hours": 2.5, "keywords": "file system inode directory structure disk storage"},
+
+    "networking_basics": {"display": "Networking Basics", "difficulty": 1, "hours": 2, "keywords": "network basics client server ip address networking"},
+    "osi_model": {"display": "OSI Model", "difficulty": 2, "hours": 2.5, "keywords": "osi model seven layers physical data link network transport"},
+    "tcp_ip": {"display": "TCP/IP", "difficulty": 3, "hours": 3, "keywords": "tcp udp ip protocol three way handshake"},
+    "dns_http": {"display": "DNS & HTTP", "difficulty": 3, "hours": 2.5, "keywords": "dns domain name system http https request response"},
+    "routing_switching": {"display": "Routing & Switching", "difficulty": 4, "hours": 3, "keywords": "router switch routing table packet forwarding"},
+    "network_security": {"display": "Network Security", "difficulty": 4, "hours": 3, "keywords": "firewall vpn encryption network security ssl tls"},
+
+    "system_design_basics": {"display": "System Design Basics", "difficulty": 2, "hours": 2.5, "keywords": "system design fundamentals requirements client server"},
+    "scalability": {"display": "Scalability", "difficulty": 3, "hours": 3, "keywords": "horizontal scaling vertical scaling scalability throughput"},
+    "load_balancing": {"display": "Load Balancing", "difficulty": 4, "hours": 2.5, "keywords": "load balancer round robin reverse proxy traffic distribution"},
+    "caching": {"display": "Caching", "difficulty": 4, "hours": 2.5, "keywords": "cache redis cdn cache invalidation cache eviction"},
+    "databases_at_scale": {"display": "Databases at Scale", "difficulty": 4, "hours": 3, "keywords": "sharding replication database scaling partitioning"},
+    "microservices": {"display": "Microservices", "difficulty": 5, "hours": 3.5, "keywords": "microservices monolith api gateway service architecture"},
+    "system_design_case_studies": {"display": "System Design Case Studies", "difficulty": 5, "hours": 4, "keywords": "design a url shortener design twitter case study interview"},
+
+    "git_basics": {"display": "Git Basics", "difficulty": 1, "hours": 1.5, "keywords": "git init add commit status log version control"},
+    "branching_merging": {"display": "Branching & Merging", "difficulty": 2, "hours": 2, "keywords": "git branch merge conflict checkout"},
+    "remote_repos": {"display": "Remote Repositories", "difficulty": 2, "hours": 1.5, "keywords": "git push pull clone remote origin github"},
+    "pull_requests": {"display": "Pull Requests", "difficulty": 3, "hours": 1.5, "keywords": "pull request code review github collaboration"},
+    "git_workflows": {"display": "Git Workflows", "difficulty": 3, "hours": 2, "keywords": "git flow rebase stash cherry-pick workflow"}
+  },
+
+  "cold_start_questions": {
+    "variables_datatypes": [
+      {"q": "Which of these is a valid Python variable name?", "options": ["2var", "var_2", "var-2", "var 2"], "answer": 1},
+      {"q": "What is the data type of `x = 3.14`?", "options": ["int", "float", "str", "bool"], "answer": 1},
+      {"q": "What does `type('hello')` return?", "options": ["<class 'str'>", "<class 'int'>", "<class 'list'>", "<class 'bool'>"], "answer": 0}
+    ],
+    "operators": [
+      {"q": "What is the result of `7 // 2` in Python?", "options": ["3.5", "3", "4", "2"], "answer": 1},
+      {"q": "What does `!=` mean?", "options": ["equal to", "not equal to", "assignment", "greater than"], "answer": 1},
+      {"q": "Which operator has the highest precedence?", "options": ["+", "*", "**", "-"], "answer": 2}
+    ],
+    "control_flow": [
+      {"q": "Which keyword exits a loop immediately?", "options": ["continue", "break", "pass", "return"], "answer": 1},
+      {"q": "What does `continue` do inside a loop?", "options": ["stops the loop", "skips to next iteration", "restarts program", "raises an error"], "answer": 1},
+      {"q": "How many times does `for i in range(3):` run?", "options": ["2", "3", "4", "infinite"], "answer": 1}
+    ],
+    "strings": [
+      {"q": "What does `'hello'[1:3]` return?", "options": ["'he'", "'el'", "'ell'", "'lo'"], "answer": 1},
+      {"q": "Which method converts a string to uppercase?", "options": [".upper()", ".up()", ".toUpper()", ".capitalize()"], "answer": 0},
+      {"q": "What does `len('python')` return?", "options": ["5", "6", "7", "error"], "answer": 1}
+    ],
+    "lists_arrays": [
+      {"q": "Which method adds an item to the end of a list?", "options": [".add()", ".append()", ".insert()", ".push()"], "answer": 1},
+      {"q": "What is `[1,2,3][-1]`?", "options": ["1", "2", "3", "error"], "answer": 2},
+      {"q": "How do you sort a list in place?", "options": ["list.sort()", "sort(list)", "list.order()", "list.sorted()"], "answer": 0}
+    ],
+    "dictionaries_sets": [
+      {"q": "How do you access a dictionary value by key 'x'?", "options": ["dict[x]", "dict.get('x')", "dict('x')", "dict->x"], "answer": 1},
+      {"q": "What data structure has no duplicate elements?", "options": ["list", "tuple", "set", "string"], "answer": 2},
+      {"q": "What does `dict.keys()` return?", "options": ["all values", "all keys", "all pairs", "the length"], "answer": 1}
+    ],
+    "functions": [
+      {"q": "Which keyword defines a function in Python?", "options": ["func", "def", "function", "lambda"], "answer": 1},
+      {"q": "What is returned if a function has no `return` statement?", "options": ["0", "None", "empty string", "error"], "answer": 1},
+      {"q": "What is a recursive function?", "options": ["a function with no arguments", "a function that calls itself", "a function that returns nothing", "a built-in function"], "answer": 1}
+    ],
+    "oop": [
+      {"q": "What keyword is used to create a class?", "options": ["class", "object", "def", "struct"], "answer": 0},
+      {"q": "What does inheritance allow?", "options": ["hiding data", "a class to reuse another class's behavior", "faster loops", "converting types"], "answer": 1},
+      {"q": "What is `self` used for in a class method?", "options": ["a global variable", "reference to the current instance", "a keyword for loops", "an import statement"], "answer": 1}
+    ],
+    "file_handling": [
+      {"q": "Which mode opens a file for appending?", "options": ["'r'", "'w'", "'a'", "'x'"], "answer": 2},
+      {"q": "What should you use to ensure a file is closed automatically?", "options": ["try/finally only", "with statement", "del statement", "close() is automatic"], "answer": 1},
+      {"q": "Which module is commonly used to read/write JSON files?", "options": ["json", "os", "sys", "re"], "answer": 0}
+    ],
+    "exception_handling": [
+      {"q": "Which block runs no matter what (error or not)?", "options": ["try", "except", "finally", "raise"], "answer": 2},
+      {"q": "What keyword manually raises an exception?", "options": ["throw", "raise", "except", "error"], "answer": 1},
+      {"q": "What does `except Exception as e` do?", "options": ["ignores all errors silently", "catches an exception and stores it in e", "stops the program", "logs to a file automatically"], "answer": 1}
+    ],
+    "modules_packages": [
+      {"q": "Which keyword imports a module?", "options": ["include", "import", "require", "using"], "answer": 1},
+      {"q": "What tool installs Python packages?", "options": ["npm", "pip", "gem", "cargo"], "answer": 1},
+      {"q": "What file lists a Python project's dependencies?", "options": ["package.json", "requirements.txt", "Gemfile", "pom.xml"], "answer": 1}
+    ],
+
+    "html_basics": [
+      {"q": "Which tag creates a hyperlink?", "options": ["<link>", "<a>", "<href>", "<url>"], "answer": 1},
+      {"q": "What does HTML stand for?", "options": ["HighText Markup Language", "HyperText Markup Language", "HyperTransfer Markup Language", "HomeText Markup Language"], "answer": 1},
+      {"q": "Which tag is used for the largest heading?", "options": ["<h6>", "<h1>", "<head>", "<header>"], "answer": 1}
+    ],
+    "css_basics": [
+      {"q": "Which property changes text color?", "options": ["font-color", "text-color", "color", "background-color"], "answer": 2},
+      {"q": "Which selector targets an element by class?", "options": ["#name", ".name", "*name", "name"], "answer": 1},
+      {"q": "What does CSS stand for?", "options": ["Cascading Style Sheets", "Creative Style System", "Computer Style Sheets", "Colorful Style Syntax"], "answer": 0}
+    ],
+    "css_layout": [
+      {"q": "Which display value enables Flexbox?", "options": ["display: block", "display: flex", "display: inline", "display: grid-flex"], "answer": 1},
+      {"q": "In CSS Grid, which property defines columns?", "options": ["grid-columns", "grid-template-columns", "column-count", "grid-flow"], "answer": 1},
+      {"q": "What does `justify-content: center` do in Flexbox?", "options": ["centers items vertically", "centers items horizontally on the main axis", "centers the page", "hides overflow"], "answer": 1}
+    ],
+    "javascript_basics": [
+      {"q": "Which keyword declares a block-scoped variable in JS?", "options": ["var", "let", "define", "int"], "answer": 1},
+      {"q": "What does `===` check in JavaScript?", "options": ["value only", "value and type", "type only", "reference only"], "answer": 1},
+      {"q": "How do you write a function in modern JS?", "options": ["function() {}", "const f = () => {}", "both A and B", "def f():"], "answer": 2}
+    ],
+    "dom_events": [
+      {"q": "Which method selects an element by id?", "options": ["document.querySelector()", "document.getElementById()", "both A and B can do this", "document.selectId()"], "answer": 2},
+      {"q": "How do you attach a click event listener?", "options": ["element.onClick()", "element.addEventListener('click', fn)", "element.click(fn)", "element.on('click')"], "answer": 1},
+      {"q": "What does `event.preventDefault()` do?", "options": ["stops event propagation", "prevents the default browser action", "removes the element", "pauses JS execution"], "answer": 1}
+    ],
+    "responsive_design": [
+      {"q": "What CSS feature adapts layout to screen size?", "options": ["media queries", "flex-box only", "z-index", "float"], "answer": 0},
+      {"q": "What does 'mobile-first' design mean?", "options": ["designing for mobile only", "starting styles for small screens then scaling up", "using only images", "no CSS needed"], "answer": 1},
+      {"q": "Which unit is relative to viewport width?", "options": ["px", "vw", "pt", "em only"], "answer": 1}
+    ],
+    "apis_fetch": [
+      {"q": "Which JS function is used to make HTTP requests natively?", "options": ["fetch()", "request()", "http()", "ajaxCall()"], "answer": 0},
+      {"q": "What does `fetch()` return?", "options": ["a string", "a Promise", "an array", "a boolean"], "answer": 1},
+      {"q": "What format is commonly used for API data exchange?", "options": ["XML only", "JSON", "CSV only", "YAML only"], "answer": 1}
+    ],
+    "frontend_frameworks": [
+      {"q": "In React, what is used to manage component state?", "options": ["this.props", "useState()", "document.state", "window.state"], "answer": 1},
+      {"q": "What is JSX?", "options": ["a database query language", "a syntax extension to write HTML in JS", "a CSS framework", "a testing library"], "answer": 1},
+      {"q": "What are props in React?", "options": ["internal component state", "read-only inputs passed to components", "CSS properties", "event handlers only"], "answer": 1}
+    ],
+    "backend_basics": [
+      {"q": "What does REST API stand for the architectural style of?", "options": ["Representational State Transfer", "Remote Execution State Transfer", "Rapid State Transfer", "Real-time State Transfer"], "answer": 0},
+      {"q": "Which HTTP method is used to create a resource?", "options": ["GET", "POST", "DELETE", "HEAD"], "answer": 1},
+      {"q": "What is middleware in a backend framework?", "options": ["a database", "code that runs between request and response", "a frontend library", "a CSS preprocessor"], "answer": 1}
+    ],
+    "databases_basics": [
+      {"q": "Which SQL command retrieves data?", "options": ["GET", "SELECT", "FETCH", "PULL"], "answer": 1},
+      {"q": "What is a primary key?", "options": ["a random column", "a unique identifier for a row", "a foreign table", "an index only"], "answer": 1},
+      {"q": "What does CRUD stand for?", "options": ["Create Read Update Delete", "Copy Read Use Delete", "Create Retrieve Undo Drop", "Connect Read Update Drop"], "answer": 0}
+    ],
+
+    "python_for_ds": [
+      {"q": "Which library provides array-based numerical computing in Python?", "options": ["pandas", "numpy", "matplotlib", "flask"], "answer": 1},
+      {"q": "What does `import pandas as pd` do?", "options": ["installs pandas", "imports pandas with alias pd", "deletes pandas", "creates a dataframe"], "answer": 1},
+      {"q": "Which is a valid way to read a CSV in pandas?", "options": ["pd.read_csv('file.csv')", "pd.open_csv('file.csv')", "pd.load('file.csv')", "pd.csv('file.csv')"], "answer": 0}
+    ],
+    "statistics_basics": [
+      {"q": "What does 'mean' represent?", "options": ["the middle value", "the average value", "the most frequent value", "the range"], "answer": 1},
+      {"q": "What does standard deviation measure?", "options": ["central tendency", "spread/dispersion of data", "correlation", "sample size"], "answer": 1},
+      {"q": "What is a normal distribution shaped like?", "options": ["a bell curve", "a straight line", "a square", "random noise"], "answer": 0}
+    ],
+    "numpy_pandas": [
+      {"q": "What is the core data structure of pandas for 2D data?", "options": ["Series", "DataFrame", "Array", "Matrix"], "answer": 1},
+      {"q": "How do you select a column 'age' from DataFrame `df`?", "options": ["df.age or df['age']", "df->age", "df{age}", "df.get.age"], "answer": 0},
+      {"q": "What does `np.array([1,2,3]).shape` return?", "options": ["(3,)", "[3]", "3", "(1,3,1)"], "answer": 0}
+    ],
+    "data_visualization": [
+      {"q": "Which library is most commonly used for basic plotting in Python?", "options": ["matplotlib", "flask", "requests", "os"], "answer": 0},
+      {"q": "Which chart type best shows distribution of a numeric variable?", "options": ["histogram", "pie chart only", "scatter only", "bar chart only"], "answer": 0},
+      {"q": "What does `plt.show()` do?", "options": ["saves the figure", "displays the figure", "deletes the figure", "clears the plot"], "answer": 1}
+    ],
+    "data_cleaning": [
+      {"q": "What is a common way to handle missing values?", "options": ["ignore always", "imputation (fill with mean/median) or drop rows", "delete the whole dataset", "convert to text"], "answer": 1},
+      {"q": "What is an outlier?", "options": ["a duplicate row", "a data point far from other observations", "a missing value", "a categorical variable"], "answer": 1},
+      {"q": "What does normalization typically do to data?", "options": ["removes all data", "scales values to a common range", "adds noise", "duplicates rows"], "answer": 1}
+    ],
+    "ml_basics": [
+      {"q": "What is supervised learning?", "options": ["learning without labels", "learning from labeled input-output pairs", "learning by clustering only", "a database technique"], "answer": 1},
+      {"q": "What is a 'feature' in machine learning?", "options": ["the model's output", "an input variable used for prediction", "a type of algorithm", "a Python library"], "answer": 1},
+      {"q": "What is overfitting?", "options": ["model performs well on new unseen data", "model memorizes training data and performs poorly on new data", "model trains too fast", "model has too few parameters"], "answer": 1}
+    ],
+    "supervised_learning": [
+      {"q": "Which algorithm is used for predicting continuous values?", "options": ["linear regression", "k-means clustering", "PCA", "apriori"], "answer": 0},
+      {"q": "What type of problem is spam email detection?", "options": ["regression", "classification", "clustering", "dimensionality reduction"], "answer": 1},
+      {"q": "What does a decision tree split on?", "options": ["random values", "feature thresholds that best separate classes", "the label only", "nothing, it's random"], "answer": 1}
+    ],
+    "unsupervised_learning": [
+      {"q": "What is the goal of k-means clustering?", "options": ["predict a label", "group similar data points together", "reduce noise in audio", "compute regression coefficients"], "answer": 1},
+      {"q": "What does PCA primarily do?", "options": ["increases dimensions", "reduces dimensionality while preserving variance", "labels the data", "removes all outliers automatically"], "answer": 1},
+      {"q": "Unsupervised learning uses:", "options": ["labeled data only", "unlabeled data", "no data", "only images"], "answer": 1}
+    ],
+    "model_evaluation": [
+      {"q": "What does 'precision' measure?", "options": ["of predicted positives, how many were correct", "of actual positives, how many were found", "overall accuracy", "training time"], "answer": 0},
+      {"q": "What does 'recall' measure?", "options": ["of predicted positives, how many were correct", "of actual positives, how many were found", "model speed", "number of features"], "answer": 1},
+      {"q": "What does AUC-ROC evaluate?", "options": ["clustering quality", "a classifier's ability to distinguish classes across thresholds", "regression error", "data cleaning quality"], "answer": 1}
+    ],
+    "ml_projects": [
+      {"q": "What is model deployment?", "options": ["training a model", "making a trained model available for use in production", "cleaning the dataset", "labeling data"], "answer": 1},
+      {"q": "What is a typical end-to-end ML pipeline step order?", "options": ["deploy, train, clean, collect", "collect data, clean, train, evaluate, deploy", "evaluate, collect, deploy, clean", "train, collect, deploy, clean"], "answer": 1},
+      {"q": "Why version your datasets and models?", "options": ["not necessary", "to reproduce results and track changes over time", "to make files bigger", "only for legal reasons"], "answer": 1}
+    ],
+
+    "big_o": [
+      {"q": "What is the time complexity of accessing an array element by index?", "options": ["O(1)", "O(n)", "O(log n)", "O(n^2)"], "answer": 0},
+      {"q": "Which grows fastest as n increases?", "options": ["O(log n)", "O(n)", "O(n^2)", "O(2^n)"], "answer": 3}
+    ],
+    "arrays_ds": [
+      {"q": "What is the time complexity of inserting at the end of a dynamic array (amortized)?", "options": ["O(1)", "O(n)", "O(log n)", "O(n^2)"], "answer": 0},
+      {"q": "Arrays store elements:", "options": ["in random memory locations", "in contiguous memory locations", "only as linked nodes", "only as key-value pairs"], "answer": 1}
+    ],
+    "linked_lists": [
+      {"q": "What does each node in a singly linked list store?", "options": ["only data", "data and a pointer to the next node", "data and pointers to both neighbors", "only a pointer"], "answer": 1},
+      {"q": "What is the time complexity of inserting at the head of a linked list?", "options": ["O(1)", "O(n)", "O(log n)", "O(n^2)"], "answer": 0}
+    ],
+    "stacks_queues": [
+      {"q": "A stack follows which order?", "options": ["FIFO", "LIFO", "Random", "Priority-based"], "answer": 1},
+      {"q": "Which operation removes an element from a queue?", "options": ["push", "pop", "dequeue", "peek"], "answer": 2}
+    ],
+    "recursion": [
+      {"q": "What must every recursive function have to avoid infinite recursion?", "options": ["a loop", "a base case", "a global variable", "a return type"], "answer": 1},
+      {"q": "What data structure implicitly tracks recursive calls?", "options": ["queue", "call stack", "heap", "linked list"], "answer": 1}
+    ],
+    "sorting_algorithms": [
+      {"q": "What is the average time complexity of quicksort?", "options": ["O(n)", "O(n log n)", "O(n^2)", "O(log n)"], "answer": 1},
+      {"q": "Which sorting algorithm repeatedly swaps adjacent out-of-order elements?", "options": ["merge sort", "bubble sort", "quicksort", "binary search"], "answer": 1}
+    ],
+    "trees": [
+      {"q": "In a binary search tree, where are smaller values stored relative to a node?", "options": ["right subtree", "left subtree", "root only", "anywhere"], "answer": 1},
+      {"q": "What is the time complexity of search in a balanced BST?", "options": ["O(1)", "O(log n)", "O(n)", "O(n^2)"], "answer": 1}
+    ],
+    "graphs": [
+      {"q": "Which traversal uses a queue?", "options": ["DFS", "BFS", "both", "neither"], "answer": 1},
+      {"q": "What represents a graph as a 2D matrix of connections?", "options": ["adjacency list", "adjacency matrix", "linked list", "binary tree"], "answer": 1}
+    ],
+    "dynamic_programming": [
+      {"q": "What technique stores results of subproblems to avoid recomputation?", "options": ["recursion only", "memoization", "sorting", "hashing"], "answer": 1},
+      {"q": "Dynamic programming works best on problems with:", "options": ["no substructure", "optimal substructure and overlapping subproblems", "only sorted input", "random data"], "answer": 1}
+    ],
+
+    "db_basics": [
+      {"q": "What is a table row also called?", "options": ["a record/tuple", "a column", "a schema", "a key"], "answer": 0},
+      {"q": "A relational database organizes data into:", "options": ["files only", "tables with rows and columns", "a single list", "graphs only"], "answer": 1}
+    ],
+    "sql_basics": [
+      {"q": "Which SQL clause filters rows?", "options": ["SELECT", "WHERE", "ORDER BY", "FROM"], "answer": 1},
+      {"q": "Which command adds new rows to a table?", "options": ["INSERT", "UPDATE", "DELETE", "SELECT"], "answer": 0}
+    ],
+    "joins": [
+      {"q": "Which join returns only matching rows from both tables?", "options": ["LEFT JOIN", "INNER JOIN", "FULL OUTER JOIN", "CROSS JOIN"], "answer": 1},
+      {"q": "A LEFT JOIN returns:", "options": ["only matched rows", "all rows from the left table plus matches from the right", "all rows from the right table only", "no rows"], "answer": 1}
+    ],
+    "normalization": [
+      {"q": "What is the main goal of normalization?", "options": ["increase redundancy", "reduce data redundancy and improve integrity", "make queries slower", "delete tables"], "answer": 1},
+      {"q": "1NF requires that:", "options": ["columns hold atomic values", "tables have no primary key", "all data is duplicated", "joins are forbidden"], "answer": 0}
+    ],
+    "indexes": [
+      {"q": "What is the primary benefit of a database index?", "options": ["faster data retrieval", "smaller database size always", "automatic normalization", "prevents all errors"], "answer": 0},
+      {"q": "Indexes are commonly implemented using:", "options": ["linked lists", "B-trees", "stacks", "queues"], "answer": 1}
+    ],
+    "transactions": [
+      {"q": "What does the 'A' in ACID stand for?", "options": ["Availability", "Atomicity", "Accuracy", "Authentication"], "answer": 1},
+      {"q": "What does 'Isolation' in ACID ensure?", "options": ["transactions are backed up", "concurrent transactions don't interfere with each other", "data is encrypted", "queries run faster"], "answer": 1}
+    ],
+    "er_modeling": [
+      {"q": "In an ER diagram, a rectangle typically represents:", "options": ["an attribute", "an entity", "a relationship", "a primary key"], "answer": 1},
+      {"q": "A one-to-many relationship means:", "options": ["one row relates to many rows in another table", "tables cannot be related", "many rows relate to one row only", "no foreign keys are needed"], "answer": 0}
+    ],
+
+    "os_basics": [
+      {"q": "What is the core job of an operating system?", "options": ["write code", "manage hardware and software resources", "design websites", "compile programs only"], "answer": 1},
+      {"q": "The kernel is:", "options": ["a user application", "the core of the OS that manages resources", "a type of file", "a network protocol"], "answer": 1}
+    ],
+    "processes_threads": [
+      {"q": "What is a thread?", "options": ["a separate program", "the smallest unit of execution within a process", "a type of file", "a hardware device"], "answer": 1},
+      {"q": "What is context switching?", "options": ["switching between processes/threads on the CPU", "deleting a process", "installing an OS", "formatting a disk"], "answer": 0}
+    ],
+    "cpu_scheduling": [
+      {"q": "Which scheduling algorithm gives each process a fixed time slice?", "options": ["FCFS", "Round Robin", "Shortest Job First", "Priority Scheduling"], "answer": 1},
+      {"q": "FCFS scheduling stands for:", "options": ["Fastest Come First Serve", "First Come First Served", "Final Come First Serve", "First Class First Serve"], "answer": 1}
+    ],
+    "memory_management": [
+      {"q": "What is paging?", "options": ["dividing memory into fixed-size blocks", "deleting unused files", "a networking protocol", "a CPU scheduling algorithm"], "answer": 0},
+      {"q": "What is fragmentation in memory management?", "options": ["memory being used efficiently", "wasted memory space that can't be effectively used", "a type of virus", "a scheduling algorithm"], "answer": 1}
+    ],
+    "virtual_memory": [
+      {"q": "What is a page fault?", "options": ["a hardware crash", "when a requested page is not in physical memory", "a successful memory access", "a type of CPU"], "answer": 1},
+      {"q": "Virtual memory allows a program to:", "options": ["use more memory than physically available", "run without an OS", "avoid using RAM entirely", "bypass the CPU"], "answer": 0}
+    ],
+    "deadlocks": [
+      {"q": "Which condition is NOT required for a deadlock?", "options": ["mutual exclusion", "circular wait", "fast CPU speed", "hold and wait"], "answer": 2},
+      {"q": "A deadlock occurs when:", "options": ["processes run in parallel successfully", "processes wait indefinitely for resources held by each other", "a process finishes execution", "memory is freed"], "answer": 1}
+    ],
+    "file_systems": [
+      {"q": "What is an inode?", "options": ["a network address", "a data structure storing file metadata", "a type of RAM", "a CPU register"], "answer": 1},
+      {"q": "A file system organizes data on:", "options": ["the CPU", "persistent storage like disks", "the network only", "RAM only"], "answer": 1}
+    ],
+
+    "networking_basics": [
+      {"q": "What does an IP address identify?", "options": ["a file", "a device on a network", "a CPU core", "a database table"], "answer": 1},
+      {"q": "In client-server architecture, the client:", "options": ["provides resources", "requests resources from the server", "stores all data permanently", "is always the same as the server"], "answer": 1}
+    ],
+    "osi_model": [
+      {"q": "How many layers does the OSI model have?", "options": ["5", "7", "4", "9"], "answer": 1},
+      {"q": "Which OSI layer is responsible for routing?", "options": ["Physical", "Network", "Presentation", "Session"], "answer": 1}
+    ],
+    "tcp_ip": [
+      {"q": "What does TCP guarantee that UDP does not?", "options": ["faster speed", "reliable, ordered delivery", "smaller packet size", "encryption"], "answer": 1},
+      {"q": "What is the TCP three-way handshake used for?", "options": ["encrypting data", "establishing a connection", "compressing data", "routing packets"], "answer": 1}
+    ],
+    "dns_http": [
+      {"q": "What does DNS do?", "options": ["encrypts traffic", "translates domain names to IP addresses", "compresses files", "manages CPU scheduling"], "answer": 1},
+      {"q": "What does HTTPS add to HTTP?", "options": ["faster speed only", "encryption via TLS/SSL", "more headers", "nothing"], "answer": 1}
+    ],
+    "routing_switching": [
+      {"q": "What does a router primarily do?", "options": ["forwards packets between different networks", "stores files", "runs applications", "manages RAM"], "answer": 0},
+      {"q": "A switch operates primarily at which layer?", "options": ["Data Link layer", "Application layer", "Session layer", "Physical layer only"], "answer": 0}
+    ],
+    "network_security": [
+      {"q": "What is the main purpose of a firewall?", "options": ["speed up the network", "filter and control incoming/outgoing traffic", "store passwords", "compress data"], "answer": 1},
+      {"q": "What does a VPN provide?", "options": ["a faster public connection", "an encrypted tunnel over a public network", "unlimited bandwidth", "a new IP protocol"], "answer": 1}
+    ],
+
+    "system_design_basics": [
+      {"q": "What is the first step in system design interviews?", "options": ["writing code", "clarifying requirements and constraints", "choosing a database", "deploying to production"], "answer": 1},
+      {"q": "What does 'client-server' architecture describe?", "options": ["a single monolithic file", "clients requesting services from a server", "a database schema", "a sorting algorithm"], "answer": 1}
+    ],
+    "scalability": [
+      {"q": "What is horizontal scaling?", "options": ["adding more power to one machine", "adding more machines to share the load", "reducing the number of servers", "compressing data"], "answer": 1},
+      {"q": "Vertical scaling means:", "options": ["adding more servers", "upgrading a single machine's resources (CPU/RAM)", "removing servers", "splitting the database"], "answer": 1}
+    ],
+    "load_balancing": [
+      {"q": "What is the role of a load balancer?", "options": ["store data permanently", "distribute incoming traffic across multiple servers", "encrypt passwords", "compile code"], "answer": 1},
+      {"q": "Round robin is a type of:", "options": ["database index", "load balancing algorithm", "encryption method", "sorting algorithm"], "answer": 1}
+    ],
+    "caching": [
+      {"q": "What is the main benefit of caching?", "options": ["permanent data storage", "faster access to frequently used data", "stronger encryption", "smaller codebase"], "answer": 1},
+      {"q": "What is cache invalidation?", "options": ["making a cache faster", "removing or updating stale cached data", "encrypting the cache", "increasing cache size"], "answer": 1}
+    ],
+    "databases_at_scale": [
+      {"q": "What is database sharding?", "options": ["encrypting a database", "splitting data across multiple databases/servers", "backing up a database", "deleting old data"], "answer": 1},
+      {"q": "What is replication used for?", "options": ["making copies of data across servers for availability/read scaling", "reducing storage cost", "compressing data", "encrypting queries"], "answer": 0}
+    ],
+    "microservices": [
+      {"q": "How do microservices differ from a monolith?", "options": ["they are one large codebase", "they are small, independently deployable services", "they cannot communicate with each other", "they require no database"], "answer": 1},
+      {"q": "What is an API gateway used for in microservices?", "options": ["storing files", "routing and managing requests to backend services", "compiling code", "training ML models"], "answer": 1}
+    ],
+    "system_design_case_studies": [
+      {"q": "When designing a URL shortener, a key design decision is:", "options": ["choosing a font", "how to generate and store unique short codes", "picking a CSS framework", "choosing an image format"], "answer": 1},
+      {"q": "Case study interviews mainly test your ability to:", "options": ["memorize syntax", "reason about trade-offs at scale", "write unit tests", "design logos"], "answer": 1}
+    ],
+
+    "git_basics": [
+      {"q": "What command initializes a new Git repository?", "options": ["git start", "git init", "git new", "git create"], "answer": 1},
+      {"q": "What does `git commit` do?", "options": ["uploads code to GitHub", "saves a snapshot of staged changes locally", "deletes a branch", "downloads a repository"], "answer": 1}
+    ],
+    "branching_merging": [
+      {"q": "What is a Git branch?", "options": ["a backup of the whole repo", "an independent line of development", "a type of commit", "a remote server"], "answer": 1},
+      {"q": "A merge conflict happens when:", "options": ["two branches change the same lines differently", "you delete a branch", "you clone a repo", "you push to GitHub"], "answer": 0}
+    ],
+    "remote_repos": [
+      {"q": "Which command uploads local commits to a remote repository?", "options": ["git pull", "git push", "git fetch", "git clone"], "answer": 1},
+      {"q": "What does `git clone` do?", "options": ["creates a new branch", "downloads a copy of a remote repository", "deletes a repository", "merges two branches"], "answer": 1}
+    ],
+    "pull_requests": [
+      {"q": "What is a pull request used for?", "options": ["deleting a repository", "proposing and reviewing changes before merging", "downloading code", "creating a new GitHub account"], "answer": 1},
+      {"q": "Code review in a pull request helps:", "options": ["slow down development for no reason", "catch bugs and share knowledge before merging", "replace testing entirely", "avoid using Git"], "answer": 1}
+    ],
+    "git_workflows": [
+      {"q": "What does `git stash` do?", "options": ["permanently deletes changes", "temporarily shelves uncommitted changes", "pushes to remote", "creates a new repository"], "answer": 1},
+      {"q": "What is `git rebase` commonly used for?", "options": ["deleting a repository", "replaying commits on top of another branch for a cleaner history", "creating a GitHub account", "compiling code"], "answer": 1}
+    ]
+  },
+
+  "flagship_videos": {
+    "python": {"video_id": "8DvywoWv6fI", "title": "Python for Everybody - Full Course", "creator": "freeCodeCamp.org (Dr. Chuck)", "duration_seconds": 50400},
+    "web_dev": {"video_id": "jS4aFq5-91M", "title": "Full JavaScript Course for Beginners", "creator": "freeCodeCamp.org", "duration_seconds": 25200},
+    "dsa": {"video_id": "RpLnQnurpLY", "title": "Learn Data Structures and Algorithms Visually", "creator": "freeCodeCamp.org", "duration_seconds": 3600},
+    "dbms": {"video_id": "HXV3zeQKqGY", "title": "SQL Tutorial - Full Database Course for Beginners", "creator": "freeCodeCamp.org (Mike Dane)", "duration_seconds": 15600},
+    "git_github": {"video_id": "mAFoROnOfHs", "title": "Git & GitHub Crash Course for Beginners", "creator": "freeCodeCamp.org", "duration_seconds": 3600}
+  },
+
+  "playlists": {
+    "python": [
+      {
+        "id": "codewithharry_100days",
+        "creator": "CodeWithHarry",
+        "title": "Python for Beginners (100 Days of Code) — Hindi",
+        "level": "basic",
+        "playlist_id": "PLu0W_9lII9agwh1XjRt242xIpHhPT2llg"
+      },
+      {
+        "id": "apnacollege_python",
+        "creator": "Apna College",
+        "title": "Python Tutorial for Beginners — Full Course",
+        "level": "basic",
+        "playlist_id": null
+      },
+      {
+        "id": "telusko_python",
+        "creator": "Telusko",
+        "title": "Python Playlist — Beginner to Advanced",
+        "level": "advanced",
+        "playlist_id": null
+      }
+    ]
+  },
+
+  "creators": [
+    {"id": "freecodecamp", "name": "freeCodeCamp.org"},
+    {"id": "programmingwithmosh", "name": "Programming with Mosh"},
+    {"id": "coreyschafer", "name": "Corey Schafer"},
+    {"id": "cs50", "name": "CS50 / Harvard"},
+    {"id": "traversymedia", "name": "Traversy Media"}
+  ]
+}

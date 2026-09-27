@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Syllabus Roadmap — {{ skill.display_name }}{% endblock %}
+{% block topbar_title %}Your syllabus roadmap{% endblock %}
+{% block topbar_sub %}{{ skill.display_name }} · Step 1 of 2{% endblock %}
+
+{% block crumbs %}
+<div class="app-crumbs"><a href="{{ url_for('dashboard') }}">Dashboard</a><span class="sep">/</span><a href="{{ url_for('start_skill', skill_id=skill_id) }}">{{ skill.display_name }}</a><span class="sep">/</span><span>Syllabus roadmap</span></div>
+{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>{{ plan.title or skill.display_name }}</h1>
+  <p>{{ plan.summary or enrollment.syllabus_summary or skill.description }}</p>
+</div>
+
+<div class="rec-card" style="margin-bottom:22px;">
+  <div class="rec-head">
+    <div>
+      <h3>{{ 'General syllabus' if enrollment.syllabus_source == 'general' else 'Your syllabus' }}</h3>
+      <div class="rec-sub">{{ enrollment.syllabus_name }} · {{ roadmap|length }} mapped topics · {{ enrollment.hours_per_week }} hrs/week</div>
+    </div>
+    <span class="badge ready">Roadmap ready</span>
+  </div>
+</div>
+
+<h2 class="section-title">{{ icon('map',17) }} Generalized roadmap</h2>
+<div class="roadmap-list">
+  {% for t in roadmap %}
+  <div class="roadmap-item ready">
+    <div style="min-width:0"><strong>{{ loop.index }}. {{ t.display }}</strong><div class="rm-sub">Difficulty {{ t.difficulty }}/5 · ~{{ t.hours }} hrs · {{ t.keywords }}</div></div>
+    <span class="badge ready">
+      {% if t.difficulty <= 1 %}
+        Foundation
+      {% elif t.difficulty <= 3 %}
+        Intermediate
+      {% else %}
+        Advanced
+      {% endif %}
+    </span>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="explain" style="margin-top:22px;">
+  <strong>Next, Learnora will test you.</strong> The diagnostic contains 7 Groq AI-generated questions: 2 Basic, 3 Intermediate and 2 Advanced. Your performance determines the level of content you receive.
+</div>
+
+<form method="GET" action="{{ url_for('quiz', skill_id=skill_id) }}" style="margin-top:18px;">
+  <button class="btn secondary block btn-big" type="submit">Start my capability test {{ icon('arrow-right',17) }}</button>
+</form>
+{% endblock %}

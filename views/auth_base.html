@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Learnora{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/learnora.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+</head>
+<body class="auth-layout auth-{{ request.endpoint|default('auth') }}">
+{% from "_icons.html" import icon %}
+
+<main class="auth-page">
+  <!-- ============================================ visual panel ==== -->
+  <div class="auth-visual">
+    <div class="auth-ambient auth-ambient-one"></div>
+    <div class="auth-ambient auth-ambient-two"></div>
+    <div class="auth-ambient auth-ambient-three"></div>
+    <div class="auth-float auth-float-one">{{ icon("book-open", 26) }}</div>
+    <div class="auth-float auth-float-two">{{ icon("code", 22) }}</div>
+    <div class="auth-float auth-float-three">{{ icon("sparkles", 20) }}</div>
+    <div class="auth-float auth-float-four">{{ icon("trophy", 24) }}</div>
+    <div class="auth-float auth-float-five">✎</div>
+    <div class="auth-ring auth-ring-one"></div>
+    <div class="auth-ring auth-ring-two"></div>
+
+    <a class="brand auth-brand" href="{{ url_for('intro') }}">
+      <span class="brand-mark">{{ icon("graduation-cap", 23) }}</span>
+      <span>Learnora</span>
+    </a>
+
+    <div class="auth-visual-copy">
+      <span class="auth-badge">{{ icon("sparkles", 14) }} {% block visual_badge %}Adaptive learning roadmaps{% endblock %}</span>
+      <h2>{% block visual_title %}Your future starts with one small step.{% endblock %}</h2>
+      <p>{% block visual_text %}Take a short assessment, get a roadmap shaped around what you already know, and learn only what's actually missing.{% endblock %}</p>
+      <div class="auth-visual-points">
+        <span>{{ icon("check", 16) }} Cold-start assessment — no wasted lessons</span>
+        <span>{{ icon("check", 16) }} Prerequisite-aware skill graph</span>
+        <span>{{ icon("check", 16) }} Curated videos, docs and topic checks</span>
+      </div>
+    </div>
+
+    <span></span>
+  </div>
+
+  <!-- ============================================== form panel ==== -->
+  <div class="auth-form-side">
+    <a class="auth-back" href="{{ url_for('intro') }}">{{ icon("arrow-left", 16) }} Back to home</a>
+
+    <div class="auth-card {% block card_class %}{% endblock %}">
+      <div class="auth-icon">{{ icon("graduation-cap", 25) }}</div>
+
+      {% set tab = request.endpoint|default('') %}
+      {% if tab in ['login', 'register'] %}
+      <div class="auth-tabs">
+        <a class="auth-tab {{ 'active' if tab == 'login' }}" href="{{ url_for('login') }}">Sign in</a>
+        <a class="auth-tab {{ 'active' if tab == 'register' }}" href="{{ url_for('register') }}">Create account</a>
+        <span class="auth-tab-slider {{ 'slide-right' if tab == 'register' }}"></span>
+      </div>
+      {% endif %}
+
+      <h1 class="auth-title">{% block auth_title %}Welcome{% endblock %}</h1>
+      <p class="auth-subtitle">{% block auth_subtitle %}{% endblock %}</p>
+
+      {% block auth_body %}{% endblock %}
+    </div>
+  </div>
+</main>
+
+<div class="flashes" id="flashes">
+  {% for flash in flashes %}
+    {% set category = flash.category %}{% set message = flash.message %}
+    <div class="flash {{ category }}">
+      <span>{{ message }}</span>
+      <button class="flash-close" aria-label="Dismiss" onclick="this.parentElement.remove()">{{ icon("x", 15) }}</button>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+  setTimeout(() => {
+    document.querySelectorAll('#flashes .flash').forEach((el, i) => {
+      setTimeout(() => {
+        el.style.transition = 'opacity .4s ease, transform .4s ease';
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(22px)';
+        setTimeout(() => el.remove(), 420);
+      }, i * 120);
+    });
+  }, 6000);
+
+  // password visibility toggles
+  document.querySelectorAll('.toggle-visibility').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = btn.parentElement.querySelector('input');
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.querySelector('.eye-on').style.display = show ? 'none' : 'inline-block';
+      btn.querySelector('.eye-off').style.display = show ? 'inline-block' : 'none';
+    });
+  });
+</script>
+{% block scripts %}{% endblock %}
+
+{% block active_tab %}{% endblock %}
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>

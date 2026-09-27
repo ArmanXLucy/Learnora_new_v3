@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Admin — Research{% endblock %}
+{% block topbar_title %}Research &amp; evaluation{% endblock %}
+{% block topbar_sub %}Metrics for the project write-up.{% endblock %}
+
+{% block content %}
+<div class="research-note">
+  This page is only visible to admins and is intended for the research paper / evaluation write-up.
+  All figures below are computed on <strong>synthetic simulated learners</strong> and a
+  <strong>synthetic completion dataset</strong> (see Section 26 of the project documentation).
+  Label them as simulated results in any paper until they are recomputed on real learner
+  interaction data collected through this platform.
+</div>
+
+<form method="POST" action="{{ url_for('admin_research_run') }}">
+  <button type="submit" class="btn secondary">{{ icon("refresh", 16) }} Run / refresh evaluation</button>
+</form>
+
+{% if metrics %}
+<h2 class="section-title">{{ icon("line-chart", 17) }} Completion-confidence model validity</h2>
+<div class="metric-grid">
+  <div class="metric-box"><div class="value">{{ metrics.completion_model.accuracy }}</div><div class="label">Accuracy</div></div>
+  <div class="metric-box"><div class="value">{{ metrics.completion_model.auc_roc }}</div><div class="label">AUC-ROC</div></div>
+  <div class="metric-box"><div class="value">{{ metrics.similarity_vs_rulebased_correlation.pearson_r }}</div><div class="label">Similarity ↔ rule-based r</div></div>
+  <div class="metric-box"><div class="value">K={{ metrics.k }}</div><div class="label">Evaluation cutoff</div></div>
+</div>
+
+<img class="research-img" src="{{ url_for('static', filename='research/completion_model_roc.png') }}" alt="ROC curve">
+<img class="research-img" src="{{ url_for('static', filename='research/completion_model_calibration.png') }}" alt="Calibration curve">
+<img class="research-img" src="{{ url_for('static', filename='research/similarity_vs_rulebased.png') }}" alt="Similarity vs rule-based correlation">
+
+<h2 class="section-title">{{ icon("bar-chart", 17) }} Ablation study — recommendation quality</h2>
+<img class="research-img" src="{{ url_for('static', filename='research/ablation_study.png') }}" alt="Ablation study bar chart">
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Variant</th><th>Precision@K</th><th>Recall@K</th><th>MAP@K</th>
+        <th>Gap coverage</th><th>Prereq violation</th><th>Context compliance</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for variant, vals in metrics.ablation_study %}
+      <tr>
+        <td><strong>{{ variant.replace('_', ' ') }}</strong></td>
+        <td>{{ vals.precision }}</td>
+        <td>{{ vals.recall }}</td>
+        <td>{{ vals.map }}</td>
+        <td>{{ vals.gap_coverage }}</td>
+        <td>{{ vals.prereq_violation }}</td>
+        <td>{{ vals.context_compliance }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<h2 class="section-title">{{ icon("map", 17) }} Course–knowledge–skill graphs</h2>
+{% for sid in metrics.skills_evaluated %}
+<h3 style="font-family:'Space Grotesk',sans-serif; font-size:16px; margin:22px 0 10px;">{{ skills[sid].display_name }}</h3>
+<img class="research-img" src="{{ url_for('static', filename='research/skill_graph_' + sid + '.png') }}" alt="Skill graph for {{ sid }}">
+{% endfor %}
+
+{% else %}
+<div class="empty-state" style="margin-top:20px;">
+  No evaluation has been run yet. Click “Run / refresh evaluation” above.
+</div>
+{% endif %}
+{% endblock %}

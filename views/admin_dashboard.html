@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+
+{% block title %}
+Admin — Students
+{% endblock %}
+
+{% block topbar_title %}
+Students
+{% endblock %}
+
+{% block topbar_sub %}
+Everyone learning on Learnora right now.
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =====================================================
+     STUDENTS
+===================================================== -->
+
+<div class="page-head">
+  <h1>All students</h1>
+
+  <p>
+    Prototype note: this view is for demonstration purposes.
+    A production deployment would add role-based access
+    control, audit logging, encryption at rest, and rate
+    limiting on top of this.
+  </p>
+</div>
+
+
+<!-- =====================================================
+     STUDENT METRICS
+===================================================== -->
+
+<div class="metric-grid">
+
+  <div class="metric-box">
+    <div class="value">
+      {{ student_rows|length }}
+    </div>
+
+    <div class="label">
+      Registered students
+    </div>
+  </div>
+
+
+  <div class="metric-box">
+    <div class="value">
+      {{ total_enrollments }}
+    </div>
+
+    <div class="label">
+      Total enrolments
+    </div>
+  </div>
+
+
+  <div class="metric-box">
+    <div class="value">
+      {{ active_learners }}
+    </div>
+
+    <div class="label">
+      Active learners
+    </div>
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     STUDENT TABLE
+===================================================== -->
+
+{% if student_rows %}
+
+<div class="admin-table-wrap">
+
+  <table class="admin-table">
+
+    <thead>
+
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Location</th>
+        <th>Profession</th>
+        <th>Skills enrolled</th>
+        <th></th>
+      </tr>
+
+    </thead>
+
+
+    <tbody>
+
+      {% for row in student_rows %}
+
+      <tr>
+
+        <td>
+
+          <strong>
+            {{ row.user.name }}
+          </strong>
+
+          <div
+            style="
+              font-size:11.5px;
+              color:var(--muted);
+            "
+          >
+            @{{ row.user.username }}
+          </div>
+
+        </td>
+
+
+        <td>
+          {{ row.user.email or '—' }}
+        </td>
+
+
+        <td>
+          {{ row.user.location }}
+        </td>
+
+
+        <td>
+          {{ row.user.profession or '—' }}
+        </td>
+
+
+        <td>
+          {{
+            row.skills_summary|join(', ')
+            if row.skills_summary
+            else '—'
+          }}
+        </td>
+
+
+        <td>
+
+          <a
+            href="{{ url_for(
+              'admin_student_detail',
+              user_id=row.user.id
+            ) }}"
+            class="btn ghost small"
+          >
+            View
+            {{ icon(
+              "chevron-right",
+              13
+            ) }}
+          </a>
+
+        </td>
+
+      </tr>
+
+      {% endfor %}
+
+    </tbody>
+
+  </table>
+
+</div>
+
+{% else %}
+
+<div class="empty-state">
+  No students have registered yet.
+</div>
+
+{% endif %}
+
+
+
+
+{% endblock %}

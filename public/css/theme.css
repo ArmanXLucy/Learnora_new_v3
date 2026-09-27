@@ -1,0 +1,819 @@
+/* Learnora global light/dark theme layer */
+:root {
+  color-scheme: light;
+  --theme-bg: #f7f9ff;
+  --theme-surface: #ffffff;
+  --theme-surface-2: #eef3ff;
+  --theme-text: #11152e;
+  --theme-muted: #68718f;
+  --theme-line: rgba(50,78,130,.14);
+  --theme-primary: #377dff;
+  --theme-shadow: 0 18px 55px rgba(36,64,120,.10);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --theme-bg: #0b1020;
+  --theme-surface: #121a2d;
+  --theme-surface-2: #1a2640;
+  --theme-text: #edf3ff;
+  --theme-muted: #a7b4d0;
+  --theme-line: rgba(176,199,240,.18);
+  --theme-primary: #79a9ff;
+  --theme-shadow: 0 18px 55px rgba(0,0,0,.28);
+}
+html, body { background: var(--theme-bg); color: var(--theme-text); transition: background-color .3s ease, color .3s ease; }
+body, .app-shell, .app-page, .app-dashboard, .app-main, .auth-page { background-color: var(--theme-bg); color: var(--theme-text); }
+body * { border-color: var(--theme-line); }
+.theme-toggle { display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid var(--theme-line); border-radius:999px; padding:10px 14px; background:var(--theme-surface); color:var(--theme-text); font-weight:700; cursor:pointer; white-space:nowrap; transition:background .25s ease, transform .2s ease; }
+.theme-toggle:hover { transform:translateY(-2px); background:var(--theme-surface-2); }
+.theme-toggle .theme-icon { font-size:15px; }
+.navbar, .auth-card, .app-topbar, .app-sidebar, .app-right, .card, .metric-box, .admin-table-wrap, .rec-card, .docs-card, .playlist-card, .creator-panel, .todo-panel, .analytics-card, .performance-card, .streak-card, .skill-card, .pricing-card, .capability-card, .large-course-card { background-color:var(--theme-surface); color:var(--theme-text); border-color:var(--theme-line); box-shadow:var(--theme-shadow); }
+a, button, label, h1, h2, h3, h4, h5, h6, p, span, li, td, th { transition:color .25s ease, background-color .25s ease, border-color .25s ease; }
+p, .muted, .form-hint, .auth-subtitle, .auth-visual-copy p, .rm-sub, .rec-sub, .otp-hint, .section-title p { color:var(--theme-muted); }
+input, select, textarea, .input-field, .search-bar, .dashboard-search, .role-toggle, .level-toggle { background:var(--theme-surface); color:var(--theme-text); border-color:var(--theme-line); }
+input::placeholder, textarea::placeholder { color:var(--theme-muted); }
+.btn, .primary-button, .nav-cta { background:linear-gradient(135deg,#2463cf,#143570); color:#fff; }
+.secondary-button, .btn.secondary, .btn.ghost { background:var(--theme-surface); color:var(--theme-text); border-color:var(--theme-line); }
+.side-item, .nav-links a, .brand, .course-heading button, .mobile-menu { color:var(--theme-text); }
+.side-item.active, .side-item:hover { background:var(--theme-surface-2); color:var(--theme-primary); }
+.auth-visual { background:linear-gradient(145deg,#22295f,#182c61 60%,#125a91); }
+.auth-form-side { background:var(--theme-bg); }
+.auth-back, .auth-footer a, .auth-links-row a { color:var(--theme-primary); }
+.flash { box-shadow:var(--theme-shadow); }
+html[data-theme="dark"] .hero { background:radial-gradient(circle at 15% 16%, rgba(45,91,170,.38) 0 12%, transparent 31%), radial-gradient(circle at 85% 15%, rgba(61,77,160,.30) 0 12%, transparent 34%), linear-gradient(180deg,#101c35 0%,#0e172b 55%,#0b1020 100%); }
+html[data-theme="dark"] .hero h1, html[data-theme="dark"] .section-heading h2, html[data-theme="dark"] .hero-copy p { color:var(--theme-text); }
+html[data-theme="dark"] .eyebrow, html[data-theme="dark"] .secondary-button { background:rgba(18,26,45,.82); color:var(--theme-text); }
+html[data-theme="dark"] .dashboard-preview { background:var(--theme-surface); }
+html[data-theme="dark"] .dashboard-sidebar { background:var(--theme-surface-2); }
+html[data-theme="dark"] .mini-course.blue { background:#20365e; }
+html[data-theme="dark"] .mini-course.purple { background:#392d5d; }
+html[data-theme="dark"] .mini-course.green { background:#21483f; }
+html[data-theme="dark"] .footer { background:#070b15; color:#dce6ff; }
+html[data-theme="dark"] .footer a, html[data-theme="dark"] .footer p { color:#a7b4d0; }
+@media (max-width: 820px) { .theme-toggle { padding:9px 12px; } .theme-toggle .theme-label { display:none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition:none !important; } }
+
+.topbar-actions { margin-left:auto; display:flex; align-items:center; gap:10px; }
+@media (max-width: 600px) {
+  .topbar-actions .theme-toggle { padding:8px 10px; }
+}
+
+
+/* ============================================================
+   NAVBAR THEME SWITCH — explicit override
+   Keeps the control visible above landing-page button styles.
+   ============================================================ */
+.navbar .nav-links .theme-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-width: 104px !important;
+  height: 42px !important;
+  padding: 9px 14px !important;
+  margin: 0 !important;
+  border: 2px solid #8db7ff !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  color: #183568 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  cursor: pointer !important;
+  position: relative !important;
+  z-index: 20 !important;
+  box-shadow: 0 4px 14px rgba(36, 99, 207, .12) !important;
+}
+
+.navbar .nav-links .theme-toggle:hover {
+  background: #edf4ff !important;
+  color: #174da4 !important;
+  transform: translateY(-1px);
+}
+
+.navbar .nav-links .theme-toggle .theme-icon {
+  display: inline-block !important;
+  font-size: 16px !important;
+  color: inherit !important;
+}
+
+html[data-theme="dark"] .navbar .nav-links .theme-toggle {
+  background: #1a2947 !important;
+  color: #f3f7ff !important;
+  border-color: #6f9ffb !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, .25) !important;
+}
+
+html[data-theme="dark"] .navbar .nav-links .theme-toggle:hover {
+  background: #263b61 !important;
+}
+
+@media (max-width: 820px) {
+  .navbar .nav-links .theme-toggle {
+    min-width: 92px !important;
+    height: 40px !important;
+    padding: 9px 12px !important;
+  }
+  .navbar .nav-links .theme-toggle .theme-label {
+    display: inline !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .navbar .nav-links .theme-toggle {
+    min-width: 92px !important;
+  }
+}
+
+
+/* ============================================================
+   ACCESSIBILITY / CONTRAST FIXES
+   Keep all existing layouts and animations unchanged.
+   These overrides make every page readable in dark mode.
+   ============================================================ */
+
+/* Landing page sections */
+html[data-theme="dark"] {
+  --b-ink: #edf3ff;
+  --b-900: #dce8ff;
+  --b-800: #b9d2ff;
+  --b-700: #8db8ff;
+  --b-600: #79a9ff;
+  --b-500: #79a9ff;
+  --b-400: #a4c7ff;
+  --b-300: #b9d4ff;
+  --b-200: #3c5680;
+  --b-100: #263957;
+  --b-50: #1a2943;
+  --b-line: rgba(176,199,240,.22);
+  --b-muted: #b4c2dd;
+  --ink: #edf3ff;
+  --muted: #b4c2dd;
+  --line: rgba(176,199,240,.22);
+}
+
+html[data-theme="dark"] .app-shell,
+html[data-theme="dark"] .content-section,
+html[data-theme="dark"] .soft-section,
+html[data-theme="dark"] .how-it-works,
+html[data-theme="dark"] .capability-section {
+  background: var(--theme-bg) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .soft-section,
+html[data-theme="dark"] .how-it-works,
+html[data-theme="dark"] .capability-section {
+  background: linear-gradient(180deg, #101a2d 0%, #0b1020 100%) !important;
+}
+
+html[data-theme="dark"] .section-heading h2,
+html[data-theme="dark"] .section-heading p,
+html[data-theme="dark"] .process-step h3,
+html[data-theme="dark"] .process-step p,
+html[data-theme="dark"] .capability-card h3,
+html[data-theme="dark"] .capability-card p,
+html[data-theme="dark"] .large-course-card h3,
+html[data-theme="dark"] .large-course-card p,
+html[data-theme="dark"] .path-grid h3,
+html[data-theme="dark"] .path-grid p,
+html[data-theme="dark"] .content-section h2,
+html[data-theme="dark"] .content-section h3,
+html[data-theme="dark"] .content-section h4,
+html[data-theme="dark"] .content-section p,
+html[data-theme="dark"] .content-section li {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .process-step,
+html[data-theme="dark"] .capability-card,
+html[data-theme="dark"] .large-course-card,
+html[data-theme="dark"] .path-grid > div,
+html[data-theme="dark"] .dashboard-preview,
+html[data-theme="dark"] .analytics-card {
+  background: var(--theme-surface) !important;
+  color: var(--theme-text) !important;
+  border-color: var(--theme-line) !important;
+}
+
+html[data-theme="dark"] .process-step p,
+html[data-theme="dark"] .capability-card p,
+html[data-theme="dark"] .large-course-card p,
+html[data-theme="dark"] .path-grid p,
+html[data-theme="dark"] .course-tag {
+  color: var(--theme-muted) !important;
+}
+
+html[data-theme="dark"] .simple-banner {
+  background: linear-gradient(120deg, #1a2943, #14233c) !important;
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .simple-banner h2,
+html[data-theme="dark"] .simple-banner p {
+  color: var(--theme-text) !important;
+}
+
+/* Authentication pages: login, create account and password reset */
+html[data-theme="dark"] .auth-form-side,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .auth-card h1,
+html[data-theme="dark"] .auth-card h2,
+html[data-theme="dark"] .auth-card h3,
+html[data-theme="dark"] .auth-card label,
+html[data-theme="dark"] .auth-card strong,
+html[data-theme="dark"] .auth-card .register-section-heading h3 {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .register-section {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-line) !important;
+}
+
+html[data-theme="dark"] .register-section-heading p,
+html[data-theme="dark"] .register-trust,
+html[data-theme="dark"] .form-hint,
+html[data-theme="dark"] .auth-subtitle,
+html[data-theme="dark"] .auth-card small {
+  color: var(--theme-muted) !important;
+}
+
+html[data-theme="dark"] .auth-card input,
+html[data-theme="dark"] .auth-card select,
+html[data-theme="dark"] .auth-card textarea,
+html[data-theme="dark"] .auth-card .input-field,
+html[data-theme="dark"] .register-section input,
+html[data-theme="dark"] .register-section select,
+html[data-theme="dark"] .register-section textarea {
+  background: #18243a !important;
+  color: #edf3ff !important;
+  border-color: #405477 !important;
+}
+
+html[data-theme="dark"] .auth-card input::placeholder,
+html[data-theme="dark"] .auth-card textarea::placeholder {
+  color: #9eafcc !important;
+}
+
+html[data-theme="dark"] .auth-tabs,
+html[data-theme="dark"] .auth-tab {
+  color: var(--theme-text) !important;
+}
+
+html[data-theme="dark"] .auth-tab.active {
+  color: #9fc4ff !important;
+}
+
+html[data-theme="dark"] .auth-back,
+html[data-theme="dark"] .auth-footer a,
+html[data-theme="dark"] .auth-links-row a {
+  color: #9fc4ff !important;
+}
+
+/* Dashboard and internal pages */
+html[data-theme="dark"] .app-main,
+html[data-theme="dark"] .app-page,
+html[data-theme="dark"] .app-content,
+html[data-theme="dark"] .app-main h1,
+html[data-theme="dark"] .app-main h2,
+html[data-theme="dark"] .app-main h3,
+html[data-theme="dark"] .app-main h4,
+html[data-theme="dark"] .app-main label,
+html[data-theme="dark"] .app-main td,
+html[data-theme="dark"] .app-main th {
+  color: var(--theme-text);
+}
+
+html[data-theme="dark"] .app-main p,
+html[data-theme="dark"] .app-main small,
+html[data-theme="dark"] .app-main .muted {
+  color: var(--theme-muted);
+}
+
+/* Preserve readable text in the dark footer and pricing area */
+html[data-theme="dark"] .footer-cta h2,
+html[data-theme="dark"] .footer-cta p,
+html[data-theme="dark"] .footer-grid h4,
+html[data-theme="dark"] .footer .brand {
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .footer-grid a,
+html[data-theme="dark"] .footer-about p,
+html[data-theme="dark"] .footer-bottom {
+  color: #b9c9e5 !important;
+}
+
+
+/* ============================================================
+   AUTHENTICATION CONTRAST + CENTERING PATCH
+   Scoped only to sign-in and create-account pages.
+   ============================================================ */
+
+/* Make all authentication text readable in dark mode */
+html[data-theme="dark"] body.auth-layout .auth-form-side {
+  background: #0b1020 !important;
+  color: #edf3ff !important;
+}
+
+html[data-theme="dark"] body.auth-layout .auth-card,
+html[data-theme="dark"] body.auth-layout .auth-card * {
+  text-shadow: none;
+}
+
+html[data-theme="dark"] body.auth-layout .auth-title,
+html[data-theme="dark"] body.auth-layout .auth-card h1,
+html[data-theme="dark"] body.auth-layout .auth-card h2,
+html[data-theme="dark"] body.auth-layout .auth-card h3,
+html[data-theme="dark"] body.auth-layout .auth-card label,
+html[data-theme="dark"] body.auth-layout .auth-card .optional-label,
+html[data-theme="dark"] body.auth-layout .auth-card .section-number {
+  color: #f4f7ff !important;
+}
+
+html[data-theme="dark"] body.auth-layout .auth-subtitle,
+html[data-theme="dark"] body.auth-layout .register-section-heading p,
+html[data-theme="dark"] body.auth-layout .form-hint,
+html[data-theme="dark"] body.auth-layout .register-trust,
+html[data-theme="dark"] body.auth-layout .auth-footer,
+html[data-theme="dark"] body.auth-layout .auth-card small {
+  color: #b8c6df !important;
+}
+
+html[data-theme="dark"] body.auth-layout .input-field,
+html[data-theme="dark"] body.auth-layout input,
+html[data-theme="dark"] body.auth-layout select,
+html[data-theme="dark"] body.auth-layout textarea {
+  background: #18243a !important;
+  color: #f4f7ff !important;
+  border-color: #53698f !important;
+}
+
+html[data-theme="dark"] body.auth-layout .input-field > svg,
+html[data-theme="dark"] body.auth-layout .toggle-visibility,
+html[data-theme="dark"] body.auth-layout .input-field {
+  color: #d2def5 !important;
+}
+
+html[data-theme="dark"] body.auth-layout input::placeholder,
+html[data-theme="dark"] body.auth-layout textarea::placeholder {
+  color: #a9b9d4 !important;
+  opacity: 1;
+}
+
+html[data-theme="dark"] body.auth-layout .auth-tabs,
+html[data-theme="dark"] body.auth-layout .role-toggle {
+  background: #263550 !important;
+  border: 1px solid #52698f !important;
+}
+
+html[data-theme="dark"] body.auth-layout .auth-tab,
+html[data-theme="dark"] body.auth-layout .role-toggle span {
+  color: #d6e2f7 !important;
+}
+
+html[data-theme="dark"] body.auth-layout .auth-tab.active,
+html[data-theme="dark"] body.auth-layout .role-toggle input:checked + span {
+  color: #ffffff !important;
+  background: #2463cf !important;
+}
+
+html[data-theme="dark"] body.auth-layout .auth-tab-slider {
+  background: #2463cf !important;
+}
+
+html[data-theme="dark"] body.auth-layout .primary-button,
+html[data-theme="dark"] body.auth-layout .full-button,
+html[data-theme="dark"] body.auth-layout .register-submit {
+  background: linear-gradient(135deg, #377dff, #2454b8) !important;
+  color: #ffffff !important;
+  border: 1px solid #78aaff !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,.28) !important;
+}
+
+html[data-theme="dark"] body.auth-layout .auth-links-row a,
+html[data-theme="dark"] body.auth-layout .auth-footer a,
+html[data-theme="dark"] body.auth-layout .auth-back {
+  color: #9fc4ff !important;
+}
+
+html[data-theme="dark"] body.auth-layout .otp-hint {
+  color: #d9e6ff !important;
+  background: #1a2943 !important;
+  border-color: #52698f !important;
+}
+
+html[data-theme="dark"] body.auth-layout option {
+  background: #18243a;
+  color: #f4f7ff;
+}
+
+/* Center the sign-in panel in the available right-side area */
+@media (min-width: 901px) {
+  body.auth-login .auth-form-side {
+    justify-content: center !important;
+    padding-top: 70px !important;
+    padding-bottom: 50px !important;
+  }
+
+  body.auth-login .auth-card {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Keep the long registration form comfortably top-aligned */
+  body.auth-register .auth-form-side {
+    justify-content: flex-start !important;
+  }
+}
+
+@media (max-width: 900px) {
+  body.auth-layout .auth-form-side {
+    overflow-y: visible;
+    max-height: none;
+  }
+}
+
+
+/* ============================================================
+   DARK MODE — VISUAL FIXES (v2)
+   Root cause: dark mode flips --ink / --muted / --b-* to LIGHT
+   values, but many components still had HARD-CODED light
+   backgrounds (white / #f5f8ff / rgba(255,255,255,.9)…), giving
+   light-on-light text. Blue "deep" gradients built from --b-900 /
+   --b-700 also turned pale. Everything below only applies when
+   html[data-theme="dark"]; light mode is untouched.
+   ============================================================ */
+html[data-theme="dark"] {
+  --d-bg: #0b1020;
+  --d-surface: #121a2d;
+  --d-surface-2: #1a2640;
+  --d-surface-3: #223255;
+  --d-text: #edf3ff;
+  --d-muted: #a7b4d0;
+  --d-line: rgba(176,199,240,.18);
+  --d-accent: #79a9ff;
+  --d-accent-soft: rgba(121,169,255,.16);
+}
+
+/* ---------- 1. Card-like surfaces (quiz, roadmap, skills, tables…) ---------- */
+html[data-theme="dark"] .quiz-topic,
+html[data-theme="dark"] .rec-card,
+html[data-theme="dark"] .roadmap-item,
+html[data-theme="dark"] .skill-card,
+html[data-theme="dark"] .playlist-card,
+html[data-theme="dark"] .docs-card,
+html[data-theme="dark"] .metric-box,
+html[data-theme="dark"] .transcript-box,
+html[data-theme="dark"] .admin-table-wrap,
+html[data-theme="dark"] .analytics-card,
+html[data-theme="dark"] .large-course-card,
+html[data-theme="dark"] .process-step {
+  background: var(--d-surface) !important;
+  color: var(--d-text);
+  border-color: var(--d-line) !important;
+  box-shadow: 0 14px 40px rgba(0,0,0,.28);
+}
+html[data-theme="dark"] .empty-state,
+html[data-theme="dark"] .search-link-card {
+  background: rgba(26,38,64,.55) !important;
+  color: var(--d-muted) !important;
+  border: 1px dashed rgba(176,199,240,.30) !important;
+}
+html[data-theme="dark"] .empty-state *,
+html[data-theme="dark"] .search-link-card p { color: var(--d-muted) !important; }
+
+/* ---------- 2. Text that was inheriting light colours on light cards ---------- */
+html[data-theme="dark"] .quiz-topic > h3,
+html[data-theme="dark"] .quiz-q > p,
+html[data-theme="dark"] .roadmap-item strong,
+html[data-theme="dark"] .rec-head h3,
+html[data-theme="dark"] .skill-card h3,
+html[data-theme="dark"] .playlist-card-body strong,
+html[data-theme="dark"] .docs-card strong,
+html[data-theme="dark"] .todo-row strong,
+html[data-theme="dark"] .profile-summary h3,
+html[data-theme="dark"] .card-heading h4,
+html[data-theme="dark"] .score-ring strong,
+html[data-theme="dark"] .section-title,
+html[data-theme="dark"] .page-head h1,
+html[data-theme="dark"] .app-topbar h3 {
+  color: var(--d-text) !important;
+}
+html[data-theme="dark"] .rm-sub,
+html[data-theme="dark"] .rec-sub,
+html[data-theme="dark"] .skill-meta,
+html[data-theme="dark"] .skill-card p,
+html[data-theme="dark"] .playlist-card-body p,
+html[data-theme="dark"] .docs-card p,
+html[data-theme="dark"] .metric-box .label,
+html[data-theme="dark"] .match-box small,
+html[data-theme="dark"] .app-topbar span,
+html[data-theme="dark"] .page-head p,
+html[data-theme="dark"] .profile-summary span,
+html[data-theme="dark"] .profile-handle,
+html[data-theme="dark"] .app-crumbs,
+html[data-theme="dark"] .form-hint,
+html[data-theme="dark"] .video-caption,
+html[data-theme="dark"] .transcript-hint,
+html[data-theme="dark"] .bar-column small,
+html[data-theme="dark"] .performance-card small,
+html[data-theme="dark"] .calendar-days span {
+  color: var(--d-muted) !important;
+}
+
+/* ---------- 3. Quiz ---------- */
+html[data-theme="dark"] .quiz-q { border-top-color: var(--d-line); }
+html[data-theme="dark"] .quiz-options label {
+  background: var(--d-surface-2);
+  color: var(--d-text);
+  border-color: var(--d-line);
+}
+html[data-theme="dark"] .quiz-options label:hover {
+  background: var(--d-surface-3);
+  border-color: var(--d-accent);
+}
+html[data-theme="dark"] .quiz-options label:has(input:checked) {
+  background: rgba(121,169,255,.20);
+  border-color: var(--d-accent);
+  box-shadow: 0 0 0 3px rgba(121,169,255,.16);
+  color: #ffffff;
+}
+html[data-theme="dark"] .quiz-options input[type=radio] {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; flex: none; margin: 0; padding: 0;
+  border: 2px solid #6f86b3; border-radius: 50%;
+  background: transparent; box-shadow: none;
+  transition: border-color .15s ease, background .15s ease;
+}
+html[data-theme="dark"] .quiz-options label:hover input[type=radio] { border-color: var(--d-accent); }
+html[data-theme="dark"] .quiz-options input[type=radio]:checked {
+  border-color: var(--d-accent);
+  background: radial-gradient(circle, var(--d-accent) 0 42%, transparent 46%);
+}
+html[data-theme="dark"] .quiz-options input[type=radio]:focus { box-shadow: none; }
+html[data-theme="dark"] .quiz-options input[type=radio]:focus-visible { outline: 2px solid var(--d-accent); outline-offset: 2px; }
+html[data-theme="dark"] .quiz-submit-bar {
+  background: linear-gradient(180deg, rgba(11,16,32,0), #0b1020 40%);
+}
+
+/* ---------- 4. Info banners (assessment note, "explain", research note…) ---------- */
+html[data-theme="dark"] .otp-hint,
+html[data-theme="dark"] .explain,
+html[data-theme="dark"] .research-note,
+html[data-theme="dark"] .transcript-header {
+  background: linear-gradient(120deg, rgba(55,125,255,.16), rgba(128,103,232,.14)) !important;
+  color: #d6e2fa !important;
+  border: 1px solid var(--d-line) !important;
+}
+html[data-theme="dark"] .otp-hint strong,
+html[data-theme="dark"] .explain strong { color: #ffffff; }
+html[data-theme="dark"] .otp-hint code { background: rgba(121,169,255,.2); color: #dbe7ff; }
+html[data-theme="dark"] .estimate-badge {
+  background: rgba(214,167,74,.14);
+  color: #f0d9a2;
+  border-color: rgba(214,167,74,.35);
+}
+html[data-theme="dark"] .scores span {
+  background: var(--d-surface-2);
+  color: var(--d-muted);
+}
+
+/* ---------- 5. Form controls in the app (hours input etc.) ---------- */
+html[data-theme="dark"] input[type=text],
+html[data-theme="dark"] input[type=password],
+html[data-theme="dark"] input[type=email],
+html[data-theme="dark"] input[type=tel],
+html[data-theme="dark"] input[type=number],
+html[data-theme="dark"] input[type=search],
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+  background-color: #18243a;
+  color: var(--d-text);
+  border-color: #405477;
+  caret-color: var(--d-accent);
+}
+html[data-theme="dark"] input[type=number]::-webkit-inner-spin-button,
+html[data-theme="dark"] input[type=number]::-webkit-outer-spin-button { filter: invert(.85); opacity: 1; }
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] select:focus,
+html[data-theme="dark"] textarea:focus {
+  border-color: var(--d-accent);
+  box-shadow: 0 0 0 3px rgba(121,169,255,.22);
+}
+html[data-theme="dark"] select option { background: #18243a; color: var(--d-text); }
+/* inputs that live inside a styled wrapper stay transparent */
+html[data-theme="dark"] .search-bar input,
+html[data-theme="dark"] .input-field input,
+html[data-theme="dark"] .dashboard-search input {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--d-text);
+  box-shadow: none !important;
+}
+
+/* ---------- 6. Buttons ---------- */
+html[data-theme="dark"] .btn.secondary {
+  background: linear-gradient(135deg, #3f7dff, #6b5ce6);
+  color: #ffffff;
+  border: 1px solid rgba(160,190,255,.45);
+  box-shadow: 0 10px 24px rgba(40,70,190,.35);
+}
+html[data-theme="dark"] .btn.secondary:hover { filter: brightness(1.1); }
+html[data-theme="dark"] .btn.ghost {
+  background: var(--d-surface-2);
+  color: var(--d-text);
+  border: 1px solid #40567f;
+  box-shadow: none;
+}
+html[data-theme="dark"] .btn.ghost:hover {
+  background: var(--d-surface-3);
+  border-color: var(--d-accent);
+  color: #ffffff;
+}
+html[data-theme="dark"] .icon-button {
+  background: var(--d-surface-2);
+  color: var(--d-text);
+  border-color: var(--d-line);
+}
+html[data-theme="dark"] .level-toggle,
+html[data-theme="dark"] .creator-tabs { background: var(--d-surface-2); }
+html[data-theme="dark"] .level-btn,
+html[data-theme="dark"] .creator-tab { color: var(--d-muted); }
+html[data-theme="dark"] .level-btn.active {
+  background: #3f7dff; color: #fff; box-shadow: 0 6px 16px rgba(20,50,150,.4);
+}
+html[data-theme="dark"] .creator-tab.active {
+  background: var(--d-surface-3); color: #fff; box-shadow: none;
+}
+
+/* ---------- 7. Roadmap list ---------- */
+html[data-theme="dark"] .roadmap-item.ready {
+  background: linear-gradient(90deg, rgba(55,125,255,.14), var(--d-surface) 55%) !important;
+  border-left-color: #4d8dff !important;
+}
+html[data-theme="dark"] .roadmap-item.mastered { border-left-color: #27c7aa !important; }
+html[data-theme="dark"] .roadmap-item.locked {
+  border-left-color: #4a5b7d !important;
+  opacity: .9;
+}
+html[data-theme="dark"] .roadmap-item.locked strong { color: #c5d1e8 !important; }
+html[data-theme="dark"] .roadmap-item:hover { box-shadow: 0 12px 30px rgba(0,0,0,.35); }
+html[data-theme="dark"] .badge.mastered,
+html[data-theme="dark"] .badge.basic    { background: rgba(39,199,170,.16); color: #62e3c7; }
+html[data-theme="dark"] .badge.ready    { background: rgba(121,169,255,.20); color: #b5d0ff; }
+html[data-theme="dark"] .badge.locked   { background: rgba(176,199,240,.12); color: #b7c4de; }
+html[data-theme="dark"] .badge.advanced { background: rgba(163,116,240,.22); color: #dcc2ff; }
+html[data-theme="dark"] .pct-pill       { background: var(--d-accent-soft); color: #b5d0ff; }
+html[data-theme="dark"] .skill-icon.blue,
+html[data-theme="dark"] .large-course-icon.blue   { background: rgba(72,103,239,.22); color: #a9bcff; }
+html[data-theme="dark"] .skill-icon.purple,
+html[data-theme="dark"] .large-course-icon.purple { background: rgba(152,86,233,.22); color: #d1adff; }
+html[data-theme="dark"] .skill-icon.green,
+html[data-theme="dark"] .large-course-icon.green  { background: rgba(35,189,160,.20); color: #62e3c7; }
+html[data-theme="dark"] .skill-icon.amber { background: rgba(217,138,43,.22); color: #ffc677; }
+html[data-theme="dark"] .progress-bar-bg,
+html[data-theme="dark"] .profile-progress { background: rgba(176,199,240,.16); }
+
+/* ---------- 8. Dashboard header, search, right rail ---------- */
+/* the header + search wrapper were painted as raised "cards" and showed as odd bands */
+html[data-theme="dark"] .app-topbar,
+html[data-theme="dark"] .search-bar {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent;
+}
+html[data-theme="dark"] .search-bar .input-wrap {
+  background: var(--d-surface);
+  border: 1px solid #33466b;
+  color: var(--d-muted);
+  box-shadow: 0 12px 34px rgba(0,0,0,.30);
+}
+html[data-theme="dark"] .search-bar .input-wrap:focus-within {
+  border-color: var(--d-accent);
+  box-shadow: 0 0 0 3px rgba(121,169,255,.22);
+}
+html[data-theme="dark"] .search-bar input::placeholder { color: #8fa1c4; opacity: 1; }
+html[data-theme="dark"] .search-results {
+  background: var(--d-surface);
+  border-color: var(--d-line);
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+}
+html[data-theme="dark"] .search-result-item:hover { background: var(--d-surface-2); }
+html[data-theme="dark"] .search-result-item .name { color: var(--d-text); }
+html[data-theme="dark"] .search-result-item .desc { color: var(--d-muted); }
+html[data-theme="dark"] .text-button,
+html[data-theme="dark"] .course-heading .text-button { color: #9db8ff; }
+
+html[data-theme="dark"] .app-right { background: var(--d-surface); }
+html[data-theme="dark"] .profile-tags span { background: var(--d-accent-soft); color: #b5d0ff; }
+html[data-theme="dark"] .todo-check { border-color: #5a6f96; }
+
+/* streak card: was a peach gradient with light text */
+html[data-theme="dark"] .streak-card {
+  background: linear-gradient(140deg, rgba(255,150,80,.16), rgba(236,92,150,.12));
+  border-color: rgba(255,170,120,.28);
+  box-shadow: none;
+}
+html[data-theme="dark"] .streak-current { color: #ffffff; }
+html[data-theme="dark"] .streak-label,
+html[data-theme="dark"] .streak-sub,
+html[data-theme="dark"] .streak-sub strong { color: #e6d3c8; }
+html[data-theme="dark"] .streak-flame { background: rgba(255,255,255,.10); color: #ffb067; }
+html[data-theme="dark"] .streak-dot { background: rgba(200,210,235,.16); }
+html[data-theme="dark"] .streak-dot.active { background: linear-gradient(140deg, #ffb457, #f0794e); }
+
+/* ---------- 9. Toast / flash messages ---------- */
+html[data-theme="dark"] .flash {
+  background: #16213a;
+  color: var(--d-text);
+  border: 1px solid #33466b;
+  box-shadow: 0 18px 45px rgba(0,0,0,.55);
+}
+html[data-theme="dark"] .flash span { color: var(--d-text); }
+html[data-theme="dark"] .flash-close { color: var(--d-muted); }
+html[data-theme="dark"] .flash-close:hover { color: #fff; }
+
+/* ---------- 10. Tables, chatbot, modal, mobile chrome ---------- */
+html[data-theme="dark"] .admin-table th { background: var(--d-surface-2); color: var(--d-muted); }
+html[data-theme="dark"] .admin-table td { color: var(--d-text); }
+html[data-theme="dark"] .admin-table tbody tr:hover { background: var(--d-surface-2); }
+html[data-theme="dark"] #chatbot-panel { background: var(--d-surface); border-color: var(--d-line); }
+html[data-theme="dark"] .chat-msg.bot { background: var(--d-surface-2); color: var(--d-text); }
+html[data-theme="dark"] #chatbot-input-row { background: var(--d-surface); border-top-color: var(--d-line); }
+html[data-theme="dark"] .auth-modal { background: var(--d-surface); color: var(--d-text); }
+html[data-theme="dark"] .modal-close { background: var(--d-surface-2); color: var(--d-muted); }
+html[data-theme="dark"] .sidebar-toggle { background: var(--d-surface-2); color: var(--d-text); border-color: var(--d-line); }
+@media (max-width: 1050px) {
+  html[data-theme="dark"] .nav-links { background: var(--d-surface); border: 1px solid var(--d-line); }
+}
+
+/* ---------- 11. Create-account page (numbered section badges, stepper) ---------- */
+html[data-theme="dark"] body.auth-layout .section-number,
+html[data-theme="dark"] .section-number {
+  background: rgba(71,120,245,.24) !important;
+  color: #b5d0ff !important;
+  border: 1px solid rgba(121,169,255,.35);
+}
+html[data-theme="dark"] .progress-dot {
+  background: var(--d-surface-2);
+  border-color: #40567f;
+  color: var(--d-muted);
+}
+html[data-theme="dark"] .progress-dot.active {
+  background: linear-gradient(135deg, #4778f5, #8067e8);
+  border-color: #79a9ff;
+  color: #fff;
+}
+html[data-theme="dark"] .progress-line { background: #40567f; }
+html[data-theme="dark"] .progress-labels { color: var(--d-muted); }
+html[data-theme="dark"] .register-section-heading h3 { color: var(--d-text) !important; }
+
+/* ---------- 12. Landing page: deep-blue bands were turning pale ---------- */
+/* "Built on …" strip under the hero */
+html[data-theme="dark"] .trusted-strip {
+  background: linear-gradient(120deg, #10244f 0%, #1a4a9c 100%) !important;
+  color: #ffffff;
+  border: 1px solid rgba(141,184,255,.28);
+  border-bottom: 0;
+}
+html[data-theme="dark"] .trusted-strip strong { color: #ffffff; }
+html[data-theme="dark"] .trusted-strip span { color: #dbe8ff; }
+html[data-theme="dark"] .trusted-strip svg { color: #bcd6ff; }
+
+/* pricing card */
+html[data-theme="dark"] .pricing-card {
+  background: linear-gradient(125deg, #10244f 0%, #1a4a9c 100%) !important;
+  border: 1px solid rgba(141,184,255,.28) !important;
+  color: #ffffff;
+  box-shadow: 0 24px 65px rgba(0,0,0,.45);
+}
+html[data-theme="dark"] .pricing-card .section-label { color: #a9cbff; }
+html[data-theme="dark"] .pricing-card h2,
+html[data-theme="dark"] .pricing-card .price strong { color: #ffffff !important; }
+html[data-theme="dark"] .pricing-card p { color: #d3e2fb !important; }
+html[data-theme="dark"] .pricing-card .price span { color: #b7cdf0; }
+html[data-theme="dark"] .pricing-card .primary-button,
+html[data-theme="dark"] .footer-button {
+  background: #ffffff !important;
+  color: #143570 !important;
+  box-shadow: 0 10px 26px rgba(0,0,0,.35);
+}
+html[data-theme="dark"] .pricing-card .primary-button svg,
+html[data-theme="dark"] .footer-button svg { color: #143570; }
+
+/* floating line-art windows behind the hero were milky grey */
+html[data-theme="dark"] .tech-float,
+html[data-theme="dark"] .terminal-box {
+  background: rgba(20,32,58,.62);
+  border-color: rgba(121,169,255,.30);
+  color: #a9cbff;
+  box-shadow: 0 14px 35px rgba(0,0,0,.30);
+}
+html[data-theme="dark"] .course-icon {
+  background: rgba(255,255,255,.14);
+  color: #dbe7ff;
+}
