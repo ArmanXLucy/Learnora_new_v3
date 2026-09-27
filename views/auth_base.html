@@ -51,7 +51,9 @@
       <div class="auth-icon">{{ icon("graduation-cap", 25) }}</div>
 
       {% set tab = request.endpoint|default('') %}
-      {% if tab in ['login', 'register'] %}
+      {% block auth_pre_title %}{% endblock %}
+
+      {% if tab in ['login', 'register'] and tab != 'login' %}
       <div class="auth-tabs" id="auth-tabs">
         <a class="auth-tab {{ 'active' if tab == 'login' }}" href="{{ url_for('login') }}">Sign in</a>
         <a class="auth-tab {{ 'active' if tab == 'register' }}" href="{{ url_for('register') }}">Create account</a>
@@ -61,6 +63,14 @@
 
       <h1 class="auth-title">{% block auth_title %}Welcome{% endblock %}</h1>
       <p class="auth-subtitle">{% block auth_subtitle %}{% endblock %}</p>
+
+      {% if tab == 'login' %}
+      <div class="auth-tabs" id="auth-tabs">
+        <a class="auth-tab active" href="{{ url_for('login') }}">Sign in</a>
+        <a class="auth-tab" href="{{ url_for('register') }}">Create account</a>
+        <span class="auth-tab-slider"></span>
+      </div>
+      {% endif %}
 
       {% block auth_body %}{% endblock %}
     </div>

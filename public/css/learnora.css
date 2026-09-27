@@ -8598,6 +8598,12 @@ html.reduce-motion *::after {
   color: #73809f;
 }
 
+/* Login-only welcome alignment; all existing typography remains unchanged. */
+.login-card .auth-title,
+.login-card .auth-subtitle {
+  text-align: center;
+}
+
 /* User / Admin toggle */
 .role-toggle {
   width: 100%;
