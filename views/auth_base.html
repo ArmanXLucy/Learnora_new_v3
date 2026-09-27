@@ -52,7 +52,7 @@
 
       {% set tab = request.endpoint|default('') %}
       {% if tab in ['login', 'register'] %}
-      <div class="auth-tabs">
+      <div class="auth-tabs" id="auth-tabs">
         <a class="auth-tab {{ 'active' if tab == 'login' }}" href="{{ url_for('login') }}">Sign in</a>
         <a class="auth-tab {{ 'active' if tab == 'register' }}" href="{{ url_for('register') }}">Create account</a>
         <span class="auth-tab-slider {{ 'slide-right' if tab == 'register' }}"></span>
@@ -102,7 +102,6 @@
 </script>
 {% block scripts %}{% endblock %}
 
-{% block active_tab %}{% endblock %}
 <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
 </html>

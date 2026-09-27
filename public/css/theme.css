@@ -309,6 +309,38 @@ html[data-theme="dark"] .footer-bottom {
 
 
 /* ============================================================
+   AUTHENTICATION — LOGO + VIEWPORT FIX
+   Keep the existing logo/design; only restore contrast and ensure
+   the authentication shell itself does not create page scrolling.
+   ============================================================ */
+body.auth-layout .auth-brand,
+body.auth-layout .auth-brand span {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+@media (min-width: 901px) {
+  body.auth-layout {
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  body.auth-layout .auth-page {
+    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  body.auth-layout .auth-form-side {
+    height: 100vh;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+/* ============================================================
    AUTHENTICATION CONTRAST + CENTERING PATCH
    Scoped only to sign-in and create-account pages.
    ============================================================ */

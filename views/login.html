@@ -202,6 +202,11 @@ function setRole(role) {
   document.getElementById('login-form').style.display = role === 'user' ? 'block' : 'none';
   document.getElementById('admin-form').style.display = role === 'admin' ? 'block' : 'none';
   document.getElementById('user-links').style.display = role === 'user' ? 'flex' : 'none';
+
+  // User: keep the existing Sign in / Create account navigation.
+  // Admin: show only the admin sign-in interface; no registration option.
+  const authTabs = document.getElementById('auth-tabs');
+  if (authTabs) authTabs.style.display = role === 'user' ? '' : 'none';
 }
 </script>
 {% endblock %}
