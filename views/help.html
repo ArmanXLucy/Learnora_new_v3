@@ -1,215 +1,423 @@
-{% extends "auth_base.html" %}
+{% extends "base.html" %}
 {% from "_icons.html" import icon %}
-{% block title %}Log in — Learnora{% endblock %}
-{% block active_tab %}login{% endblock %}
-{% block card_class %}login-card{% endblock %}
-{% block auth_title %}Welcome back{% endblock %}
-{% block auth_subtitle %}Log in to pick up your roadmap right where you left off.{% endblock %}
+{% block title %}Help Center — Learnora{% endblock %}
+{% block topbar_title %}Help Center{% endblock %}
+{% block topbar_sub %}Get answers, troubleshoot your account, or contact the Learnora support team.{% endblock %}
+{% block content %}
+<div class="helpdesk-shell">
+  <section class="helpdesk-hero">
+    <div class="helpdesk-hero-copy">
+      <span class="helpdesk-kicker">LEARNORA SUPPORT</span>
+      <h1>How can we help?</h1>
+      <p>Find a quick answer or send us a support request. Your account, learning path and assessment questions all live here.</p>
+      <div class="helpdesk-status"><span class="status-dot"></span> Support center is available</div>
+    </div>
+    <div class="helpdesk-hero-orb" aria-hidden="true">{{ icon("headset", 42) }}</div>
+  </section>
 
-{% block auth_pre_title %}
-<div class="role-toggle">
-  <label><input type="radio" name="role" value="user" checked onclick="setRole('user')"><span>Login as User</span></label>
-  <label><input type="radio" name="role" value="admin" onclick="setRole('admin')"><span>Login as Admin</span></label>
+  <div class="helpdesk-layout">
+    <section class="helpdesk-card helpdesk-contact">
+      <div class="helpdesk-card-top">
+        <div class="helpdesk-icon blue">{{ icon("message-circle", 20) }}</div>
+        <div><span class="card-eyebrow">CONTACT SUPPORT</span><h2>Send a support request</h2><p>Tell us what happened and we'll have the details needed to understand your issue.</p></div>
+      </div>
+
+      <form method="POST" class="helpdesk-form" id="helpdesk-form">
+        <div class="helpdesk-form-grid">
+          <label class="form-group">
+            <span>What do you need help with?</span>
+            <select name="topic" id="help-topic">
+              <option>Account & profile</option>
+              <option>Skills & courses</option>
+              <option>Assessments</option>
+              <option>Roadmaps</option>
+              <option>Technical issue</option>
+              <option>Notifications & settings</option>
+              <option>Feedback / suggestion</option>
+              <option>Something else</option>
+            </select>
+          </label>
+          <label class="form-group">
+            <span>Priority</span>
+            <select name="priority" id="help-priority">
+              <option>Normal</option>
+              <option>Important</option>
+              <option>Urgent</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="form-group">
+          <span>Your question</span>
+          <textarea name="message" id="help-message" rows="7" maxlength="2000" required placeholder="Describe the problem, what you expected to happen, and what you see instead..."></textarea>
+          <small class="character-count"><span id="help-count">0</span>/2000</small>
+        </label>
+
+        <div class="helpdesk-submit-row">
+          <div class="secure-note">{{ icon("shield-check", 16) }} Your request is linked to your Learnora account.</div>
+          <button class="helpdesk-submit" type="submit">Send request {{ icon("send", 16) }}</button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="helpdesk-side">
+      <section class="helpdesk-card support-status-card">
+        <div class="side-card-title"><div class="helpdesk-icon purple">{{ icon("life-buoy", 19) }}</div><div><span class="card-eyebrow">SUPPORT CENTER</span><h3>Need a place to start?</h3></div></div>
+        <div class="support-step"><span>01</span><div><strong>Choose a topic</strong><small>Pick the area closest to your question.</small></div></div>
+        <div class="support-step"><span>02</span><div><strong>Describe the issue</strong><small>Include the screen, feature or action involved.</small></div></div>
+        <div class="support-step"><span>03</span><div><strong>Send your request</strong><small>Your request is saved for the support team.</small></div></div>
+      </section>
+
+      <section class="helpdesk-card faq-card">
+        <div class="side-card-title"><div class="helpdesk-icon green">{{ icon("book-open", 19) }}</div><div><span class="card-eyebrow">HELP TOPICS</span><h3>Quick answers</h3></div></div>
+        <div class="faq-list">
+          <a href="{{ url_for('profile') }}"><span>Update profile & picture</span>{{ icon("arrow-up-right", 14) }}</a>
+          <a href="{{ url_for('settings') }}"><span>Notifications & settings</span>{{ icon("arrow-up-right", 14) }}</a>
+          <a href="{{ url_for('assessments') }}"><span>How assessments work</span>{{ icon("arrow-up-right", 14) }}</a>
+          <a href="{{ url_for('roadmaps') }}"><span>Understanding my roadmap</span>{{ icon("arrow-up-right", 14) }}</a>
+        </div>
+      </section>
+
+      <section class="helpdesk-card feature-help-card">
+        <div class="feature-help-icon">?</div>
+        <div><strong>Can't find what you need?</strong><p>Send the request anyway. Add screenshots or exact steps in your message when useful.</p></div>
+      </section>
+    </aside>
+  </div>
+
+
+  <!-- =====================================================
+       YOUR SUPPORT REQUESTS / ADMIN RESPONSES
+  ====================================================== -->
+
+  <style>
+    /* Support responses only: this stylesheet sits outside #support-response-root
+       so the live-refresh renderer cannot remove it. */
+    .support-response-card {
+      margin-top: 22px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .support-response-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .support-response-item {
+      padding: 18px 18px 20px;
+      border: 1px solid var(--theme-line, var(--line));
+      border-radius: 16px;
+      background: var(--theme-surface, var(--card, #fff));
+    }
+
+    .support-response-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 13px;
+      border-bottom: 1px solid var(--theme-line, var(--line));
+    }
+
+    .support-ticket-heading strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--theme-text, var(--ink));
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .support-ticket-heading small {
+      display: block;
+      color: var(--theme-muted, var(--muted));
+      font-size: 12px;
+    }
+
+    .support-student-status {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    .support-student-status.open,
+    .support-student-status.pending,
+    .support-student-status.under-review,
+    .support-student-status.in-progress {
+      background: #eef4ff;
+      border-color: #dbe6ff;
+      color: #3867ff;
+    }
+
+    .support-student-status.approved,
+    .support-student-status.resolved {
+      background: #e9f9f0;
+      border-color: #d4f1e1;
+      color: #168652;
+    }
+
+    .support-student-status.rejected {
+      background: #fff1f1;
+      border-color: #f6d7d7;
+      color: #c23a3a;
+    }
+
+    .support-conversation {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding-top: 18px;
+    }
+
+    .support-message {
+      width: min(82%, 720px);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .support-message-user {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .support-message-admin {
+      align-self: flex-end;
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .support-message-label {
+      color: var(--theme-muted, var(--muted));
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .support-message-bubble {
+      width: 100%;
+      padding: 13px 15px;
+      border-radius: 13px;
+      border: 1px solid var(--theme-line, var(--line));
+      color: var(--theme-text, var(--ink));
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: var(--theme-bg, #f8f9fd);
+      box-sizing: border-box;
+    }
+
+    .support-message-admin .support-message-bubble {
+      background: #eef7ff;
+      border-color: #d8eaff;
+      text-align: left;
+    }
+
+    .support-message time {
+      color: var(--theme-muted, var(--muted));
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    .support-waiting-message {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 0;
+      padding: 11px 13px;
+      border: 1px solid #eadfb0;
+      border-radius: 12px;
+      background: #faf8ef;
+      color: #77682a;
+      font-size: 13px;
+    }
+
+    html[data-theme="dark"] .support-message-bubble {
+      background: var(--theme-surface-2, #141c30);
+    }
+
+    html[data-theme="dark"] .support-message-admin .support-message-bubble {
+      background: #1a2b42;
+      border-color: rgba(115, 170, 232, .24);
+    }
+
+    html[data-theme="dark"] .support-student-status.open,
+    html[data-theme="dark"] .support-student-status.pending,
+    html[data-theme="dark"] .support-student-status.under-review,
+    html[data-theme="dark"] .support-student-status.in-progress {
+      background: rgba(56, 103, 255, .14);
+      border-color: rgba(101, 133, 255, .22);
+    }
+
+    html[data-theme="dark"] .support-student-status.approved,
+    html[data-theme="dark"] .support-student-status.resolved {
+      background: rgba(22, 134, 82, .14);
+      border-color: rgba(71, 179, 126, .22);
+    }
+
+    html[data-theme="dark"] .support-student-status.rejected {
+      background: rgba(194, 58, 58, .14);
+      border-color: rgba(235, 107, 107, .22);
+    }
+
+    html[data-theme="dark"] .support-waiting-message {
+      background: rgba(119, 104, 42, .13);
+      border-color: rgba(210, 190, 101, .2);
+      color: #d7cb89;
+    }
+
+    @media(max-width:600px) {
+      .support-response-item {
+        padding: 15px;
+      }
+
+      .support-response-head {
+        align-items: flex-start;
+      }
+
+      .support-message {
+        width: 94%;
+      }
+    }
+  </style>
+
+  <div id="support-response-root">
+  {% if support_tickets %}
+  <section class="helpdesk-card support-response-card">
+    <div class="helpdesk-card-top">
+      <div class="helpdesk-icon purple">{{ icon("message-circle", 20) }}</div>
+      <div>
+        <span class="card-eyebrow">YOUR SUPPORT REQUESTS</span>
+        <h2>Support responses</h2>
+        <p>See your submitted requests and messages from the Learnora admin team.</p>
+      </div>
+    </div>
+
+    <div class="support-response-list">
+      {% for ticket in support_tickets %}
+      <article class="support-response-item">
+        <div class="support-response-head">
+          <div>
+            <strong>{{ ticket.topic or 'General help' }}</strong>
+            <small>{{ ticket.created_at|dt }}</small>
+          </div>
+          <span class="support-student-status {{ 'approved' if ticket.status == 'approved' else 'open' }}">
+            {{ ticket.status or 'open' }}
+          </span>
+        </div>
+
+        <div class="support-student-question">
+          <span>Your request</span>
+          <p>{{ ticket.message or '—' }}</p>
+        </div>
+
+        {% if ticket.admin_message %}
+        <div class="support-admin-message">
+          <div class="support-admin-message-title">
+            {{ icon("badge-check", 15) }}
+            <strong>Message from Learnora Admin</strong>
+          </div>
+          <p>{{ ticket.admin_message }}</p>
+        </div>
+        {% else %}
+        <div class="support-waiting-message">
+          {{ icon("clock", 15) }}
+          <span>Waiting for the Learnora support team to review your request.</span>
+        </div>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% endif %}
+  </div>
+
 </div>
 {% endblock %}
-
-{% block auth_body %}
-<div id="firebase-error" class="otp-hint" style="display:none;"></div>
-
-<form class="auth-form" id="login-form">
-  <label class="input-field">{{ icon("mail", 16) }}<input type="email" id="email" required placeholder="Email address" autocomplete="email"></label>
-  <label class="input-field">{{ icon("lock", 16) }}<input type="password" id="password" required placeholder="Password" autocomplete="current-password"><button type="button" class="toggle-visibility" aria-label="Toggle password visibility"><span class="eye-on">{{ icon("eye", 16) }}</span><span class="eye-off" style="display:none">{{ icon("eye-off", 16) }}</span></button></label>
-  <button type="submit" class="primary-button full-button" id="login-button">Log in {{ icon("arrow-right", 17) }}</button>
-</form>
-
-<form class="auth-form" id="admin-form" style="display:none;">
-  <label class="input-field">{{ icon("user", 16) }}<input type="email" id="admin-username" placeholder="Admin email address" autocomplete="email"></label>
-  <label class="input-field">{{ icon("lock", 16) }}<input type="password" id="admin-password" placeholder="Admin password"></label>
-  <button type="submit" class="primary-button full-button">Admin login {{ icon("arrow-right", 17) }}</button>
-</form>
-
-<div class="auth-links-row" id="user-links"><a href="{{ url_for('forgot_password') }}">Forgot password?</a><span><a href="{{ url_for('register') }}">Create an account</a></span></div>
-<div id="resend-verification" style="display:none; margin-top:12px;">
-  <button type="button" class="secondary-button full-button" id="resend-verification-button">Resend verification email</button>
-</div>
-{% endblock %}
-
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/firebase-rest.js') }}"></script>
 <script>
-(function () {
-  'use strict';
+(function(){
+  const box = document.getElementById('help-message');
+  const count = document.getElementById('help-count');
+  if(box && count){ const update=()=>count.textContent=box.value.length; box.addEventListener('input',update); update(); }
 
-  const config = {{ firebase_config|tojson|safe }};
-  const api = window.learnoraFirebaseRest;
-  const errorBox = document.getElementById('firebase-error');
-  const loginForm = document.getElementById('login-form');
-  const adminForm = document.getElementById('admin-form');
-  const loginButton = document.getElementById('login-button');
-  const resendWrap = document.getElementById('resend-verification');
-  const resendButton = document.getElementById('resend-verification-button');
+  const root = document.getElementById('support-response-root');
+  if (!root) return;
 
-  function showError(message) {
-    errorBox.textContent = message;
-    errorBox.style.display = 'block';
-  }
+  const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[char]));
 
-  function hideError() {
-    errorBox.textContent = '';
-    errorBox.style.display = 'none';
-  }
-
-  const firebaseReady = Boolean(config?.apiKey && config?.authDomain && config?.projectId && config?.appId);
-
-  if (!firebaseReady) {
-    showError('Firebase is not configured. Check FIREBASE_API_KEY, FIREBASE_AUTH_DOMAIN, FIREBASE_PROJECT_ID and FIREBASE_APP_ID in .env.');
-  } else if (!api) {
-    showError('Learnora authentication script did not load. Refresh the page.');
-  }
-
-  async function createLearnoraSession(idToken) {
-    let profile = {};
-    try {
-      profile = JSON.parse(localStorage.getItem('learnora_pending_profile') || '{}');
-    } catch (_) {}
-
-    const response = await fetch('{{ url_for("firebase_session") }}', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify({ idToken, profile })
-    });
-
-    let data;
-    const type = response.headers.get('content-type') || '';
-    if (type.includes('application/json')) {
-      data = await response.json();
-    } else {
-      const text = await response.text();
-      console.error('[Learnora] Session endpoint returned non-JSON:', response.status, text);
-      throw new Error('The server returned an unexpected response (' + response.status + '). Check the Node terminal.');
-    }
-
-    if (!response.ok || !data.ok) {
-      const message = data.details ? ((data.error || 'Authentication failed.') + ': ' + data.details) : (data.error || 'Authentication failed.');
-      throw new Error(message);
-    }
-
-    localStorage.removeItem('learnora_pending_profile');
-    window.location.replace(data.redirect || '/dashboard');
-  }
-
-  loginForm.addEventListener('submit', async function (event) {
-    event.preventDefault();
-    event.stopPropagation();
-    hideError();
-    resendWrap.style.display = 'none';
-
-    if (!firebaseReady || !api) return;
-
-    const email = document.getElementById('email').value.trim().toLowerCase();
-    const password = document.getElementById('password').value;
-    if (!email || !password) return showError('Enter your email and password.');
-
-    loginButton.disabled = true;
-    const originalButton = loginButton.innerHTML;
-    loginButton.textContent = 'Signing in...';
-
-    try {
-      const signIn = await api.signIn(config.apiKey, email, password);
-      const lookup = await api.lookup(config.apiKey, signIn.idToken);
-      const account = lookup?.users?.[0];
-
-      if (!account) throw new Error('Firebase did not return the account information.');
-
-      if (account.emailVerified !== true) {
-        resendWrap.style.display = 'block';
-        throw new Error('Please verify your email before logging in. Check your inbox or spam folder.');
-      }
-
-      await createLearnoraSession(signIn.idToken);
-    } catch (error) {
-      console.error('[Learnora] Login error:', error);
-      showError(api.friendlyError(error, 'Login failed.'));
-      if (error?.firebaseCode === 'USER_DISABLED') resendWrap.style.display = 'none';
-      loginButton.disabled = false;
-      loginButton.innerHTML = originalButton;
-    }
-  });
-
-  resendButton.addEventListener('click', async function () {
-    hideError();
-    if (!firebaseReady || !api) return;
-
-    const email = document.getElementById('email').value.trim().toLowerCase();
-    const password = document.getElementById('password').value;
-    if (!email || !password) return showError('Enter your email and password first, then click Resend verification email.');
-
-    resendButton.disabled = true;
-    try {
-      const signIn = await api.signIn(config.apiKey, email, password);
-      const lookup = await api.lookup(config.apiKey, signIn.idToken);
-      const account = lookup?.users?.[0];
-
-      if (account?.emailVerified === true) {
-        showError('Your email is already verified. You can log in now.');
-      } else {
-        await api.sendVerification(config.apiKey, signIn.idToken);
-        showError('A new verification email has been sent to ' + email + '. Check your inbox and spam folder.');
-      }
-    } catch (error) {
-      console.error('[Learnora] Verification email error:', error);
-      showError(api.friendlyError(error, 'Could not send the verification email.'));
-    } finally {
-      resendButton.disabled = false;
-    }
-  });
-
-  adminForm.addEventListener('submit', async function (event) {
-    event.preventDefault();
-    event.stopPropagation();
-    hideError();
-    if (!firebaseReady || !api) return;
-
-    try {
-      const email = document.getElementById('admin-username').value.trim().toLowerCase();
-      const password = document.getElementById('admin-password').value;
-      const signIn = await api.signIn(config.apiKey, email, password);
-      const lookup = await api.lookup(config.apiKey, signIn.idToken);
-      const account = lookup?.users?.[0];
-      if (!account?.emailVerified) throw new Error('Please verify the admin email before signing in.');
-
-      const response = await fetch('{{ url_for("admin_login") }}', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({ idToken: signIn.idToken })
-      });
-      const data = await response.json();
-      if (!response.ok || !data.ok) throw new Error(data.error || 'Admin login failed.');
-      window.location.replace(data.redirect || '/admin');
-    } catch (error) {
-      console.error('[Learnora] Admin login error:', error);
-      showError(api.friendlyError(error, error.message || 'Admin login failed.'));
-    }
-  });
-
-  window.learnoraAuthStatus = {
-    firebaseReady,
-    restClientLoaded: Boolean(api)
+  const formatDate = (value) => {
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return '';
+    return d.toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
   };
+
+  const icon = (name) => name === 'badge-check'
+    ? '<svg class="ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 14.2 5l3-.3.8 2.9 2.5 1.6-1.3 2.7 1.3 2.7-2.5 1.6-.8 2.9-3-.3L12 21l-2.2-2-3 .3-.8-2.9-2.5-1.6 1.3-2.7-1.3-2.7 2.5-1.6.8-2.9 3 .3L12 3Z"/><path d="m8 12 2.5 2.5L16 9"/></svg>'
+    : '<svg class="ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+
+  let lastSignature = '';
+  const render = (tickets) => {
+    if (!tickets.length) { root.innerHTML = ''; return; }
+    root.innerHTML = `<section class="helpdesk-card support-response-card">
+      <div class="helpdesk-card-top"><div class="helpdesk-icon purple"><svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-8 8 8.7 8.7 0 0 1-3.4-.7L4 20l1.2-4.2A8 8 0 1 1 20 11.5Z"/></svg></div><div><span class="card-eyebrow">YOUR SUPPORT REQUESTS</span><h2>Support responses</h2><p>See your submitted requests and messages from the Learnora admin team.</p></div></div>
+      <div class="support-response-list">${tickets.map(ticket => {
+        const rawStatus = String(ticket.status || 'open');
+        const statusClass = rawStatus.toLowerCase().replace(/\s+/g, '-');
+        const statusLabel = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1);
+        return `<article class="support-response-item">
+          <div class="support-response-head">
+            <div class="support-ticket-heading">
+              <strong>${escapeHtml(ticket.topic || 'General help')}</strong>
+              <small>${escapeHtml(formatDate(ticket.created_at))}</small>
+            </div>
+            <span class="support-student-status ${escapeHtml(statusClass)}">${statusLabel === 'Resolved' ? '✓ ' : ''}${escapeHtml(statusLabel)}</span>
+          </div>
+
+          <div class="support-conversation">
+            <div class="support-message support-message-user">
+              <span class="support-message-label">YOU</span>
+              <div class="support-message-bubble">${escapeHtml(ticket.message || '—')}</div>
+              <time>${escapeHtml(formatDate(ticket.created_at))}</time>
+            </div>
+
+            ${ticket.admin_message ? `<div class="support-message support-message-admin">
+              <span class="support-message-label">LEARNORA ADMIN</span>
+              <div class="support-message-bubble">${escapeHtml(ticket.admin_message)}</div>
+              <time>${escapeHtml(formatDate(ticket.updated_at || ticket.created_at))}</time>
+            </div>` : `<div class="support-waiting-message">${icon('clock')}<span>Waiting for the Learnora support team to review your request.</span></div>`}
+          </div>
+        </article>`;
+      }).join('')}</div>
+    </section>`;
+  };
+
+  const load = async () => {
+    try {
+      const response = await fetch('/api/helpdesk/tickets', { credentials: 'same-origin', headers: { 'Accept': 'application/json' }, cache: 'no-store' });
+      if (!response.ok) throw new Error('Failed to load support requests');
+      const data = await response.json();
+      const tickets = Array.isArray(data.tickets) ? data.tickets : [];
+      const signature = JSON.stringify(tickets.map(t => [t.id, t.status, t.admin_message, t.message, t.updated_at]));
+      if (signature !== lastSignature) { lastSignature = signature; render(tickets); }
+    } catch (error) { console.error('[help] live refresh', error); }
+  };
+
+  load();
+  window.setInterval(load, 4000);
 })();
-
-function setRole(role) {
-  document.getElementById('firebase-error').style.display = 'none';
-  document.getElementById('login-form').style.display = role === 'user' ? 'block' : 'none';
-  document.getElementById('admin-form').style.display = role === 'admin' ? 'block' : 'none';
-  document.getElementById('user-links').style.display = role === 'user' ? 'flex' : 'none';
-
-  // User: keep the existing Sign in / Create account navigation.
-  // Admin: show only the admin sign-in interface; no registration option.
-  const authTabs = document.getElementById('auth-tabs');
-  if (authTabs) authTabs.style.display = role === 'user' ? '' : 'none';
-}
 </script>
 {% endblock %}
